@@ -7,3 +7,5 @@ coverage
 package-lock.json
 apps/api/src/generated
 docs/api/openapi.json
+CLAUDE.md
+docs/CONCR_SPEC.md

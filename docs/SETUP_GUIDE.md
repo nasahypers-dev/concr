@@ -4,13 +4,13 @@ See `README.md` for the full command list.
 
 ## Prerequisites
 
-| Tool | Version | Windows | macOS |
-|---|---|---|---|
-| Node.js | 24 (see `.nvmrc`) | nodejs.org installer or `nvm-windows` | `nvm install 24` or Homebrew |
-| npm | 10+ | comes with Node | comes with Node |
-| Docker | Docker Desktop (WSL2 backend) | docker.com | Docker Desktop or OrbStack |
-| Expo Go | SDK 57 | Play Store on the phone | App Store on the phone |
-| Git | any recent | Git for Windows | Xcode CLT / Homebrew |
+| Tool    | Version                       | Windows                               | macOS                        |
+| ------- | ----------------------------- | ------------------------------------- | ---------------------------- |
+| Node.js | 24 (see `.nvmrc`)             | nodejs.org installer or `nvm-windows` | `nvm install 24` or Homebrew |
+| npm     | 10+                           | comes with Node                       | comes with Node              |
+| Docker  | Docker Desktop (WSL2 backend) | docker.com                            | Docker Desktop or OrbStack   |
+| Expo Go | SDK 57                        | Play Store on the phone               | App Store on the phone       |
+| Git     | any recent                    | Git for Windows                       | Xcode CLT / Homebrew         |
 
 ## First run
 

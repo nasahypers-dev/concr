@@ -4,13 +4,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "eslint.workingDirectories": [
-    { "pattern": "apps/*" },
-    { "pattern": "packages/*" }
-  ],
+  "eslint.workingDirectories": [{ "pattern": "apps/*" }, { "pattern": "packages/*" }],
   "typescript.tsdk": "node_modules/typescript/lib",
   "files.eol": "\n",
-  "tailwindCSS.experimental.classRegex": [
-    ["className\s*=\s*[\"'`]([^\"'`]*)[\"'`]"]
-  ]
+  "tailwindCSS.experimental.classRegex": [["className\s*=\s*[\"'`]([^\"'`]*)[\"'`]"]]
 }

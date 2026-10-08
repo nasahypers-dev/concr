@@ -15,7 +15,11 @@ Phase plan: `docs/CONCR_SPEC.md` §19. Update this file at the end of every sess
 - [ ] DoD: `/health` 200 · Expo Go shows CONCR welcome · login page opens
 
 ## Phase 1 — Auth + catalog + customer order + minimal dispatcher (not started)
+
 ## Phase 2 — Driver app + live tracking (not started)
+
 ## Phase 3 — Push + documents + settings (not started)
+
 ## Phase 4 — Reports, aggregates, polish (not started)
+
 ## Phase 5 — Production (not started)
