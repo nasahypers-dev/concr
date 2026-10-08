@@ -42,3 +42,10 @@ yarn-error.log*
 Thumbs.db
 .idea/
 *.swp
+
+# expo / next extras
+.kotlin/
+.metro-health-check*
+*.pem
+.vercel
+next-env.d.ts
