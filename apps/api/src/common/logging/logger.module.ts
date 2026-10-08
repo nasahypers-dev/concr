@@ -38,6 +38,26 @@ export function generateRequestId(req: IncomingMessage, res: ServerResponse): st
             autoLogging: {
               ignore: (req: IncomingMessage) => req.url === LIVENESS_PATH,
             },
+            customLogLevel: (_req: IncomingMessage, res: ServerResponse, error?: Error) => {
+              if (error || res.statusCode >= 500) return 'error';
+              if (res.statusCode >= 400) return 'warn';
+              return 'info';
+            },
+            // pino-http fabricates `new Error('failed with status code 5xx')` for every 5xx and logs its
+            // (meaningless) stack. Real exceptions are already logged with their stack by
+            // AllExceptionsFilter, so keep only the response for synthetic ones.
+            customErrorObject: (
+              _req: IncomingMessage,
+              _res: ServerResponse,
+              error: Error,
+              logObject: Record<string, unknown>,
+            ) => {
+              if (error.message.startsWith('failed with status code')) {
+                const { err: _err, ...rest } = logObject;
+                return rest;
+              }
+              return logObject;
+            },
             redact: {
               paths: [
                 'req.headers.authorization',
