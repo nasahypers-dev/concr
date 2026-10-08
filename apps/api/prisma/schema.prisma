@@ -1,0 +1,17 @@
+// Prisma 7 schema. The connection URL lives in prisma.config.ts (not here).
+// Phase 0: no models yet, only the PostGIS extension so Phase 1 can use geometry columns.
+// Spec §7 is the model direction for Phase 1.
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "cjs"
+  // extensionless relative imports: compiled by tsc (nodenext/cjs) and loaded by ts-jest alike
+  importFileExtension = ""
+  previewFeatures     = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [postgis]
+}

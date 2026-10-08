@@ -3,6 +3,7 @@
 // appends framework-specific rules (Expo, Next, Nest).
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
+import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 /**
@@ -54,6 +55,15 @@ export function createBaseConfig(tsconfigRootDir) {
       // lint them without type information.
       files: ['**/*.{js,cjs,mjs}'],
       ...tseslint.configs.disableTypeChecked,
+      languageOptions: {
+        ...tseslint.configs.disableTypeChecked.languageOptions,
+        globals: { ...globals.node },
+      },
+      rules: {
+        ...tseslint.configs.disableTypeChecked.rules,
+        // CommonJS scripts (apps/api/scripts/*.js) legitimately use require()
+        '@typescript-eslint/no-require-imports': 'off',
+      },
     },
     prettier,
   ];
