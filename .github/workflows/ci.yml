@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: format · lint · typecheck · test · migrate · e2e · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: postgis/postgis:16-3.5
+        env:
+          POSTGRES_DB: concr
+          POSTGRES_USER: concr
+          POSTGRES_PASSWORD: concr
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U concr -d concr"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    env:
+      CI: 'true'
+      DATABASE_URL: postgresql://concr:concr@127.0.0.1:5432/concr?schema=public
+      REDIS_URL: redis://127.0.0.1:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install (runs prisma generate via postinstall)
+        run: npm ci
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Apply migrations
+        run: npm run db:deploy -w apps/api
+
+      - name: Migration drift check (schema vs applied migrations)
+        run: npm run db:migrate:check -w apps/api
+
+      - name: API e2e (readiness must report database + redis up)
+        run: npm run test:e2e -w apps/api
+        env:
+          E2E_REQUIRE_INFRA: 'true'
+
+      - name: Build API
+        run: npm run build -w apps/api
+
+      - name: Build dispatcher panel
+        run: npm run build -w apps/dispatch
