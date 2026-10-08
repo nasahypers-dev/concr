@@ -1,0 +1,9 @@
+node_modules
+dist
+build
+.next
+.expo
+coverage
+package-lock.json
+apps/api/src/generated
+docs/api/openapi.json
