@@ -1,0 +1,43 @@
+# Local infrastructure for CONCR: PostgreSQL 16 + PostGIS 3.5 and Redis 7.
+# Start:  npm run docker:up      (docker compose -f infra/docker-compose.yml up -d)
+# Stop:   npm run docker:down
+# Data lives in named volumes and survives restarts; `docker compose ... down -v` wipes it.
+name: concr
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.5
+    container_name: concr-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: concr
+      POSTGRES_USER: concr
+      POSTGRES_PASSWORD: concr
+    ports:
+      - '5432:5432'
+    volumes:
+      - concr-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U concr -d concr']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: concr-redis
+    restart: unless-stopped
+    command: ['redis-server', '--appendonly', 'yes']
+    ports:
+      - '6379:6379'
+    volumes:
+      - concr-redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  concr-postgres-data:
+  concr-redis-data:
