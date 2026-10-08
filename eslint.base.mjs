@@ -49,6 +49,12 @@ export function createBaseConfig(tsconfigRootDir) {
         ],
       },
     },
+    {
+      // Plain JS/MJS files (configs, scripts) are not part of a tsconfig project:
+      // lint them without type information.
+      files: ['**/*.{js,cjs,mjs}'],
+      ...tseslint.configs.disableTypeChecked,
+    },
     prettier,
   ];
 }

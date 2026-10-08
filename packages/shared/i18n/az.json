@@ -1,0 +1,92 @@
+{
+  "common": {
+    "appName": "CONCR",
+    "tagline": "Möhkəmlik. Etibar. Keyfiyyət.",
+    "continue": "Davam et",
+    "back": "Geri",
+    "cancel": "Ləğv et",
+    "save": "Yadda saxla",
+    "ok": "OK",
+    "yes": "Bəli",
+    "no": "Xeyr",
+    "currency": "₼"
+  },
+  "nav": {
+    "home": "Ana səhifə",
+    "orders": "Sifarişlərim",
+    "sites": "Obyektlər",
+    "profile": "Profil",
+    "today": "Bu gün"
+  },
+  "auth": {
+    "welcomeTitle": "Hazır beton, bir toxunuşla",
+    "welcomeSubtitle": "Markanı və həcmi seçin, vaxtı təyin edin, mikseri xəritədə canlı izləyin.",
+    "getStarted": "Başla",
+    "phoneTitle": "Telefon nömrəniz",
+    "phoneHint": "Təsdiq kodunu SMS ilə göndərəcəyik",
+    "phonePlaceholder": "+994 50 000 00 00",
+    "sendCode": "Kod göndər",
+    "otpTitle": "Təsdiq kodu",
+    "otpHint": "{phone} nömrəsinə göndərilən 6 rəqəmli kodu daxil edin",
+    "verify": "Təsdiqlə",
+    "resendCode": "Kodu yenidən göndər",
+    "staffLoginTitle": "Dispetçer paneli",
+    "staffLoginSubtitle": "E-poçt və şifrə ilə daxil olun",
+    "email": "E-poçt",
+    "emailPlaceholder": "ad@sirket.az",
+    "password": "Şifrə",
+    "login": "Daxil ol",
+    "loggingIn": "Daxil olunur…",
+    "loginFailed": "Daxil olmaq mümkün olmadı. Məlumatları yoxlayıb yenidən cəhd edin.",
+    "invalidEmail": "Düzgün e-poçt ünvanı daxil edin",
+    "passwordTooShort": "Şifrə ən azı 8 simvoldan ibarət olmalıdır",
+    "invalidPhone": "Nömrəni +994 formatında daxil edin",
+    "devEnterAsCustomer": "DEV: müştəri kimi daxil ol",
+    "devEnterAsDriver": "DEV: sürücü kimi daxil ol"
+  },
+  "states": {
+    "loading": "Yüklənir…",
+    "emptyTitle": "Hələ heç nə yoxdur",
+    "emptyDescription": "Məlumat olduqda burada görünəcək.",
+    "errorTitle": "Xəta baş verdi",
+    "errorDescription": "Zəhmət olmasa bir az sonra yenidən cəhd edin.",
+    "retry": "Yenidən cəhd et",
+    "offline": "İnternet bağlantısı yoxdur",
+    "notFoundTitle": "Səhifə tapılmadı",
+    "goHome": "Ana səhifəyə qayıt"
+  },
+  "customer": {
+    "homeTitle": "Ana səhifə",
+    "orderCta": "Beton sifariş et",
+    "ordersTitle": "Sifarişlərim",
+    "ordersEmpty": "Hələ sifarişiniz yoxdur",
+    "sitesTitle": "Obyektlər",
+    "sitesEmpty": "Hələ obyekt əlavə etməmisiniz",
+    "profileTitle": "Profil",
+    "comingSoon": "Bu bölmə növbəti mərhələdə hazır olacaq"
+  },
+  "driver": {
+    "todayTitle": "Bugünkü reyslər",
+    "todayEmpty": "Bu gün üçün reys yoxdur",
+    "profileTitle": "Profil",
+    "onShift": "Növbədəyəm",
+    "offShift": "Növbədə deyiləm"
+  },
+  "errors": {
+    "VALIDATION_ERROR": "Daxil edilən məlumatlar düzgün deyil",
+    "BAD_REQUEST": "Yanlış sorğu",
+    "UNAUTHORIZED": "Daxil olmaq lazımdır",
+    "FORBIDDEN": "Bu əməliyyata icazəniz yoxdur",
+    "NOT_FOUND": "Tapılmadı",
+    "CONFLICT": "Məlumat artıq mövcuddur və ya dəyişib",
+    "RATE_LIMITED": "Çox sayda cəhd. Bir az sonra yenidən yoxlayın",
+    "INTERNAL_ERROR": "Serverdə xəta baş verdi",
+    "SERVICE_UNAVAILABLE": "Xidmət müvəqqəti əlçatan deyil",
+    "MIN_VOLUME_NOT_MET": "Həcm minimum sifariş həddindən azdır",
+    "OUT_OF_SERVICE_AREA": "Bu ünvana çatdırılma mümkün deyil",
+    "INVALID_STATE_TRANSITION": "Bu status dəyişikliyi mümkün deyil",
+    "OTP_INVALID": "Kod yanlışdır",
+    "OTP_EXPIRED": "Kodun müddəti bitib",
+    "OTP_TOO_MANY_ATTEMPTS": "Çox sayda yanlış cəhd. Yeni kod istəyin"
+  }
+}

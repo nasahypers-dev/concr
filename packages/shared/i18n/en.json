@@ -1,0 +1,92 @@
+{
+  "common": {
+    "appName": "CONCR",
+    "tagline": "Strength. Trust. Quality.",
+    "continue": "Continue",
+    "back": "Back",
+    "cancel": "Cancel",
+    "save": "Save",
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No",
+    "currency": "₼"
+  },
+  "nav": {
+    "home": "Home",
+    "orders": "My orders",
+    "sites": "Sites",
+    "profile": "Profile",
+    "today": "Today"
+  },
+  "auth": {
+    "welcomeTitle": "Ready-mix concrete, one tap away",
+    "welcomeSubtitle": "Pick the grade and volume, set the time, and watch the mixer live on the map.",
+    "getStarted": "Get started",
+    "phoneTitle": "Your phone number",
+    "phoneHint": "We will send a verification code by SMS",
+    "phonePlaceholder": "+994 50 000 00 00",
+    "sendCode": "Send code",
+    "otpTitle": "Verification code",
+    "otpHint": "Enter the 6-digit code sent to {phone}",
+    "verify": "Verify",
+    "resendCode": "Resend code",
+    "staffLoginTitle": "Dispatcher panel",
+    "staffLoginSubtitle": "Sign in with your email and password",
+    "email": "Email",
+    "emailPlaceholder": "name@company.az",
+    "password": "Password",
+    "login": "Sign in",
+    "loggingIn": "Signing in…",
+    "loginFailed": "Could not sign in. Check your details and try again.",
+    "invalidEmail": "Enter a valid email address",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "invalidPhone": "Enter the number in +994 format",
+    "devEnterAsCustomer": "DEV: enter as customer",
+    "devEnterAsDriver": "DEV: enter as driver"
+  },
+  "states": {
+    "loading": "Loading…",
+    "emptyTitle": "Nothing here yet",
+    "emptyDescription": "Data will appear here.",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "Please try again in a moment.",
+    "retry": "Try again",
+    "offline": "No internet connection",
+    "notFoundTitle": "Page not found",
+    "goHome": "Go to home"
+  },
+  "customer": {
+    "homeTitle": "Home",
+    "orderCta": "Order concrete",
+    "ordersTitle": "My orders",
+    "ordersEmpty": "You have no orders yet",
+    "sitesTitle": "Sites",
+    "sitesEmpty": "You have not added any sites yet",
+    "profileTitle": "Profile",
+    "comingSoon": "This section arrives in the next phase"
+  },
+  "driver": {
+    "todayTitle": "Today's deliveries",
+    "todayEmpty": "No deliveries today",
+    "profileTitle": "Profile",
+    "onShift": "On shift",
+    "offShift": "Off shift"
+  },
+  "errors": {
+    "VALIDATION_ERROR": "The submitted data is invalid",
+    "BAD_REQUEST": "Bad request",
+    "UNAUTHORIZED": "Sign in required",
+    "FORBIDDEN": "You do not have access to this action",
+    "NOT_FOUND": "Not found",
+    "CONFLICT": "The record already exists or has changed",
+    "RATE_LIMITED": "Too many attempts. Try again later",
+    "INTERNAL_ERROR": "Server error",
+    "SERVICE_UNAVAILABLE": "Service temporarily unavailable",
+    "MIN_VOLUME_NOT_MET": "Volume is below the minimum order",
+    "OUT_OF_SERVICE_AREA": "We do not deliver to this address",
+    "INVALID_STATE_TRANSITION": "This status change is not allowed",
+    "OTP_INVALID": "Invalid code",
+    "OTP_EXPIRED": "The code has expired",
+    "OTP_TOO_MANY_ATTEMPTS": "Too many wrong attempts. Request a new code"
+  }
+}

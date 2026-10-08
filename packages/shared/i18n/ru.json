@@ -1,0 +1,92 @@
+{
+  "common": {
+    "appName": "CONCR",
+    "tagline": "Прочность. Надёжность. Качество.",
+    "continue": "Продолжить",
+    "back": "Назад",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "ok": "OK",
+    "yes": "Да",
+    "no": "Нет",
+    "currency": "₼"
+  },
+  "nav": {
+    "home": "Главная",
+    "orders": "Мои заказы",
+    "sites": "Объекты",
+    "profile": "Профиль",
+    "today": "Сегодня"
+  },
+  "auth": {
+    "welcomeTitle": "Готовый бетон в одно касание",
+    "welcomeSubtitle": "Выберите марку и объём, назначьте время и следите за миксером на карте в реальном времени.",
+    "getStarted": "Начать",
+    "phoneTitle": "Ваш номер телефона",
+    "phoneHint": "Мы отправим код подтверждения по SMS",
+    "phonePlaceholder": "+994 50 000 00 00",
+    "sendCode": "Отправить код",
+    "otpTitle": "Код подтверждения",
+    "otpHint": "Введите 6-значный код, отправленный на номер {phone}",
+    "verify": "Подтвердить",
+    "resendCode": "Отправить код ещё раз",
+    "staffLoginTitle": "Панель диспетчера",
+    "staffLoginSubtitle": "Войдите с помощью e-mail и пароля",
+    "email": "E-mail",
+    "emailPlaceholder": "imya@kompaniya.az",
+    "password": "Пароль",
+    "login": "Войти",
+    "loggingIn": "Вход…",
+    "loginFailed": "Не удалось войти. Проверьте данные и попробуйте снова.",
+    "invalidEmail": "Введите корректный e-mail",
+    "passwordTooShort": "Пароль должен содержать не менее 8 символов",
+    "invalidPhone": "Введите номер в формате +994",
+    "devEnterAsCustomer": "DEV: войти как клиент",
+    "devEnterAsDriver": "DEV: войти как водитель"
+  },
+  "states": {
+    "loading": "Загрузка…",
+    "emptyTitle": "Пока ничего нет",
+    "emptyDescription": "Данные появятся здесь.",
+    "errorTitle": "Произошла ошибка",
+    "errorDescription": "Пожалуйста, попробуйте позже.",
+    "retry": "Повторить",
+    "offline": "Нет подключения к интернету",
+    "notFoundTitle": "Страница не найдена",
+    "goHome": "На главную"
+  },
+  "customer": {
+    "homeTitle": "Главная",
+    "orderCta": "Заказать бетон",
+    "ordersTitle": "Мои заказы",
+    "ordersEmpty": "У вас пока нет заказов",
+    "sitesTitle": "Объекты",
+    "sitesEmpty": "Вы ещё не добавили объекты",
+    "profileTitle": "Профиль",
+    "comingSoon": "Этот раздел появится на следующем этапе"
+  },
+  "driver": {
+    "todayTitle": "Рейсы на сегодня",
+    "todayEmpty": "На сегодня рейсов нет",
+    "profileTitle": "Профиль",
+    "onShift": "На смене",
+    "offShift": "Не на смене"
+  },
+  "errors": {
+    "VALIDATION_ERROR": "Введённые данные некорректны",
+    "BAD_REQUEST": "Неверный запрос",
+    "UNAUTHORIZED": "Требуется вход",
+    "FORBIDDEN": "У вас нет доступа к этому действию",
+    "NOT_FOUND": "Не найдено",
+    "CONFLICT": "Данные уже существуют или были изменены",
+    "RATE_LIMITED": "Слишком много попыток. Повторите позже",
+    "INTERNAL_ERROR": "Ошибка на сервере",
+    "SERVICE_UNAVAILABLE": "Сервис временно недоступен",
+    "MIN_VOLUME_NOT_MET": "Объём меньше минимального заказа",
+    "OUT_OF_SERVICE_AREA": "Доставка по этому адресу невозможна",
+    "INVALID_STATE_TRANSITION": "Такое изменение статуса невозможно",
+    "OTP_INVALID": "Неверный код",
+    "OTP_EXPIRED": "Срок действия кода истёк",
+    "OTP_TOO_MANY_ATTEMPTS": "Слишком много неверных попыток. Запросите новый код"
+  }
+}
