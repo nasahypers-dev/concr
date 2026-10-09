@@ -219,16 +219,8 @@ export default function OrderDetailScreen() {
         </Card>
       </Section>
 
-      <Section title={t('order.documents')}>
-        {documents.length === 0 ? (
-          <StateView
-            status="empty"
-            compact
-            icon="document-text-outline"
-            title={t('order.noDocuments')}
-            description=""
-          />
-        ) : (
+      {documents.length > 0 ? (
+        <Section title={t('order.documents')}>
           <Card compact>
             {documents.map((doc) => (
               <ListRow
@@ -239,8 +231,8 @@ export default function OrderDetailScreen() {
               />
             ))}
           </Card>
-        )}
-      </Section>
+        </Section>
+      ) : null}
 
       <Section title={t('order.timeline')}>
         <Card>

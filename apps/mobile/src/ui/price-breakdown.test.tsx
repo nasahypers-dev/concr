@@ -25,7 +25,7 @@ describe('PriceBreakdown', () => {
     expect(screen.getByText('198,00 ₼')).toBeTruthy();
     expect(screen.getByText('1 298,00 ₼')).toBeTruthy();
     expect(screen.getByText('Qiymətə daxildir')).toBeTruthy();
-    expect(screen.queryByText('Nasos')).toBeNull();
+    expect(screen.queryByText(/Pompa/)).toBeNull();
   });
 
   it('marks an unknown pump price instead of showing 0', async () => {
@@ -46,5 +46,21 @@ describe('PriceBreakdown', () => {
     );
     expect(screen.getByText(/Qiymət dispetçer tərəfindən təsdiqlənəcək/)).toBeTruthy();
     expect(screen.getByText('—')).toBeTruthy();
+  });
+
+  it('adds the pump after VAT: 8 m³ of M200 with a 24 m pump', async () => {
+    const quote = calculateQuote({
+      product: { basePrice: '100.00', minQty: null },
+      volumeM3: 8,
+      pumpOption: { pricePerOrder: '200.00', pricePerM3: null },
+      settings,
+    });
+    if (!quote.ok) throw new Error(quote.code);
+    await render(<PriceBreakdown breakdown={quote.breakdown} grade="M200" pumpRequired />);
+    expect(screen.getByText('800,00 ₼')).toBeTruthy();
+    expect(screen.getByText('144,00 ₼')).toBeTruthy();
+    expect(screen.getByText('Pompa (ƏDV-siz)')).toBeTruthy();
+    expect(screen.getByText('200,00 ₼')).toBeTruthy();
+    expect(screen.getByText('1 144,00 ₼')).toBeTruthy();
   });
 });

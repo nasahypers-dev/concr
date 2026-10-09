@@ -32,7 +32,7 @@ describe('calculateQuote (spec §10)', () => {
     expect(result.breakdown.total).toBe('796.50');
   });
 
-  it('adds a pump fee per order and per m³ before VAT', () => {
+  it('adds a pump fee per order and per m³ without VAT (D15)', () => {
     const result = calculateQuote({
       product: m300,
       volumeM3: 10,
@@ -41,8 +41,8 @@ describe('calculateQuote (spec §10)', () => {
     });
     if (!result.ok) throw new Error(result.code);
     expect(result.breakdown.pumpFee).toBe('150.00');
-    expect(result.breakdown.vat).toBe('225.00'); // (1100 + 150) × 0.18
-    expect(result.breakdown.total).toBe('1475.00');
+    expect(result.breakdown.vat).toBe('198.00'); // 1100 × 0.18, the pump is not taxed
+    expect(result.breakdown.total).toBe('1448.00');
   });
 
   it('flags an unknown pump price instead of guessing it', () => {

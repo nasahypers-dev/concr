@@ -126,6 +126,8 @@ describe('mock api client — catalog', () => {
     });
     expect(pumped.pumpPriceKnown).toBe(true);
     expect(pumped.breakdown.pumpFee).toBe('200.00');
+    expect(pumped.breakdown.vat).toBe('198.00'); // VAT on the concrete only (D15)
+    expect(pumped.breakdown.total).toBe('1498.00');
     await expectApiError(
       api.catalog.quote({ productId: m300.id, volumeM3: 1, pumpOptionId: null }),
       'MIN_VOLUME_NOT_MET',

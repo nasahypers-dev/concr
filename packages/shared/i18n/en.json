@@ -106,10 +106,9 @@
     "pumpYes": "Yes, with a pump",
     "pumpNo": "No, straight from the mixer",
     "boomLength": "Boom length {length} m",
-    "pumpPriceNote": "The pump price is per order (Baku and Absheron) and is added to the total.",
+    "pumpPriceNote": "The pump price is per order (Baku and Absheron), not subject to VAT, and is added to the total.",
     "chooseWindow": "Delivery time",
     "leadTimeHint": "Earliest: {date}, {window}",
-    "nightHint": "The plant works 24/7; night slots are available.",
     "review": "Review your order",
     "paymentMethod": "Payment method",
     "note": "Note",
@@ -139,8 +138,7 @@
     "deliveries": "Trips",
     "liveMap": "Live map",
     "timeline": "History",
-    "documents": "Documents",
-    "noDocuments": "No documents yet",
+    "documents": "Handover acts",
     "price": "Price",
     "cancel": "Cancel order",
     "cancelTitle": "Cancel this order?",
@@ -207,13 +205,13 @@
   "price": {
     "base": "{grade} · {volume} × {price}",
     "subtotal": "Concrete (excl. VAT)",
-    "pump": "Pump",
+    "pump": "Pump (excl. VAT)",
     "pumpPending": "Price to be confirmed by the dispatcher",
     "delivery": "Delivery",
     "deliveryIncluded": "Included in the price",
     "vat": "VAT {rate}%",
     "total": "Total (incl. VAT)",
-    "perM3ExVat": "{price} + VAT"
+    "perM3": "{price}/m³"
   },
   "timeline": {
     "CREATED": "Order created",

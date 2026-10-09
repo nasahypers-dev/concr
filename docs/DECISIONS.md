@@ -5,28 +5,32 @@ Owner: Nurlan. Everything marked **open** is a `TODO(nurlan)` placeholder in cod
 
 ## Decided (spec v2, 2026-10-08)
 
-| #   | Decision                                             | Value                                                                                     | Where in code                                         |
-| --- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| D1  | Concrete prices (per m³, excl. VAT)                  | M100 90 ₼ … M600 140 ₼, +5 ₼ per 50 step (spec §4)                                        | `prisma/seed.ts` (Phase 1)                            |
-| D2  | VAT                                                  | 18 %, prices stored excl. VAT, VAT added at the end                                       | `settings.vatRate`, `modules/pricing`                 |
-| D3  | Delivery fee                                         | Included in price for all of Baku + Absheron                                              | `settings.deliveryIncluded = true`, `deliveryFee = 0` |
-| D4  | Service area                                         | Baku + Absheron polygon, used **only** for validation                                     | `ServiceArea`                                         |
-| D5  | Mixer capacities                                     | 8, 10, 12 m³                                                                              | `Truck.capacityM3`                                    |
-| D6  | Slump options                                        | P2, P3, P4                                                                                | `Product.slumpOptions`                                |
-| D7  | Concrete lifetime                                    | 90 min from `departedAt`, warning at 75 min                                               | `settings.concreteLifetimeMin`                        |
-| D8  | Payment                                              | Cash or card on delivery (owner, 2026-10-09); no online payment                           | `PaymentMethod`                                       |
-| D9  | GPS source in MVP                                    | Driver's phone (background location)                                                      | spec §9                                               |
-| D10 | Auth                                                 | Customer & driver: phone + SMS OTP; staff: email + password                               | `auth` module                                         |
-| D11 | Supplier contact                                     | Novxanı şossesi, Bakı · +994 50 620 95 84 · info@novxanibeton.az · novxanibeton.az · 24/7 | `prisma/seed.ts` only                                 |
-| D12 | Working hours                                        | 24/7, night slots allowed                                                                 | `settings.workingHours`                               |
-| D13 | Brand (temporary)                                    | CONCR, scheme `concr://`, bundle id `az.concr.app`                                        | `apps/mobile/app.config.ts`                           |
-| D14 | Order line phone shown in the app ("Zavoda zəng et") | +994 50 326 03 43 (owner, 2026-10-09); official listing stays +994 50 620 95 84           | `fixtures/supplier.ts` `dispatchPhone`                |
+| #   | Decision                                             | Value                                                                                                         | Where in code                                         |
+| --- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| D1  | Concrete prices (per m³, excl. VAT)                  | M100 90 ₼ … M600 140 ₼, +5 ₼ per 50 step (spec §4)                                                            | `prisma/seed.ts` (Phase 1)                            |
+| D2  | VAT                                                  | 18 %, prices stored excl. VAT, VAT added at the end                                                           | `settings.vatRate`, `modules/pricing`                 |
+| D3  | Delivery fee                                         | Included in price for all of Baku + Absheron                                                                  | `settings.deliveryIncluded = true`, `deliveryFee = 0` |
+| D4  | Service area                                         | Baku + Absheron polygon, used **only** for validation                                                         | `ServiceArea`                                         |
+| D5  | Mixer capacities                                     | 8, 10, 12 m³                                                                                                  | `Truck.capacityM3`                                    |
+| D6  | Slump options                                        | P2, P3, P4                                                                                                    | `Product.slumpOptions`                                |
+| D7  | Concrete lifetime                                    | 90 min from `departedAt`, warning at 75 min                                                                   | `settings.concreteLifetimeMin`                        |
+| D8  | Payment                                              | Cash or card on delivery (owner, 2026-10-09); no online payment                                               | `PaymentMethod`                                       |
+| D9  | GPS source in MVP                                    | Driver's phone (background location)                                                                          | spec §9                                               |
+| D10 | Auth                                                 | Customer & driver: phone + SMS OTP; staff: email + password                                                   | `auth` module                                         |
+| D11 | Supplier contact                                     | Novxanı şossesi, Bakı · +994 50 620 95 84 · info@novxanibeton.az · novxanibeton.az · 24/7                     | `prisma/seed.ts` only                                 |
+| D12 | Working hours                                        | 24/7, night slots allowed                                                                                     | `settings.workingHours`                               |
+| D13 | Brand (temporary)                                    | CONCR, scheme `concr://`, bundle id `az.concr.app`                                                            | `apps/mobile/app.config.ts`                           |
+| D14 | Order line phone shown in the app ("Zavoda zəng et") | +994 50 326 03 43 (owner, 2026-10-09); official listing stays +994 50 620 95 84                               | `fixtures/supplier.ts` `dispatchPhone`                |
+| D15 | VAT scope                                            | 18 % on the concrete only; the pump fee is added after VAT, untaxed (owner, 2026-10-09; supersedes spec §10)  | `pricing/calculate-quote.ts`                          |
+| D16 | Wording                                              | "Pompa" instead of "Nasos" in all Azerbaijani UI text (owner, 2026-10-09)                                     | `i18n/az.json`                                        |
+| D17 | Default site                                         | Feature removed: no "Əsas obyekt" flag; the wizard never used it (owner, 2026-10-09)                          | `domain/site.ts`                                      |
+| D18 | Handover acts in the customer app                    | Kept (per-trip "Təhvil aktı", Phase 3 PDF); the section is hidden while an order has none (owner, 2026-10-09) | `orders/[id].tsx`                                     |
 
 ## Open questions (spec §22) — placeholders in code until answered
 
 | #   | Question                                                                                                         | Assumption used now                                                          | Status   |
 | --- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | -------- |
-| Q1  | Minimum order volume? Earliest delivery (lead time) in hours?                                                    | 3 m³ · 6 h                                                                   | open     |
+| Q1  | Minimum order volume? Earliest delivery (lead time) in hours?                                                    | 8 m³ (owner, 2026-10-09) · 6 h                                               | open     |
 | Q2  | Pump boom lengths besides 24 m; price model (per order / per m³ / per hour)?                                     | 24/28/32/36/38/42 m; per order 200/250/250/300/350/400 ₼ (owner, 2026-10-09) | answered |
 | Q3  | Number of mixers per capacity and plate numbers; number of drivers; their phones (Android/iPhone)?               | 2×8, 2×10, 2×12, 1 pump, 3 drivers, placeholder plates                       | open     |
 | Q4  | Do trucks already have a GPS tracker (which vendor)?                                                             | No; `TrackingSource = PHONE`                                                 | open     |

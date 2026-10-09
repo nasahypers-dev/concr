@@ -129,7 +129,7 @@ export default function WizardProductScreen() {
                         : 'text-ink-muted'
                     }
                   >
-                    {t('price.perM3ExVat', { price: formatAzn(product.basePrice) })}
+                    {t('price.perM3', { price: formatAzn(product.basePrice) })}
                   </Text>
                 </Pressable>
               );

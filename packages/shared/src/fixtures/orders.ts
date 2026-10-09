@@ -226,7 +226,7 @@ export function createOrderFixtures(ctx: OrderFixtureContext): OrderFixtureSet {
     customerNote: 'Səhər tez gəlsə yaxşı olar, usta 8-də gəlir.',
   });
 
-  // 102 — CONFIRMED with pump (price to be confirmed by the dispatcher), day after tomorrow
+  // 102 — CONFIRMED with a 24 m pump (200 ₼ per order, not taxed), day after tomorrow
   {
     const order = makeOrder({
       id: ORDER_IDS.confirmed,
@@ -527,7 +527,7 @@ export function createOrderFixtures(ctx: OrderFixtureContext): OrderFixtureSet {
       seq: 106,
       siteId: SITE_IDS.yasamal,
       grade: 'M350',
-      volumeM3: 6,
+      volumeM3: 8,
       slump: SlumpClass.P3,
       withPump: false,
       requestedDate: bakuDate(now, -6),

@@ -45,7 +45,7 @@ function Row({
   );
 }
 
-/** Spec §4 display: "110 ₼ + ƏDV" per line, "Cəmi: 1 298,00 ₼ (ƏDV daxil)" at the bottom. */
+/** Concrete → VAT → pump (not taxed, D15) → delivery → total, so 800 + 144 = 944 reads top-down. */
 export function PriceBreakdown({
   breakdown,
   grade,
@@ -65,6 +65,7 @@ export function PriceBreakdown({
         })}
         value={formatAzn(breakdown.subtotal)}
       />
+      <Row label={t('price.vat', { rate: vatPercent })} value={formatAzn(breakdown.vat)} />
       {pumpRequired ? (
         <Row
           label={
@@ -83,7 +84,6 @@ export function PriceBreakdown({
         }
         muted
       />
-      <Row label={t('price.vat', { rate: vatPercent })} value={formatAzn(breakdown.vat)} />
       <View className="my-1 h-px bg-border dark:bg-border-dark" />
       <Row label={t('price.total')} value={formatAzn(breakdown.total)} strong />
     </View>

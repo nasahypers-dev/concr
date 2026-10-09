@@ -39,6 +39,9 @@ describe('fixtures (spec §18 seed as data)', () => {
     }
     const pending = fx.orders.find((o) => o.id === ORDER_IDS.pending)!;
     expect(formatAzn(pending.totalAmount)).toBe('1 557,60 ₼'); // 12 m³ × 110 + 18 % VAT
+    const confirmed = fx.orders.find((o) => o.id === ORDER_IDS.confirmed)!;
+    // 8 m³ × 105 = 840 + 18 % VAT 151,20 + pump 200 (not taxed, D15)
+    expect(formatAzn(confirmed.totalAmount)).toBe('1 191,20 ₼');
   });
 
   it('covers every order status once and sums deliveries to the order volume', () => {

@@ -33,7 +33,6 @@ export default function CustomerHomeScreen() {
         <Text variant="title">
           {firstName ? t('home.greeting', { name: firstName }) : t('home.greetingAnonymous')}
         </Text>
-        <Text tone="muted">{t('common.tagline')}</Text>
       </View>
       <Button label={t('customer.orderCta')} icon="add-circle-outline" onPress={startOrder} />
       {orders.isPending ? (

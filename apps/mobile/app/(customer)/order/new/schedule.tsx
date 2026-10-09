@@ -43,7 +43,6 @@ export default function WizardScheduleScreen() {
               earliest={earliest}
               onChange={(window) => draft.patch({ window })}
             />
-            <Banner tone="info" message={t('wizard.nightHint')} />
           </>
         ) : quote.isError ? (
           <Banner tone="danger" message={t('states.errorDescription')} />

@@ -19,7 +19,7 @@ export function createSupplier(): Supplier {
     logoUrl: null,
     isActive: true,
     settings: {
-      minOrderM3: 3, // TODO(nurlan): minimum order volume (spec §3)
+      minOrderM3: 8, // owner decision 2026-10-09 (Q1)
       vatRate: 0.18,
       pricesIncludeVat: false,
       deliveryIncluded: true,

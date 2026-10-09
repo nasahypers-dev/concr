@@ -7,7 +7,7 @@ describe('i18n', () => {
 
   it('renders Azerbaijani letters from the shared bundle', () => {
     const i18n = initI18n('az');
-    expect(i18n.t('common.tagline')).toBe('Möhkəmlik. Etibar. Keyfiyyət.');
+    expect(i18n.t('nav.sites')).toBe('Obyektlər');
     expect(i18n.t('auth.welcomeTitle')).toMatch(/[əğıöşüç]/);
   });
 

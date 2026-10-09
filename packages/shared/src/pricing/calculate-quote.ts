@@ -11,8 +11,8 @@ import { addMoney, multiplyMoney, ZERO_MONEY } from '../money/money';
  *   subtotal    = product.basePrice × volumeM3            (excl. VAT)
  *   pumpFee     = pump ? (pricePerOrder ?? 0) + (pricePerM3 ?? 0) × volumeM3 : 0
  *   deliveryFee = 0                                        (settings.deliveryIncluded)
- *   vat         = (subtotal + pumpFee + deliveryFee) × settings.vatRate
- *   total       = subtotal + pumpFee + deliveryFee + vat
+ *   vat         = subtotal × settings.vatRate               (VAT on the concrete only, D15)
+ *   total       = subtotal + vat + pumpFee + deliveryFee
  * Pure function: the mock client and the API module call exactly this (ADR 0007).
  */
 export interface QuoteInput {
@@ -99,9 +99,9 @@ export function calculateQuote(input: QuoteInput): QuoteResult {
   // fee is zero regardless of the flag; the flag is kept for the snapshot's honesty.
   const deliveryFee = ZERO_MONEY;
 
-  const taxable = addMoney(subtotal, pumpFee, deliveryFee);
-  const vat = multiplyMoney(taxable, settings.vatRate);
-  const total = addMoney(taxable, vat);
+  // Owner decision D15 (2026-10-09): VAT applies to the concrete only; the pump fee is added as is.
+  const vat = multiplyMoney(subtotal, settings.vatRate);
+  const total = addMoney(subtotal, vat, pumpFee, deliveryFee);
 
   return {
     ok: true,
