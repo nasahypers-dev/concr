@@ -23,18 +23,28 @@ Owner: Nurlan. Everything marked **open** is a `TODO(nurlan)` placeholder in cod
 
 ## Open questions (spec §22) — placeholders in code until answered
 
-| #   | Question                                                                                           | Assumption used now                                    | Status |
-| --- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | ------ |
-| Q1  | Minimum order volume? Earliest delivery (lead time) in hours?                                      | 3 m³ · 6 h                                             | open   |
-| Q2  | Pump boom lengths besides 24 m; price model (per order / per m³ / per hour)?                       | 24 m only, price unknown                               | open   |
-| Q3  | Number of mixers per capacity and plate numbers; number of drivers; their phones (Android/iPhone)? | 2×8, 2×10, 2×12, 1 pump, 3 drivers, placeholder plates | open   |
-| Q4  | Do trucks already have a GPS tracker (which vendor)?                                               | No; `TrackingSource = PHONE`                           | open   |
-| Q5  | Cancellation rules and demurrage (waiting) fee?                                                    | cancel cutoff 12 h, no demurrage                       | open   |
-| Q6  | Company customers (VÖEN, credit limit, monthly invoice) needed in MVP?                             | fields exist, no flow                                  | open   |
-| Q7  | Sample of the paper delivery act (photo) for the PDF template                                      | none                                                   | open   |
-| Q8  | Apple Developer ($99/yr) and Google Play ($25) accounts                                            | needed in Phase 2 for iOS dev build                    | open   |
-| Q9  | Google Maps Platform billing account                                                               | needed in Phase 2                                      | open   |
-| Q10 | Domain (`concr.az`?) and VPS provider                                                              | Hetzner assumed                                        | open   |
-| Q11 | Logo / colours: continue with site graphite `#12161F`? Accent `#F5A623`?                           | yes / yes                                              | open   |
-| Q12 | Product display order in app (M100→M600 or reverse) and "Popular" badge on M250/M300               | M100→M600, badge on                                    | open   |
-| Q13 | Supplier legal name and VÖEN for documents                                                         | placeholder                                            | open   |
+| #   | Question                                                                                                         | Assumption used now                                    | Status |
+| --- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | ------ |
+| Q1  | Minimum order volume? Earliest delivery (lead time) in hours?                                                    | 3 m³ · 6 h                                             | open   |
+| Q2  | Pump boom lengths besides 24 m; price model (per order / per m³ / per hour)?                                     | 24 m only, price unknown                               | open   |
+| Q3  | Number of mixers per capacity and plate numbers; number of drivers; their phones (Android/iPhone)?               | 2×8, 2×10, 2×12, 1 pump, 3 drivers, placeholder plates | open   |
+| Q4  | Do trucks already have a GPS tracker (which vendor)?                                                             | No; `TrackingSource = PHONE`                           | open   |
+| Q5  | Cancellation rules and demurrage (waiting) fee?                                                                  | cancel cutoff 12 h, no demurrage                       | open   |
+| Q6  | Company customers (VÖEN, credit limit, monthly invoice) needed in MVP?                                           | fields exist, no flow                                  | open   |
+| Q7  | Sample of the paper delivery act (photo) for the PDF template                                                    | none                                                   | open   |
+| Q8  | Apple Developer ($99/yr) and Google Play ($25) accounts                                                          | needed in Phase 2 for iOS dev build                    | open   |
+| Q9  | Google Maps Platform billing account                                                                             | needed in Phase 2                                      | open   |
+| Q10 | Domain (`concr.az`?) and VPS provider                                                                            | Hetzner assumed                                        | open   |
+| Q11 | Logo / colours: continue with site graphite `#12161F`? Accent `#F5A623`?                                         | yes / yes                                              | open   |
+| Q12 | Product display order in app (M100→M600 or reverse) and "Popular" badge on M250/M300                             | M100→M600, badge on                                    | open   |
+| Q13 | Supplier legal name and VÖEN for documents                                                                       | placeholder                                            | open   |
+| Q14 | Fixture placeholders: customer/driver names and phones, truck plates `90-AA-00x`, site addresses and coordinates | invented for the mock UI only, never shipped           | open   |
+
+## Process decisions
+
+| #   | Decision                                                                                                                                                   | Date       |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| P1  | UI-first: build all three interfaces on realistic mock data (`@concr/shared` fixtures + mock API client), integrate the backend afterwards (ADR 0006–0008) | 2026-10-09 |
+| P2  | Order of UI sprints: customer mobile (U1) → driver mobile (U2) → dispatcher web (U3) → polish (U4); then backend phases B1–B4 (see `docs/PROGRESS.md`)     | 2026-10-09 |
+| P3  | Design directly in code with a design system (no Figma step)                                                                                               | 2026-10-09 |
+| P4  | Maps without a Google key until the owner opens a billing account: react-native-maps in Expo Go, MapLibre on the web                                       | 2026-10-09 |

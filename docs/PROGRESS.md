@@ -1,53 +1,58 @@
 # Progress
 
-Phase plan: `docs/CONCR_SPEC.md` §19. Update this file at the end of every session.
+Spec: `docs/CONCR_SPEC.md`. On 2026-10-09 the order of work changed to **UI first on mock data,
+backend afterwards** (`docs/DECISIONS.md` P1–P4, ADR 0006–0008). Update this file at the end of every session.
+
+## Roadmap
+
+| Sprint  | Scope                                                                                                                                                                           | Status                                 |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| Phase 0 | Monorepo skeleton: shared, API, mobile, web, infra, CI, docs                                                                                                                    | done 2026-10-08                        |
+| **U1**  | Shared domain + fixtures + pricing + state machines, mock API client + live-tracking simulator, mobile design system, mock OTP sign-in, **all customer screens** incl. live map | done 2026-10-09 (device check pending) |
+| U2      | Driver app: today list, delivery screen with big buttons, 90-min timer, photo completion (mock)                                                                                 | next                                   |
+| U3      | Dispatcher web: app shell, inbox + order detail, orders table, planning board, live map (MapLibre), settings, reports (mock)                                                    | planned                                |
+| U4      | Polish: dark mode, motion, accessibility, Azerbaijani typography, empty/error audit, screenshots                                                                                | planned                                |
+| B1      | Prisma models + seed from the fixtures, auth, `SupplierScopeGuard`                                                                                                              | planned                                |
+| B2      | catalog/quote/orders/sites endpoints, `HttpApiClient`, switch `API_MODE=http`                                                                                                   | planned                                |
+| B3      | tracking ingestion + Socket.IO replaces the mock tracker, EAS dev build, background location                                                                                    | planned                                |
+| B4+     | push, documents, settings, reports, production (spec Phases 3–5)                                                                                                                | planned                                |
+
+## U1 — what was built (2026-10-09)
+
+- `packages/shared`: domain types (`domain/`), integer-qəpik money helpers, geo helpers, `calculateQuote`
+  (spec §10), order and delivery state machines (spec §8), fixtures = spec §18 seed as data
+  (6 orders, one EN_ROUTE with a route), `ApiClient` contract, in-memory mock client with validation,
+  scoping and state machines, `MockTracker`. 77 tests.
+- `apps/mobile`: design system v1 (tokens, Inter, dark-mode aware components: Text, Button, Card,
+  StatusBadge, Banner, Skeleton, ListRow, Stepper, SegmentedControl, QuantityStepper, Sheet,
+  PriceBreakdown, Timeline, MapView, DateWindowPicker, AppHeader, Section, Scroll), API provider with
+  `EXPO_PUBLIC_API_MODE=mock`, OTP sign-in on the mock client (code `123456`), typed query hooks,
+  customer screens: home, 5-step order wizard (+ in-wizard new site), orders list with filters,
+  order detail with live map / deliveries / price / documents / timeline / cancel / reorder,
+  sites CRUD with map pin, profile with language switch and logout. 26 tests.
+- Docs: ADR 0006–0008, DECISIONS P1–P4 + Q14, this roadmap.
+
+### Verified
+
+| Check                                               | Result                                                       |
+| --------------------------------------------------- | ------------------------------------------------------------ |
+| `npm run lint && npm run typecheck && npm run test` | green: 77 + 15 + 5 + 26 tests                                |
+| `npx expo export --platform android`                | bundles all screens (Metro + NativeWind + react-native-maps) |
+| `npx expo-doctor`                                   | 21/21 checks pass (gesture-handler pinned to Expo Go's 2.32) |
+
+### Not verified yet (needs the owner's phone)
+
+- Expo Go on a device: welcome → OTP → home → wizard → order detail with the moving mixer marker.
+- Map rendering in Expo Go on Android (Expo Go's bundled Google key) and iOS.
+
+### Known gaps / notes
+
+- No screen-level render tests yet (expo-router hooks need a test harness); component and hook tests exist.
+- Reorder opens the wizard at the schedule step with the previous order prefilled.
+- Dark mode tokens exist, but the dark palette is unpolished (U4).
+- WSL is not installed on the Windows laptop, so Docker/Postgres were not run locally; irrelevant for U1–U4.
 
 ## Phase 0 — Skeleton (done 2026-10-08)
 
-- [x] git repo, npm workspaces, TypeScript base, ESLint 10 flat config, Prettier, EditorConfig, LF line endings
-- [x] `packages/shared`: enums, error codes, zod schemas, i18n (az/ru/en) + key-parity and error-code tests
-- [x] `infra/docker-compose.yml`: PostGIS 16 + Redis 7 with healthchecks
-- [x] `apps/api`: NestJS 11, `/health` (liveness) + `/health/ready` (Terminus: Postgres + Redis), Swagger
-      `/api/docs`, pino logger with request id, error envelope filter, zod validation pipe, Prisma 7 skeleton
-      with the PostGIS extension migration, OpenAPI export to `docs/api/openapi.json`
-- [x] `apps/mobile`: Expo SDK 57, Expo Router with `Stack.Protected` role routing, NativeWind 4, TanStack
-      Query, zustand session in expo-secure-store, i18next over shared bundles, `(auth)/(customer)/(driver)`
-      groups with stub screens, UI kit (Button, TextField, Screen, StateView)
-- [x] `apps/dispatch`: Next.js 16, Tailwind 4, shadcn (Base UI), next-intl (cookie locale), login page with
-      react-hook-form + shared zod schema, API client with envelope parsing
-- [x] CI: GitHub Actions (format, lint, typecheck, unit tests, migrations, drift check, API e2e, builds)
-- [x] Docs: README, SETUP_GUIDE, DECISIONS, ADR 0001–0005
-
-### Definition of done — how it was verified
-
-| DoD item                      | Evidence                                                                                                                                          |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| API `/health` 200             | e2e test `apps/api/test/app.e2e-spec.ts` (5 tests) + `GET /api/docs-json` lists both health routes                                                |
-| Expo Go shows "CONCR" welcome | `npx expo-doctor` 21/21 checks, `npx expo export --platform android` builds the bundle; **not yet opened on a phone** (owner to scan the QR code) |
-| Login page opens              | `next build` renders `/login` as a dynamic route; 4 component tests for the form                                                                  |
-| Green checks                  | `npm run lint && npm run typecheck && npm run test` → 61 tests green on Windows                                                                   |
-
-### Not verified on this machine
-
-- Docker Desktop is not installed here, so `docker compose up`, `prisma migrate dev` and `/health/ready` = 200
-  were not exercised locally. CI runs them against service containers on the first push.
-- The GitHub Actions workflow has not run yet (no remote). First push will tell.
-
-### Known notices (harmless)
-
-- API e2e prints "Jest did not exit one second after the test run" when Postgres/Redis are down: in-flight
-  refused connections at shutdown. Disappears when the services run.
-
-## Phase 1 — Auth + catalog + customer order + minimal dispatcher (next)
-
-Prisma models + seed (real prices), OTP + staff auth, `SupplierScopeGuard`, catalog + quote + pricing
-(pure, 100 % tests), sites, orders create/list/detail/cancel + order state machine, dispatcher inbox with
-confirm/reject, mobile auth + 5-step wizard + order list/detail.
-
-## Phase 2 — Driver app + live tracking (not started)
-
-## Phase 3 — Push + documents + settings (not started)
-
-## Phase 4 — Reports, aggregates, polish (not started)
-
-## Phase 5 — Production (not started)
+Monorepo, `@concr/shared` basics, NestJS API with health probes / Swagger / error envelope / Prisma 7
+skeleton, Expo app skeleton, Next.js login page (disabled until B1), docker-compose, CI, ADR 0001–0005.

@@ -11,6 +11,9 @@ One file per technical decision: `NNNN-kebab-title.md`. Business decisions go to
 | 0003 | API conventions: error envelope, zod validation, request id, health probes | accepted |
 | 0004 | Mobile local storage: expo-secure-store until the EAS dev build            | accepted |
 | 0005 | i18n libraries: i18next (mobile), next-intl (web), shared JSON             | accepted |
+| 0006 | Shared domain layer and swappable API client (mock-first UI)               | accepted |
+| 0007 | Pricing and state machines live in `@concr/shared`                         | accepted |
+| 0008 | Maps without a Google key for now                                          | accepted |
 
 ## Template
 

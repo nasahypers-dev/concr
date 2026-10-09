@@ -36,7 +36,14 @@ npm run docker:down
 ```
 
 Copy each `.env.example` to `.env` (`apps/api`, `apps/mobile`, `apps/dispatch`). The mobile one needs your
-laptop's LAN IP, see `docs/SETUP_GUIDE.md`.
+laptop's LAN IP only once the real API is used, see `docs/SETUP_GUIDE.md`.
+
+## Mock mode (current default)
+
+The apps run on realistic in-memory data from `@concr/shared` fixtures (`EXPO_PUBLIC_API_MODE=mock`):
+no backend, no Docker. Sign in with any phone number and the code `123456`, or use the dev quick-login
+button on the welcome screen. The seeded customer has six orders, one of them with a mixer moving on the
+live map. The backend is integrated in the B-phases (`docs/PROGRESS.md`).
 
 `npm run sim:driver` (fake driver moving a seeded delivery) arrives in Phase 2.
 
