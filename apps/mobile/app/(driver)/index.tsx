@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Switch, Text, View } from 'react-native';
-import { colors, Screen, StateView } from '@/ui';
+import { Switch, View } from 'react-native';
+import { colors, Screen, StateView, Text } from '@/ui';
 
 /** Driver "Today": shift toggle (local only until Phase 2) + today's deliveries. */
 export default function DriverTodayScreen() {
@@ -9,10 +9,8 @@ export default function DriverTodayScreen() {
   const [onShift, setOnShift] = useState(false);
   return (
     <Screen edges={['left', 'right']}>
-      <View className="flex-row items-center justify-between rounded-xl bg-surface-muted p-4">
-        <Text className="text-lg font-semibold text-ink">
-          {onShift ? t('driver.onShift') : t('driver.offShift')}
-        </Text>
+      <View className="flex-row items-center justify-between rounded-xl bg-surface-muted p-4 dark:bg-surface-muted-dark">
+        <Text variant="subheading">{onShift ? t('driver.onShift') : t('driver.offShift')}</Text>
         <Switch
           value={onShift}
           onValueChange={setOnShift}

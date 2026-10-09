@@ -67,7 +67,12 @@ export function OrderCard({ order, onPress, emphasis = false }: OrderCardProps) 
         {inProgress ? (
           <View className="flex-row items-center gap-2">
             <Icon name="navigate" size="sm" color={colors.accentStrong} />
-            <Text variant="bodySm" weight="semibold" className="text-accent-strong">
+            <Text
+              variant="bodySm"
+              weight="semibold"
+              tone="none"
+              className="text-accent-strong dark:text-accent-light"
+            >
               {t('delivery.trip', {
                 sequence: Math.min(order.deliveriesCompleted + 1, order.deliveriesTotal),
                 total: order.deliveriesTotal,

@@ -82,6 +82,7 @@ export function Button({
           <Text
             variant={sizeClass[size].text}
             weight="semibold"
+            tone="none"
             className={labelByVariant[variant]}
           >
             {label}

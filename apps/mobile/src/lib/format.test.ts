@@ -1,4 +1,5 @@
 import {
+  formatPhoneAz,
   dayOffsetFromToday,
   formatDate,
   formatDateTime,
@@ -31,5 +32,12 @@ describe('format helpers (Baku time)', () => {
     expect(formatVolume(12)).toBe('12 m³');
     expect(formatVolume(7.5)).toBe('7,5 m³');
     expect(formatVolume(7.25)).toBe('7,25 m³');
+  });
+});
+
+describe('formatPhoneAz', () => {
+  it('groups Azerbaijani numbers', () => {
+    expect(formatPhoneAz('+994503260343')).toBe('+994 50 326 03 43');
+    expect(formatPhoneAz('+994506209584')).toBe('+994 50 620 95 84');
   });
 });

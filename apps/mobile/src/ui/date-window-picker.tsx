@@ -16,6 +16,7 @@ export interface DateWindowPickerProps {
   onChange: (value: DeliveryWindow) => void;
   /** Slots before this one are disabled (lead time, spec §3). */
   earliest: EarliestSlot;
+  /** Customers may book up to one month ahead (owner decision 2026-10-09). */
   daysAhead?: number;
   now?: Date;
   className?: string;
@@ -31,17 +32,24 @@ export const WINDOW_SLOTS: readonly (readonly [TimeOfDay, TimeOfDay])[] = Array.
   },
 );
 
+export const DEFAULT_DAYS_AHEAD = 30;
+
 function slotMinutes(time: TimeOfDay): number {
   const [h = 0, m = 0] = time.split(':').map(Number);
   return h * 60 + m;
 }
+
+const selectedChip = 'border-primary bg-primary dark:border-accent dark:bg-accent';
+const idleChip = 'border-border bg-surface dark:border-border-dark dark:bg-surface-dark';
+const selectedText = 'text-primary-foreground dark:text-accent-foreground';
+const idleText = 'text-ink dark:text-ink-dark';
 
 /** Day chips (next N days) + a grid of 2-hour slots; invalid slots are disabled, never hidden. */
 export function DateWindowPicker({
   value,
   onChange,
   earliest,
-  daysAhead = 14,
+  daysAhead = DEFAULT_DAYS_AHEAD,
   now = new Date(),
   className,
 }: DateWindowPickerProps) {
@@ -61,6 +69,23 @@ export function DateWindowPicker({
   const slotDisabled = (start: TimeOfDay): boolean =>
     selectedDate === earliest.date && slotMinutes(start) < slotMinutes(earliest.timeWindowStart);
 
+  const pickDay = (date: IsoDate) => {
+    const keepsSlot =
+      value !== null &&
+      !(
+        date === earliest.date &&
+        slotMinutes(value.timeWindowStart) < slotMinutes(earliest.timeWindowStart)
+      );
+    const start = keepsSlot ? value : null;
+    onChange({
+      date,
+      timeWindowStart:
+        start?.timeWindowStart ?? (date === earliest.date ? earliest.timeWindowStart : '08:00'),
+      timeWindowEnd:
+        start?.timeWindowEnd ?? (date === earliest.date ? earliest.timeWindowEnd : '10:00'),
+    });
+  };
+
   return (
     <View className={cn('gap-4', className)}>
       <ScrollView
@@ -76,50 +101,24 @@ export function DateWindowPicker({
               accessibilityRole="radio"
               accessibilityState={{ selected }}
               accessibilityLabel={formatDate(date)}
-              onPress={() => {
-                const start =
-                  value &&
-                  !(
-                    date === earliest.date &&
-                    slotMinutes(value.timeWindowStart) < slotMinutes(earliest.timeWindowStart)
-                  )
-                    ? value
-                    : null;
-                onChange({
-                  date,
-                  timeWindowStart:
-                    start?.timeWindowStart ??
-                    (date === earliest.date ? earliest.timeWindowStart : '08:00'),
-                  timeWindowEnd:
-                    start?.timeWindowEnd ??
-                    (date === earliest.date ? earliest.timeWindowEnd : '10:00'),
-                });
-              }}
+              onPress={() => pickDay(date)}
               className={cn(
                 'min-h-14 min-w-[72px] items-center justify-center rounded-xl border px-3',
-                selected
-                  ? 'border-primary bg-primary dark:border-accent dark:bg-accent'
-                  : 'border-border bg-surface dark:border-border-dark dark:bg-surface-dark',
+                selected ? selectedChip : idleChip,
               )}
             >
               <Text
                 variant="bodySm"
                 weight="semibold"
-                className={
-                  selected
-                    ? 'text-primary-foreground dark:text-accent-foreground'
-                    : 'text-ink dark:text-ink-dark'
-                }
+                tone="none"
+                className={selected ? selectedText : idleText}
               >
                 {dayLabel(date)}
               </Text>
               <Text
                 variant="caption"
-                className={
-                  selected
-                    ? 'text-primary-foreground/80 dark:text-accent-foreground/80'
-                    : 'text-ink-muted'
-                }
+                tone="none"
+                className={selected ? `${selectedText} opacity-80` : 'text-ink-muted'}
               >
                 {formatDate(date)}
               </Text>
@@ -143,20 +142,15 @@ export function DateWindowPicker({
               }
               className={cn(
                 'min-h-12 w-[31%] items-center justify-center rounded-xl border',
-                selected
-                  ? 'border-primary bg-primary dark:border-accent dark:bg-accent'
-                  : 'border-border bg-surface dark:border-border-dark dark:bg-surface-dark',
+                selected ? selectedChip : idleChip,
                 disabled && 'opacity-35',
               )}
             >
               <Text
                 variant="bodySm"
                 weight="medium"
-                className={
-                  selected
-                    ? 'text-primary-foreground dark:text-accent-foreground'
-                    : 'text-ink dark:text-ink-dark'
-                }
+                tone="none"
+                className={selected ? selectedText : idleText}
               >
                 {formatWindow(start, end)}
               </Text>

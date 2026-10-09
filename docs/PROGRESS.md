@@ -8,7 +8,7 @@ backend afterwards** (`docs/DECISIONS.md` P1–P4, ADR 0006–0008). Update this
 | Sprint  | Scope                                                                                                                                                                           | Status                                 |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
 | Phase 0 | Monorepo skeleton: shared, API, mobile, web, infra, CI, docs                                                                                                                    | done 2026-10-08                        |
-| **U1**  | Shared domain + fixtures + pricing + state machines, mock API client + live-tracking simulator, mobile design system, mock OTP sign-in, **all customer screens** incl. live map | done 2026-10-09 (device check pending) |
+| **U1**  | Shared domain + fixtures + pricing + state machines, mock API client + live-tracking simulator, mobile design system, mock OTP sign-in, **all customer screens** incl. live map | done 2026-10-09, device-checked on iPhone (Expo Go) |
 | U2      | Driver app: today list, delivery screen with big buttons, 90-min timer, photo completion (mock)                                                                                 | next                                   |
 | U3      | Dispatcher web: app shell, inbox + order detail, orders table, planning board, live map (MapLibre), settings, reports (mock)                                                    | planned                                |
 | U4      | Polish: dark mode, motion, accessibility, Azerbaijani typography, empty/error audit, screenshots                                                                                | planned                                |
@@ -49,8 +49,24 @@ backend afterwards** (`docs/DECISIONS.md` P1–P4, ADR 0006–0008). Update this
 
 - No screen-level render tests yet (expo-router hooks need a test harness); component and hook tests exist.
 - Reorder opens the wizard at the schedule step with the previous order prefilled.
-- Dark mode tokens exist, but the dark palette is unpolished (U4).
+- Dark mode: badges, banners, chips and highlighted rows now have dark pairs (`*-soft-dark` + `*-light`); a full dark-palette pass is still U4.
 - WSL is not installed on the Windows laptop, so Docker/Postgres were not run locally; irrelevant for U1–U4.
+
+### Device check fixes (2026-10-09, iPhone / Expo Go)
+
+- Dark mode: `Text` got a `none` tone so badge/chip/button colours set via className are no longer
+  overridden by the default ink colour; soft backgrounds have `dark:` pairs (status badge, banner,
+  highlighted delivery row, default-site badge, selected pump row, StateView error).
+- Slump: the wizard explains the choice in customer language (`wizard.slumpIntro`, `wizard.slumpP2..P4`).
+- Price preview on the product step is computed locally with `calculateQuote` (no mock round trip per tap);
+  mock latency lowered to 200 ms.
+- Payment methods: CASH and CARD only (D8 updated).
+- Delivery date: customers can pick any day within the next 30 days (`DEFAULT_DAYS_AHEAD`).
+- Pumps: 24/28/32/36/38/42 m with per-order prices 200/250/250/300/350/400 ₼ (Q2 answered); the pump step
+  shows the price per option and the quote includes it.
+- "Call the plant" dials the order line `+994 50 326 03 43` (`Supplier.dispatchPhone`, D14).
+- Open: a top-right icon reported as too large on the orders screen could not be identified from the code
+  (no header icon exists there); waiting for a screenshot.
 
 ## Phase 0 — Skeleton (done 2026-10-08)
 

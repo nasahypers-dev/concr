@@ -49,8 +49,13 @@ export default function SitesScreen() {
                       {item.name}
                     </Text>
                     {item.isDefault ? (
-                      <View className="rounded-full bg-accent-soft px-2 py-0.5">
-                        <Text variant="caption" weight="semibold" className="text-accent-strong">
+                      <View className="rounded-full bg-accent-soft px-2 dark:bg-accent-soft-dark py-0.5">
+                        <Text
+                          variant="caption"
+                          weight="semibold"
+                          tone="none"
+                          className="text-accent-strong dark:text-accent-light"
+                        >
                           {t('sites.default')}
                         </Text>
                       </View>

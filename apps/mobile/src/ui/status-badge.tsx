@@ -28,13 +28,29 @@ export const deliveryStatusTone: Record<DeliveryStatus, BadgeTone> = {
   FAILED: 'danger',
 };
 
+/** Light: dark text on a soft tint. Dark: light text on a deep tint (never white on amber). */
 const toneClass: Record<BadgeTone, { box: string; text: string }> = {
-  neutral: { box: 'bg-surface-muted', text: 'text-ink-muted' },
-  info: { box: 'bg-info-soft', text: 'text-info' },
-  warning: { box: 'bg-warning-soft', text: 'text-warning' },
-  accent: { box: 'bg-accent-soft', text: 'text-accent-strong' },
-  success: { box: 'bg-success-soft', text: 'text-success' },
-  danger: { box: 'bg-danger-soft', text: 'text-danger' },
+  neutral: {
+    box: 'bg-surface-muted dark:bg-surface-muted-dark',
+    text: 'text-ink-muted dark:text-ink-muted-dark',
+  },
+  info: { box: 'bg-info-soft dark:bg-info-soft-dark', text: 'text-info dark:text-info-light' },
+  warning: {
+    box: 'bg-warning-soft dark:bg-warning-soft-dark',
+    text: 'text-warning dark:text-warning-light',
+  },
+  accent: {
+    box: 'bg-accent-soft dark:bg-accent-soft-dark',
+    text: 'text-accent-strong dark:text-accent-light',
+  },
+  success: {
+    box: 'bg-success-soft dark:bg-success-soft-dark',
+    text: 'text-success dark:text-success-light',
+  },
+  danger: {
+    box: 'bg-danger-soft dark:bg-danger-soft-dark',
+    text: 'text-danger dark:text-danger-light',
+  },
 };
 
 export type StatusBadgeProps =
@@ -64,6 +80,7 @@ export function StatusBadge(props: StatusBadgeProps) {
       <Text
         variant={size === 'sm' ? 'caption' : 'bodySm'}
         weight="semibold"
+        tone="none"
         className={toneClass[tone].text}
       >
         {label}

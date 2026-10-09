@@ -11,7 +11,7 @@ export function resolveApiMode(
   return raw === 'http' ? 'http' : 'mock';
 }
 
-const SIMULATED_LATENCY_MS = 350;
+const SIMULATED_LATENCY_MS = 200;
 
 let singleton: ApiClient | null = null;
 

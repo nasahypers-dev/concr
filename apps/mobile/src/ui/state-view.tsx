@@ -67,7 +67,9 @@ export function StateView({
       <View
         className={cn(
           'h-16 w-16 items-center justify-center rounded-full',
-          isError ? 'bg-danger-soft' : 'bg-surface-muted dark:bg-surface-muted-dark',
+          isError
+            ? 'bg-danger-soft dark:bg-danger-soft-dark'
+            : 'bg-surface-muted dark:bg-surface-muted-dark',
         )}
       >
         <Icon name={glyph} size="xl" color={isError ? colors.danger : colors.inkMuted} />

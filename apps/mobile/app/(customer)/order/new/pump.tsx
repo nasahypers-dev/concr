@@ -1,3 +1,4 @@
+import { formatAzn } from '@concr/shared';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
@@ -25,7 +26,7 @@ function PumpChoice({
       onPress={onPress}
       className={`flex-1 items-center gap-2 rounded-2xl border p-4 ${
         active
-          ? 'border-accent bg-accent-soft'
+          ? 'border-accent bg-accent-soft dark:bg-accent-soft-dark'
           : 'border-border bg-surface dark:border-border-dark dark:bg-surface-dark'
       }`}
     >
@@ -89,7 +90,7 @@ export default function WizardPumpScreen() {
                     onPress={() => draft.patch({ pumpOptionId: pump.id })}
                     className={`flex-row items-center gap-3 rounded-2xl border p-4 ${
                       active
-                        ? 'border-accent bg-accent-soft'
+                        ? 'border-accent bg-accent-soft dark:bg-accent-soft-dark'
                         : 'border-border bg-surface dark:border-border-dark dark:bg-surface-dark'
                     }`}
                   >
@@ -98,9 +99,24 @@ export default function WizardPumpScreen() {
                       size="lg"
                       color={active ? colors.accentStrong : colors.inkSubtle}
                     />
-                    <Text weight="semibold">
-                      {t('wizard.boomLength', { length: pump.boomLengthM })}
-                    </Text>
+                    <View className="flex-1 flex-row items-center justify-between">
+                      <Text weight="semibold">
+                        {t('wizard.boomLength', { length: pump.boomLengthM })}
+                      </Text>
+                      <Text
+                        weight="bold"
+                        tone="none"
+                        className={
+                          active
+                            ? 'text-accent-strong dark:text-accent-light'
+                            : 'text-ink dark:text-ink-dark'
+                        }
+                      >
+                        {pump.pricePerOrder !== null
+                          ? formatAzn(pump.pricePerOrder)
+                          : t('price.pumpPending')}
+                      </Text>
+                    </View>
                   </Pressable>
                 );
               })}

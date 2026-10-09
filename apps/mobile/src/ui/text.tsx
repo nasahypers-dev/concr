@@ -5,7 +5,16 @@ export type TextVariant =
   'display' | 'title' | 'heading' | 'subheading' | 'body' | 'bodySm' | 'caption' | 'label';
 export type TextWeight = 'regular' | 'medium' | 'semibold' | 'bold';
 export type TextTone =
-  'default' | 'muted' | 'subtle' | 'inverse' | 'primary' | 'accent' | 'danger' | 'success';
+  | 'default'
+  | 'muted'
+  | 'subtle'
+  | 'inverse'
+  | 'primary'
+  | 'accent'
+  | 'danger'
+  | 'success'
+  /** No colour class: the caller sets it via className (badges, chips, filled buttons). */
+  | 'none';
 
 export interface TextProps extends RNTextProps {
   variant?: TextVariant;
@@ -53,6 +62,7 @@ const toneClass: Record<TextTone, string> = {
   accent: 'text-accent',
   danger: 'text-danger',
   success: 'text-success',
+  none: '',
 };
 
 /**

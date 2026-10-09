@@ -1,9 +1,8 @@
-import { formatAzn, type Product, type SlumpClass } from '@concr/shared';
+import { calculateQuote, formatAzn, type Product, type SlumpClass } from '@concr/shared';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
-import { useProducts, useQuote, useSupplier } from '@/features/catalog/use-catalog';
-import { useErrorMessage } from '@/features/common/use-error-message';
+import { useProducts, useSupplier } from '@/features/catalog/use-catalog';
 import { useOrderDraftStore } from '@/features/orders/order-draft.store';
 import { WizardFrame } from '@/features/orders/wizard-frame';
 import {
@@ -19,19 +18,34 @@ import {
 
 const VOLUME_MAX_M3 = 100;
 
+const slumpDescriptionKey = {
+  P2: 'wizard.slumpP2',
+  P3: 'wizard.slumpP3',
+  P4: 'wizard.slumpP4',
+} as const;
+
 export default function WizardProductScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const products = useProducts();
   const supplier = useSupplier();
-  const errorMessage = useErrorMessage();
   const draft = useOrderDraftStore();
 
   const selected = products.data?.find((p) => p.id === draft.productId) ?? null;
-  const minVolume = supplier.data?.supplier.settings.minOrderM3 ?? 1;
-  const quote = useQuote(
-    selected ? { productId: selected.id, volumeM3: draft.volumeM3, pumpOptionId: null } : null,
-  );
+  const settings = supplier.data?.supplier.settings;
+  const minVolume = settings?.minOrderM3 ?? 1;
+
+  // The price preview is computed locally with the same pure function the API uses: instant,
+  // no round trip per tap. The server-side quote (service area, earliest slot) runs later.
+  const preview =
+    selected && settings
+      ? calculateQuote({
+          product: selected,
+          volumeM3: draft.volumeM3,
+          pumpOption: null,
+          settings,
+        })
+      : null;
 
   const selectProduct = (product: Product) => {
     const slump = draft.slump && product.slumpOptions.includes(draft.slump) ? draft.slump : null;
@@ -51,13 +65,13 @@ export default function WizardProductScreen() {
           <Text variant="bodySm" tone="muted">
             {t('wizard.pricePreview')}
           </Text>
-          {quote.isError ? (
+          {preview && !preview.ok ? (
             <Text variant="bodySm" tone="danger">
-              {errorMessage(quote.error)}
+              {t(`errors.${preview.code}`)}
             </Text>
           ) : (
             <Text variant="subheading" weight="bold">
-              {quote.data ? formatAzn(quote.data.breakdown.total) : '—'}
+              {preview?.ok ? formatAzn(preview.breakdown.total) : '—'}
             </Text>
           )}
         </View>
@@ -89,6 +103,7 @@ export default function WizardProductScreen() {
                     <Text
                       variant="subheading"
                       weight="bold"
+                      tone="none"
                       className={
                         active
                           ? 'text-primary-foreground dark:text-accent-foreground'
@@ -107,9 +122,10 @@ export default function WizardProductScreen() {
                   </View>
                   <Text
                     variant="caption"
+                    tone="none"
                     className={
                       active
-                        ? 'text-primary-foreground/80 dark:text-accent-foreground/80'
+                        ? 'text-primary-foreground dark:text-accent-foreground opacity-80'
                         : 'text-ink-muted'
                     }
                   >
@@ -124,14 +140,17 @@ export default function WizardProductScreen() {
         {selected ? (
           <View className="gap-2">
             <Text variant="subheading">{t('wizard.slump')}</Text>
+            <Text variant="bodySm" tone="muted">
+              {t('wizard.slumpIntro')}
+            </Text>
             <SegmentedControl<SlumpClass>
               value={draft.slump}
               onChange={(slump) => draft.patch({ slump })}
               options={selected.slumpOptions.map((s) => ({ value: s, label: s }))}
               accessibilityLabel={t('wizard.slump')}
             />
-            <Text variant="bodySm" tone="muted">
-              {t('wizard.slumpHint')}
+            <Text variant="bodySm" tone={draft.slump ? 'default' : 'muted'}>
+              {draft.slump ? t(slumpDescriptionKey[draft.slump]) : t('wizard.slumpHint')}
             </Text>
           </View>
         ) : null}

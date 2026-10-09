@@ -17,10 +17,26 @@ export interface BannerProps {
 }
 
 const toneStyle: Record<BannerTone, { box: string; icon: IconName; color: string }> = {
-  info: { box: 'bg-info-soft', icon: 'information-circle', color: colors.info },
-  warning: { box: 'bg-warning-soft', icon: 'alert-circle', color: colors.warning },
-  danger: { box: 'bg-danger-soft', icon: 'close-circle', color: colors.danger },
-  success: { box: 'bg-success-soft', icon: 'checkmark-circle', color: colors.success },
+  info: {
+    box: 'bg-info-soft dark:bg-info-soft-dark',
+    icon: 'information-circle',
+    color: colors.info,
+  },
+  warning: {
+    box: 'bg-warning-soft dark:bg-warning-soft-dark',
+    icon: 'alert-circle',
+    color: colors.warning,
+  },
+  danger: {
+    box: 'bg-danger-soft dark:bg-danger-soft-dark',
+    icon: 'close-circle',
+    color: colors.danger,
+  },
+  success: {
+    box: 'bg-success-soft dark:bg-success-soft-dark',
+    icon: 'checkmark-circle',
+    color: colors.success,
+  },
 };
 
 /** Inline notice (offline, pump price pending, cancelled reason, ...). */

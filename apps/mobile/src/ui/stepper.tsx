@@ -32,13 +32,20 @@ export function Stepper({ steps, current, className }: StepperProps) {
                   'h-7 w-7 items-center justify-center rounded-full border-2',
                   done && 'border-primary bg-primary',
                   active && 'border-accent bg-accent',
-                  !done && !active && 'border-border bg-surface',
+                  !done &&
+                    !active &&
+                    'border-border bg-surface dark:border-border-dark dark:bg-surface-dark',
                 )}
               >
                 {done ? (
                   <Icon name="checkmark" size="sm" color={colors.primaryForeground} />
                 ) : (
-                  <Text variant="caption" weight="semibold" tone={active ? 'default' : 'subtle'}>
+                  <Text
+                    variant="caption"
+                    weight="semibold"
+                    tone="none"
+                    className={active ? 'text-accent-foreground' : 'text-ink-subtle'}
+                  >
                     {index + 1}
                   </Text>
                 )}

@@ -7,6 +7,7 @@ import { useLogout, useMe, useUpdateProfile } from '@/features/auth/use-auth';
 import { useSupplier } from '@/features/catalog/use-catalog';
 import { useErrorMessage } from '@/features/common/use-error-message';
 import { changeLocale } from '@/i18n';
+import { formatPhoneAz } from '@/lib/format';
 import {
   Banner,
   Button,
@@ -111,8 +112,12 @@ export default function CustomerProfileScreen() {
           <ListRow
             icon="call-outline"
             title={t('profile.callSupplier')}
-            subtitle={supplier.data?.supplier.phone}
-            onPress={() => void Linking.openURL(`tel:${supplier.data?.supplier.phone ?? ''}`)}
+            subtitle={
+              supplier.data ? formatPhoneAz(supplier.data.supplier.dispatchPhone) : undefined
+            }
+            onPress={() =>
+              void Linking.openURL(`tel:${supplier.data?.supplier.dispatchPhone ?? ''}`)
+            }
           />
           <ListRow
             icon="globe-outline"

@@ -37,7 +37,7 @@ export default function WizardSiteScreen() {
                 onPress={() => patch({ siteId: site.id })}
                 className={`flex-row items-center gap-3 rounded-2xl border p-4 ${
                   active
-                    ? 'border-accent bg-accent-soft'
+                    ? 'border-accent bg-accent-soft dark:bg-accent-soft-dark'
                     : 'border-border bg-surface dark:border-border-dark dark:bg-surface-dark'
                 }`}
               >

@@ -16,7 +16,9 @@ module.exports = {
           DEFAULT: '#F5A623',
           foreground: '#12161F',
           soft: '#FEF3DB',
+          'soft-dark': '#3A2E12',
           strong: '#B86E00',
+          light: '#FBBF24',
         },
         background: {
           DEFAULT: '#F6F7F9',
@@ -41,10 +43,11 @@ module.exports = {
           strong: '#D1D5DB',
           dark: '#2A3140',
         },
-        info: { DEFAULT: '#2563EB', soft: '#DBEAFE' },
-        warning: { DEFAULT: '#B45309', soft: '#FEF3C7' },
-        danger: { DEFAULT: '#DC2626', soft: '#FEE2E2' },
-        success: { DEFAULT: '#15803D', soft: '#DCFCE7' },
+        // *-soft: tint behind dark text (light mode); *-soft-dark + *-light: dark mode pair.
+        info: { DEFAULT: '#2563EB', soft: '#DBEAFE', 'soft-dark': '#12284A', light: '#93C5FD' },
+        warning: { DEFAULT: '#B45309', soft: '#FEF3C7', 'soft-dark': '#3B2A0E', light: '#FCD34D' },
+        danger: { DEFAULT: '#DC2626', soft: '#FEE2E2', 'soft-dark': '#3B1212', light: '#FCA5A5' },
+        success: { DEFAULT: '#15803D', soft: '#DCFCE7', 'soft-dark': '#10321C', light: '#86EFAC' },
       },
       fontFamily: {
         inter: ['Inter_400Regular'],

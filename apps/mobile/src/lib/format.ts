@@ -87,3 +87,10 @@ export function clampEta(minutes: number | null | undefined): number | null {
   if (minutes === null || minutes === undefined || !Number.isFinite(minutes)) return null;
   return Math.max(0, Math.round(minutes));
 }
+
+/** "+994503260343" → "+994 50 326 03 43"; other lengths are returned grouped loosely. */
+export function formatPhoneAz(phone: string): string {
+  const match = /^\+994(\d{2})(\d{3})(\d{2})(\d{2})$/.exec(phone);
+  if (match) return `+994 ${match[1]} ${match[2]} ${match[3]} ${match[4]}`;
+  return phone.replace(/(\d{3})(?=\d)/g, '$1 ');
+}

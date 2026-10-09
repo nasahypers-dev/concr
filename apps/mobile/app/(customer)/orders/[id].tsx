@@ -319,7 +319,7 @@ function DeliveryRow({
   const { t } = useTranslation();
   const tracking = isTrackingDeliveryStatus(delivery.status);
   return (
-    <View className={highlight ? 'rounded-xl bg-accent-soft p-3' : 'py-2'}>
+    <View className={highlight ? 'rounded-xl bg-accent-soft p-3 dark:bg-accent-soft-dark' : 'py-2'}>
       <View className="flex-row items-center justify-between">
         <Text weight="semibold">
           {t('delivery.trip', { sequence: delivery.sequence, total })} ·{' '}
@@ -328,7 +328,12 @@ function DeliveryRow({
         <StatusBadge kind="delivery" status={delivery.status} size="sm" />
       </View>
       {tracking && etaMinutes !== null ? (
-        <Text variant="bodySm" weight="medium" className="mt-1 text-accent-strong">
+        <Text
+          variant="bodySm"
+          weight="medium"
+          tone="none"
+          className="mt-1 text-accent-strong dark:text-accent-light"
+        >
           {delivery.status === 'ARRIVED'
             ? t('delivery.arrived')
             : t('delivery.eta', { minutes: etaMinutes })}
