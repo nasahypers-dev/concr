@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useProducts, usePumpOptions, useQuote } from '@/features/catalog/use-catalog';
 import { useErrorMessage } from '@/features/common/use-error-message';
+import { CardDetailsForm } from '@/features/orders/card-details-form';
 import { useWindowLabel } from '@/features/orders/order-card';
 import { useOrderSummary, useSiteContactLabel } from '@/features/orders/order-summary';
 import { draftToCreateOrderInput, useOrderDraftStore } from '@/features/orders/order-draft.store';
@@ -123,6 +124,7 @@ export default function WizardReviewScreen() {
               label: t(`payment.${method}`),
             }))}
           />
+          {draft.paymentMethod === PaymentMethod.CARD ? <CardDetailsForm /> : null}
         </View>
 
         <TextField

@@ -122,6 +122,16 @@
     "CASH": "Cash",
     "CARD": "Card"
   },
+  "card": {
+    "title": "Card details",
+    "number": "Card number",
+    "holder": "Cardholder name",
+    "holderPlaceholder": "NAME SURNAME",
+    "expiry": "Expiry date",
+    "expiryPlaceholder": "MM/YY",
+    "cvv": "CVV",
+    "demoNote": "Demo mode: card details are neither stored nor sent. Payment integration comes later."
+  },
   "order": {
     "title": "Order {number}",
     "filterAll": "All",

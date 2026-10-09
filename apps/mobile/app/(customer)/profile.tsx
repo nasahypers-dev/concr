@@ -1,10 +1,12 @@
 import { type Locale, locales } from '@concr/shared';
 import Constants from 'expo-constants';
-import { useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, View } from 'react-native';
 import { useLogout, useMe, useUpdateProfile } from '@/features/auth/use-auth';
 import { useSupplier } from '@/features/catalog/use-catalog';
+import { useAutoHide } from '@/features/common/use-auto-hide';
 import { useErrorMessage } from '@/features/common/use-error-message';
 import { changeLocale } from '@/i18n';
 import { formatPhoneAz } from '@/lib/format';
@@ -35,8 +37,11 @@ export default function CustomerProfileScreen() {
   const theme = useSettingsStore((s) => s.theme);
   const setTheme = useSettingsStore((s) => s.setTheme);
   const [name, setName] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
+  const [saved, showSaved, hideSaved] = useAutoHide();
   const [logoutOpen, setLogoutOpen] = useState(false);
+
+  // The confirmation must not survive a tab switch.
+  useFocusEffect(useCallback(() => () => hideSaved(), [hideSaved]));
 
   const currentName = name ?? me.data?.fullName ?? '';
   const dirty = name !== null && name.trim() !== (me.data?.fullName ?? '');
@@ -47,7 +52,7 @@ export default function CustomerProfileScreen() {
       {
         onSuccess: () => {
           setName(null);
-          setSaved(true);
+          showSaved();
         },
       },
     );
@@ -76,7 +81,7 @@ export default function CustomerProfileScreen() {
               value={currentName}
               onChangeText={(value) => {
                 setName(value);
-                setSaved(false);
+                hideSaved();
               }}
               icon="person-outline"
             />

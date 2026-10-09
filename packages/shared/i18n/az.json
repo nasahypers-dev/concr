@@ -122,6 +122,16 @@
     "CASH": "Nağd",
     "CARD": "Kartla"
   },
+  "card": {
+    "title": "Kart məlumatları",
+    "number": "Kart nömrəsi",
+    "holder": "Kart sahibinin adı",
+    "holderPlaceholder": "AD SOYAD",
+    "expiry": "Son istifadə tarixi",
+    "expiryPlaceholder": "AA/İİ",
+    "cvv": "CVV",
+    "demoNote": "Demo rejimi: kart məlumatları saxlanılmır və göndərilmir. Ödəniş inteqrasiyası sonra əlavə olunacaq."
+  },
   "order": {
     "title": "Sifariş {number}",
     "filterAll": "Hamısı",

@@ -1,5 +1,12 @@
 import type { PropsWithChildren } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import { type Edge, SafeAreaView } from 'react-native-safe-area-context';
 import { cn } from './cn';
 
@@ -15,7 +22,10 @@ export interface ScreenProps extends PropsWithChildren {
   className?: string;
 }
 
-/** Every screen starts here: safe area, app background, 16 px gutters, dark mode aware. */
+/**
+ * Every screen starts here: safe area, app background, 16 px gutters, dark mode aware.
+ * A tap on any empty area closes the keyboard (inputs and buttons keep their own taps).
+ */
 export function Screen({
   children,
   scroll = false,
@@ -29,6 +39,7 @@ export function Screen({
     <ScrollView
       contentContainerClassName={cn('flex-grow gap-4', gutters, className)}
       keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
       showsVerticalScrollIndicator={false}
     >
       {children}
@@ -48,7 +59,9 @@ export function Screen({
   );
   return (
     <SafeAreaView edges={edges} className="flex-1 bg-background dark:bg-background-dark">
-      {body}
+      <TouchableWithoutFeedback accessible={false} onPress={Keyboard.dismiss}>
+        <View className="flex-1">{body}</View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }
