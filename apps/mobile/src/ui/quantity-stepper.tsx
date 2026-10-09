@@ -3,7 +3,6 @@ import { Pressable, TextInput, View } from 'react-native';
 import { cn } from './cn';
 import { Icon } from './icon';
 import { Text } from './text';
-import { colors } from './theme';
 
 export interface QuantityStepperProps {
   value: number;
@@ -69,7 +68,7 @@ export function QuantityStepper({
           !canDecrement && 'opacity-40',
         )}
       >
-        <Icon name="remove" size="lg" color={colors.ink} />
+        <Icon name="remove" size="lg" />
       </Pressable>
       <View className="min-h-14 flex-1 flex-row items-center justify-center gap-1 rounded-xl border border-border bg-surface px-3 dark:border-border-dark dark:bg-surface-dark">
         <TextInput
@@ -99,7 +98,7 @@ export function QuantityStepper({
           !canIncrement && 'opacity-40',
         )}
       >
-        <Icon name="add" size="lg" color={colors.primaryForeground} />
+        <Icon name="add" size="lg" tone="onPrimary" />
       </Pressable>
     </View>
   );

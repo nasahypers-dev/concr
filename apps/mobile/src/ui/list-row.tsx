@@ -3,7 +3,6 @@ import { Pressable, View } from 'react-native';
 import { cn } from './cn';
 import { Icon, type IconName } from './icon';
 import { Text } from './text';
-import { colors } from './theme';
 
 export interface ListRowProps {
   title: string;
@@ -31,7 +30,7 @@ export function ListRow({
     <>
       {icon ? (
         <View className="h-10 w-10 items-center justify-center rounded-full bg-surface-muted dark:bg-surface-muted-dark">
-          <Icon name={icon} size="md" color={colors.inkMuted} />
+          <Icon name={icon} size="md" tone="muted" />
         </View>
       ) : null}
       <View className="flex-1 gap-0.5">
@@ -44,8 +43,7 @@ export function ListRow({
           </Text>
         ) : null}
       </View>
-      {right ??
-        (onPress ? <Icon name="chevron-forward" size="md" color={colors.inkSubtle} /> : null)}
+      {right ?? (onPress ? <Icon name="chevron-forward" size="md" tone="subtle" /> : null)}
     </>
   );
   const classes = cn('min-h-14 flex-row items-center gap-3 py-2', className);

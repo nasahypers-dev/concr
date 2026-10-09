@@ -2,7 +2,7 @@ import { TextInput, type TextInputProps, View } from 'react-native';
 import { cn } from './cn';
 import { Icon, type IconName } from './icon';
 import { Text } from './text';
-import { colors } from './theme';
+import { useThemeColors } from './theme';
 
 export interface TextFieldProps extends TextInputProps {
   label: string;
@@ -26,6 +26,7 @@ export function TextField({
   ...rest
 }: TextFieldProps) {
   const invalid = Boolean(error);
+  const theme = useThemeColors();
   return (
     <View className={cn('gap-1.5', className)}>
       <Text variant="bodySm" weight="medium">
@@ -39,13 +40,13 @@ export function TextField({
           !editable && 'opacity-60',
         )}
       >
-        {icon ? <Icon name={icon} size="md" color={colors.inkMuted} /> : null}
+        {icon ? <Icon name={icon} size="md" tone="muted" /> : null}
         <TextInput
           accessibilityLabel={label}
           accessibilityState={{ disabled: !editable }}
           editable={editable}
           multiline={multiline}
-          placeholderTextColor={colors.inkSubtle}
+          placeholderTextColor={theme.inkSubtle}
           textAlignVertical={multiline ? 'top' : 'center'}
           className="flex-1 font-inter text-body text-ink dark:text-ink-dark"
           {...rest}

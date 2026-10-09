@@ -4,7 +4,7 @@ import { Pressable, View } from 'react-native';
 import { useOrderDraftStore } from '@/features/orders/order-draft.store';
 import { WizardFrame } from '@/features/orders/wizard-frame';
 import { useSites } from '@/features/sites/use-sites';
-import { Button, Icon, Scroll, SkeletonList, StateView, Text, colors } from '@/ui';
+import { Button, Icon, Scroll, SkeletonList, StateView, Text } from '@/ui';
 
 export default function WizardSiteScreen() {
   const { t } = useTranslation();
@@ -44,7 +44,7 @@ export default function WizardSiteScreen() {
                 <Icon
                   name={active ? 'radio-button-on' : 'radio-button-off'}
                   size="lg"
-                  color={active ? colors.accentStrong : colors.inkSubtle}
+                  tone={active ? 'accentStrong' : 'subtle'}
                 />
                 <View className="flex-1 gap-0.5">
                   <Text weight="semibold">{site.name}</Text>

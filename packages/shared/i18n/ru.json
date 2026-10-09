@@ -180,6 +180,7 @@
     "namePlaceholder": "Введите имя",
     "phone": "Телефон",
     "language": "Язык",
+    "appearance": "Оформление",
     "save": "Сохранить",
     "saved": "Сохранено",
     "support": "Поддержка",
@@ -188,6 +189,11 @@
     "logoutTitle": "Выйти из аккаунта?",
     "logoutConfirm": "Да, выйти",
     "version": "Версия {version}"
+  },
+  "theme": {
+    "system": "Системная",
+    "light": "Светлая",
+    "dark": "Тёмная"
   },
   "driver": {
     "todayTitle": "Рейсы на сегодня",

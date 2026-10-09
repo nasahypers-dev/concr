@@ -16,7 +16,8 @@ import { ApiProvider } from '@/api/api-provider';
 import { createQueryClient } from '@/api/query-client';
 import { initI18n } from '@/i18n';
 import { selectIsAuthenticated, useSessionStore } from '@/store/session.store';
-import { colors, StateView } from '@/ui';
+import { useSettingsStore } from '@/store/settings.store';
+import { StateView, useThemeColors } from '@/ui';
 
 initI18n();
 
@@ -34,22 +35,25 @@ export default function RootLayout() {
     Inter_700Bold,
   });
   const hydrated = useSessionStore((state) => state.hydrated);
+  const settingsHydrated = useSettingsStore((state) => state.hydrated);
+  const theme = useThemeColors();
   const role = useSessionStore((state) => state.role);
   const isAuthenticated = useSessionStore(selectIsAuthenticated);
 
   // Without fonts the type scale is wrong; wait briefly, but never block on a font error.
-  if (!hydrated || (!fontsLoaded && !fontError)) {
+  // Settings carry the theme preference; waiting for them avoids a light→dark flash.
+  if (!hydrated || !settingsHydrated || (!fontsLoaded && !fontError)) {
     return <StateView status="loading" />;
   }
 
   return (
     <ApiProvider>
       <QueryClientProvider client={queryClient}>
-        <StatusBar style="light" />
+        <StatusBar style="auto" />
         <Stack
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: colors.background },
+            contentStyle: { backgroundColor: theme.background },
           }}
         >
           <Stack.Protected guard={!isAuthenticated}>

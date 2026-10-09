@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { dayOffsetFromToday, formatDate, formatWindow } from '@/lib/format';
 import { useOrderSummary, useSiteContactLabel } from './order-summary';
-import { Card, Icon, StatusBadge, Text, colors } from '@/ui';
+import { Card, Icon, StatusBadge, Text } from '@/ui';
 
 export interface OrderCardProps {
   order: OrderSummary;
@@ -50,19 +50,19 @@ export function OrderCard({ order, onPress, emphasis = false }: OrderCardProps) 
       </View>
       <View className="mt-3 gap-1.5">
         <View className="flex-row items-center gap-2">
-          <Icon name="location-outline" size="sm" color={colors.inkMuted} />
+          <Icon name="location-outline" size="sm" tone="muted" />
           <Text variant="bodySm" tone="muted" numberOfLines={1} className="flex-1">
             {order.siteName}
           </Text>
         </View>
         <View className="flex-row items-center gap-2">
-          <Icon name="time-outline" size="sm" color={colors.inkMuted} />
+          <Icon name="time-outline" size="sm" tone="muted" />
           <Text variant="bodySm" tone="muted" numberOfLines={1} className="flex-1">
             {windowLabel(order.requestedDate, order.timeWindowStart, order.timeWindowEnd)}
           </Text>
         </View>
         <View className="flex-row items-center gap-2">
-          <Icon name="call-outline" size="sm" color={colors.inkMuted} />
+          <Icon name="call-outline" size="sm" tone="muted" />
           <Text variant="bodySm" tone="muted" numberOfLines={1} className="flex-1">
             {contactLabel(order.siteContactName, order.siteContactPhone)}
           </Text>
@@ -71,7 +71,7 @@ export function OrderCard({ order, onPress, emphasis = false }: OrderCardProps) 
       <View className="mt-3 flex-row items-center justify-between">
         {inProgress ? (
           <View className="flex-row items-center gap-2">
-            <Icon name="navigate" size="sm" color={colors.accentStrong} />
+            <Icon name="navigate" size="sm" tone="accentStrong" />
             <Text
               variant="bodySm"
               weight="semibold"

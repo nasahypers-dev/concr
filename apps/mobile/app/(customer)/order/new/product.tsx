@@ -13,7 +13,6 @@ import {
   SkeletonList,
   StateView,
   Text,
-  colors,
 } from '@/ui';
 
 const VOLUME_MAX_M3 = 100;
@@ -114,11 +113,7 @@ export default function WizardProductScreen() {
                       {product.grade}
                     </Text>
                     {product.isPopular ? (
-                      <Icon
-                        name="star"
-                        size="sm"
-                        color={active ? colors.accent : colors.accentStrong}
-                      />
+                      <Icon name="star" size="sm" tone={active ? 'accent' : 'accentStrong'} />
                     ) : null}
                   </View>
                   <Text

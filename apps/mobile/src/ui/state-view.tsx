@@ -72,7 +72,7 @@ export function StateView({
             : 'bg-surface-muted dark:bg-surface-muted-dark',
         )}
       >
-        <Icon name={glyph} size="xl" color={isError ? colors.danger : colors.inkMuted} />
+        <Icon name={glyph} size="xl" tone={isError ? 'danger' : 'muted'} />
       </View>
       <Text variant="subheading" className="text-center">
         {heading}

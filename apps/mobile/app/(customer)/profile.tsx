@@ -8,6 +8,7 @@ import { useSupplier } from '@/features/catalog/use-catalog';
 import { useErrorMessage } from '@/features/common/use-error-message';
 import { changeLocale } from '@/i18n';
 import { formatPhoneAz } from '@/lib/format';
+import { THEME_PREFERENCES, type ThemePreference, useSettingsStore } from '@/store/settings.store';
 import {
   Banner,
   Button,
@@ -31,6 +32,8 @@ export default function CustomerProfileScreen() {
   const updateProfile = useUpdateProfile();
   const logout = useLogout();
   const errorMessage = useErrorMessage();
+  const theme = useSettingsStore((s) => s.theme);
+  const setTheme = useSettingsStore((s) => s.setTheme);
   const [name, setName] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
@@ -104,6 +107,15 @@ export default function CustomerProfileScreen() {
           value={(i18n.language as Locale) ?? 'az'}
           onChange={(locale) => void switchLocale(locale)}
           options={locales.map((locale) => ({ value: locale, label: localeLabels[locale] }))}
+        />
+      </Section>
+
+      <Section title={t('profile.appearance')}>
+        <SegmentedControl<ThemePreference>
+          value={theme}
+          onChange={setTheme}
+          options={THEME_PREFERENCES.map((value) => ({ value, label: t(`theme.${value}`) }))}
+          accessibilityLabel={t('profile.appearance')}
         />
       </Section>
 

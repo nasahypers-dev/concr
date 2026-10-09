@@ -180,6 +180,7 @@
     "namePlaceholder": "Adınızı yazın",
     "phone": "Telefon",
     "language": "Dil",
+    "appearance": "Görünüş",
     "save": "Yadda saxla",
     "saved": "Yadda saxlanıldı",
     "support": "Dəstək",
@@ -188,6 +189,11 @@
     "logoutTitle": "Hesabdan çıxırsınız?",
     "logoutConfirm": "Bəli, çıx",
     "version": "Versiya {version}"
+  },
+  "theme": {
+    "system": "Sistem",
+    "light": "Açıq",
+    "dark": "Tünd"
   },
   "driver": {
     "todayTitle": "Bugünkü reyslər",

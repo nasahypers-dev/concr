@@ -2,7 +2,6 @@ import { Pressable, View } from 'react-native';
 import { cn } from './cn';
 import { Icon, type IconName } from './icon';
 import { Text } from './text';
-import { colors } from './theme';
 
 export interface AppHeaderProps {
   title: string;
@@ -33,7 +32,7 @@ export function AppHeader({
           onPress={onBack}
           className="-ml-2 h-11 w-11 items-center justify-center rounded-full active:opacity-70"
         >
-          <Icon name="arrow-back" size="lg" color={colors.ink} />
+          <Icon name="arrow-back" size="lg" />
         </Pressable>
       ) : null}
       <View className="flex-1">
@@ -53,7 +52,7 @@ export function AppHeader({
           onPress={onRightPress}
           className="-mr-2 h-11 w-11 items-center justify-center rounded-full active:opacity-70"
         >
-          <Icon name={rightIcon} size="lg" color={colors.ink} />
+          <Icon name={rightIcon} size="lg" />
         </Pressable>
       ) : null}
     </View>

@@ -2,7 +2,7 @@ import { ActivityIndicator, Pressable, type PressableProps, View } from 'react-n
 import { cn } from './cn';
 import { Icon, type IconName } from './icon';
 import { Text } from './text';
-import { colors } from './theme';
+import { colors, darkColors, type ThemeColors, useThemeColors } from './theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -33,13 +33,21 @@ const labelByVariant: Record<ButtonVariant, string> = {
   danger: 'text-white',
 };
 
-const iconColorByVariant: Record<ButtonVariant, string> = {
-  primary: colors.primaryForeground,
-  secondary: colors.ink,
-  outline: colors.ink,
-  ghost: colors.primary,
-  danger: colors.primaryForeground,
-};
+/** Icon/spinner colour must match the label classes above in both palettes. */
+function iconColorFor(variant: ButtonVariant, theme: ThemeColors): string {
+  const dark = theme === darkColors;
+  switch (variant) {
+    case 'primary':
+      return theme.primaryForeground; // white on graphite, graphite on amber
+    case 'secondary':
+    case 'outline':
+      return theme.ink;
+    case 'ghost':
+      return dark ? theme.accent : theme.primary;
+    case 'danger':
+      return colors.primaryForeground;
+  }
+}
 
 const sizeClass: Record<ButtonSize, { box: string; text: 'body' | 'bodySm' }> = {
   sm: { box: 'min-h-10 px-3', text: 'bodySm' },
@@ -59,6 +67,7 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const inactive = disabled || loading;
+  const iconColor = iconColorFor(variant, useThemeColors());
   return (
     <Pressable
       accessibilityRole="button"
@@ -75,10 +84,10 @@ export function Button({
       {...rest}
     >
       {loading ? (
-        <ActivityIndicator color={iconColorByVariant[variant]} />
+        <ActivityIndicator color={iconColor} />
       ) : (
         <View className="flex-row items-center gap-2">
-          {icon ? <Icon name={icon} size="md" color={iconColorByVariant[variant]} /> : null}
+          {icon ? <Icon name={icon} size="md" color={iconColor} /> : null}
           <Text
             variant={sizeClass[size].text}
             weight="semibold"

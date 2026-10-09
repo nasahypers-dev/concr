@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cn } from './cn';
 import { Icon } from './icon';
 import { Text } from './text';
-import { colors } from './theme';
 
 export interface SheetProps extends PropsWithChildren {
   visible: boolean;
@@ -34,7 +33,7 @@ export function Sheet({ visible, onClose, title, children, className }: SheetPro
                 onPress={onClose}
                 className="p-1"
               >
-                <Icon name="close" size="lg" color={colors.inkMuted} />
+                <Icon name="close" size="lg" tone="muted" />
               </Pressable>
             </View>
           ) : null}

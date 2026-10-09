@@ -41,7 +41,7 @@ export default function SitesScreen() {
             >
               <View className="flex-row items-center gap-3">
                 <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-soft dark:bg-surface-muted-dark">
-                  <Icon name="location" size="md" color={colors.ink} />
+                  <Icon name="location" size="md" />
                 </View>
                 <View className="flex-1 gap-0.5">
                   <Text weight="semibold" numberOfLines={1}>
@@ -51,7 +51,7 @@ export default function SitesScreen() {
                     {item.addressLine}
                   </Text>
                 </View>
-                <Icon name="chevron-forward" size="md" color={colors.inkSubtle} />
+                <Icon name="chevron-forward" size="md" tone="subtle" />
               </View>
             </Card>
           )}

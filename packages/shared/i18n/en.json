@@ -180,6 +180,7 @@
     "namePlaceholder": "Enter your name",
     "phone": "Phone",
     "language": "Language",
+    "appearance": "Appearance",
     "save": "Save",
     "saved": "Saved",
     "support": "Support",
@@ -188,6 +189,11 @@
     "logoutTitle": "Sign out of your account?",
     "logoutConfirm": "Yes, sign out",
     "version": "Version {version}"
+  },
+  "theme": {
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
   },
   "driver": {
     "todayTitle": "Today's deliveries",

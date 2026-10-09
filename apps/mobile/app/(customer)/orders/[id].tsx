@@ -38,7 +38,6 @@ import {
   Text,
   TextField,
   Timeline,
-  colors,
 } from '@/ui';
 
 export default function OrderDetailScreen() {
@@ -347,7 +346,7 @@ function DeliveryRow({
             onPress={() => void Linking.openURL(`tel:${delivery.driver?.phone ?? ''}`)}
             className="h-9 w-9 items-center justify-center rounded-full bg-primary-soft dark:bg-surface-muted-dark"
           >
-            <Icon name="call" size="sm" color={colors.ink} />
+            <Icon name="call" size="sm" />
           </Pressable>
         </View>
       ) : null}

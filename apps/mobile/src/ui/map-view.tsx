@@ -1,6 +1,6 @@
 import type { GeoPoint } from '@concr/shared';
 import { useEffect, useRef } from 'react';
-import { View } from 'react-native';
+import { useColorScheme, View } from 'react-native';
 import RNMapView, { Marker, Polyline } from 'react-native-maps';
 import { cn } from './cn';
 import { Icon } from './icon';
@@ -46,6 +46,7 @@ export function MapView({
   testID,
 }: MapViewProps) {
   const ref = useRef<RNMapView>(null);
+  const scheme = useColorScheme();
   const points: GeoPoint[] = [
     ...(plant ? [plant] : []),
     ...(site ? [site] : []),
@@ -81,6 +82,7 @@ export function MapView({
         scrollEnabled={interactive}
         zoomEnabled={interactive}
         rotateEnabled={false}
+        userInterfaceStyle={scheme === 'dark' ? 'dark' : 'light'}
         pitchEnabled={false}
         showsCompass={false}
         toolbarEnabled={false}

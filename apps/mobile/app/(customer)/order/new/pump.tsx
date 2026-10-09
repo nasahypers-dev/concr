@@ -5,7 +5,7 @@ import { Pressable, View } from 'react-native';
 import { usePumpOptions } from '@/features/catalog/use-catalog';
 import { useOrderDraftStore } from '@/features/orders/order-draft.store';
 import { WizardFrame } from '@/features/orders/wizard-frame';
-import { Banner, Icon, type IconName, Scroll, SkeletonList, Text, colors } from '@/ui';
+import { Banner, Icon, type IconName, Scroll, SkeletonList, Text } from '@/ui';
 
 function PumpChoice({
   active,
@@ -30,7 +30,7 @@ function PumpChoice({
           : 'border-border bg-surface dark:border-border-dark dark:bg-surface-dark'
       }`}
     >
-      <Icon name={icon} size="xl" color={active ? colors.accentStrong : colors.inkMuted} />
+      <Icon name={icon} size="xl" tone={active ? 'accentStrong' : 'muted'} />
       <Text weight="semibold" className="text-center">
         {label}
       </Text>
@@ -97,7 +97,7 @@ export default function WizardPumpScreen() {
                     <Icon
                       name={active ? 'radio-button-on' : 'radio-button-off'}
                       size="lg"
-                      color={active ? colors.accentStrong : colors.inkSubtle}
+                      tone={active ? 'accentStrong' : 'subtle'}
                     />
                     <View className="flex-1 flex-row items-center justify-between">
                       <Text weight="semibold">

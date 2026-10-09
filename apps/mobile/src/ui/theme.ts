@@ -48,9 +48,14 @@ export const darkColors: ThemeColors = {
   inkInverse: '#12161F',
   border: '#2A3140',
   borderStrong: '#3B4454',
+  // Amber that reads on dark surfaces (tailwind `accent.light`).
+  accentStrong: '#FBBF24',
 };
 
-/** Palette for the current system colour scheme (for props that cannot take className). */
+/**
+ * Palette for the active colour scheme (for props that cannot take className). Follows the
+ * system or the preference set through `settings.store.ts` (ADR 0009).
+ */
 export function useThemeColors(): ThemeColors {
   const scheme = useColorScheme();
   return scheme === 'dark' ? darkColors : colors;
