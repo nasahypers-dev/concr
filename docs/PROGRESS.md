@@ -65,8 +65,15 @@ backend afterwards** (`docs/DECISIONS.md` P1–P4, ADR 0006–0008). Update this
 - Pumps: 24/28/32/36/38/42 m with per-order prices 200/250/250/300/350/400 ₼ (Q2 answered); the pump step
   shows the price per option and the quote includes it.
 - "Call the plant" dials the order line `+994 50 326 03 43` (`Supplier.dispatchPhone`, D14).
-- Open: a top-right icon reported as too large on the orders screen could not be identified from the code
-  (no header icon exists there); waiting for a screenshot.
+- The "too large top-right icon" turned out to be Expo Go's floating developer button, not part of the app.
+- A persisted session whose user no longer exists in the rebuilt mock store now signs out (UNAUTHORIZED →
+  login) instead of leaving every screen in an error state.
+
+### CI (2026-10-09)
+
+- First push to GitHub (`nasahypers-dev/concr`) went through; the workflow is green after four fixes:
+  Prettier on two docs, `lint` builds `@concr/shared` first, `build` no longer wipes `dist`, and the
+  Redis readiness probe waits for an in-flight connect (e2e expects 200 with the CI services).
 
 ## Phase 0 — Skeleton (done 2026-10-08)
 
