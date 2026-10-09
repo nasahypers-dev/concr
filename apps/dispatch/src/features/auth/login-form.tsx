@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { STAFF_LOGIN_ENABLED } from './auth.config';
 
 /** Shape of POST /auth/staff/login (Phase 1); the endpoint does not exist yet in Phase 0. */
 interface StaffLoginResponse {
@@ -24,7 +25,12 @@ interface StaffLoginResponse {
   refreshToken: string;
 }
 
-export function LoginForm() {
+export interface LoginFormProps {
+  /** When false the form is shown disabled with a notice (default: STAFF_LOGIN_ENABLED). */
+  enabled?: boolean;
+}
+
+export function LoginForm({ enabled = STAFF_LOGIN_ENABLED }: LoginFormProps) {
   const t = useTranslations();
   const [serverError, setServerError] = useState<string | null>(null);
   const {
@@ -34,6 +40,7 @@ export function LoginForm() {
   } = useForm<StaffLoginInput>({
     resolver: zodResolver(staffLoginSchema),
     defaultValues: { email: '', password: '' },
+    disabled: !enabled,
   });
 
   const fieldError = (message: string | undefined): string | undefined => {
@@ -50,6 +57,7 @@ export function LoginForm() {
   };
 
   const onSubmit = handleSubmit(async (values) => {
+    if (!enabled) return;
     setServerError(null);
     try {
       await apiFetch<StaffLoginResponse>('/auth/staff/login', { method: 'POST', body: values });
@@ -76,6 +84,11 @@ export function LoginForm() {
       </CardHeader>
       <form onSubmit={onSubmit} noValidate aria-busy={isSubmitting}>
         <CardContent className="flex flex-col gap-4">
+          {!enabled ? (
+            <p role="status" className="rounded-md bg-muted p-3 text-sm text-muted-foreground">
+              {t('auth.loginNotAvailable')}
+            </p>
+          ) : null}
           <div className="flex flex-col gap-2">
             <Label htmlFor="email">{t('auth.email')}</Label>
             <Input
@@ -116,7 +129,7 @@ export function LoginForm() {
           ) : null}
         </CardContent>
         <CardFooter className="mt-4">
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" className="w-full" disabled={!enabled || isSubmitting}>
             {isSubmitting ? t('auth.loggingIn') : t('auth.login')}
           </Button>
         </CardFooter>

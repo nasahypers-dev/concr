@@ -38,6 +38,7 @@
     "login": "Daxil ol",
     "loggingIn": "Daxil olunur…",
     "loginFailed": "Daxil olmaq mümkün olmadı. Məlumatları yoxlayıb yenidən cəhd edin.",
+    "loginNotAvailable": "Giriş hələ aktiv deyil. Növbəti mərhələdə (Phase 1) işə düşəcək.",
     "invalidEmail": "Düzgün e-poçt ünvanı daxil edin",
     "passwordTooShort": "Şifrə ən azı 8 simvoldan ibarət olmalıdır",
     "invalidPhone": "Nömrəni +994 formatında daxil edin",

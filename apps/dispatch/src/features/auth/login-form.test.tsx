@@ -4,10 +4,10 @@ import userEvent from '@testing-library/user-event';
 import { NextIntlClientProvider } from 'next-intl';
 import { LoginForm } from './login-form';
 
-function renderForm() {
+function renderForm(enabled = true) {
   return render(
     <NextIntlClientProvider locale="az" messages={messages.az}>
-      <LoginForm />
+      <LoginForm enabled={enabled} />
     </NextIntlClientProvider>,
   );
 }
@@ -36,6 +36,20 @@ describe('LoginForm', () => {
     expect(screen.getByLabelText('E-poçt')).toBeInTheDocument();
     expect(screen.getByLabelText('Şifrə')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Daxil ol' })).toBeInTheDocument();
+  });
+
+  it('is fully disabled with a notice while staff sign-in is switched off (Phase 0)', async () => {
+    const fetchMock = jest.fn();
+    global.fetch = fetchMock;
+    renderForm(false);
+    expect(screen.getByRole('status')).toHaveTextContent('Giriş hələ aktiv deyil');
+    expect(screen.getByLabelText('E-poçt')).toBeDisabled();
+    expect(screen.getByLabelText('Şifrə')).toBeDisabled();
+    const button = screen.getByRole('button', { name: 'Daxil ol' });
+    expect(button).toBeDisabled();
+    await userEvent.click(button);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('shows validation messages on empty submit and does not call the API', async () => {
