@@ -396,7 +396,7 @@ export function createMockApiClient(options: MockApiClientOptions): MockApiClien
       async list() {
         await delay();
         const customer = currentCustomer();
-        return store.sitesOf(customer.id).sort((a, b) => Number(b.isDefault) - Number(a.isDefault));
+        return store.sitesOf(customer.id).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
       },
       async get(id) {
         await delay();
@@ -406,13 +406,10 @@ export function createMockApiClient(options: MockApiClientOptions): MockApiClien
         await delay();
         const customer = currentCustomer();
         const data = parse<SiteInput>(siteInputSchema, input);
-        const existing = store.sitesOf(customer.id);
-        if (data.isDefault) for (const s of existing) s.isDefault = false;
         const site: Site = {
           id: store.nextSiteId(),
           customerId: customer.id,
           ...data,
-          isDefault: data.isDefault || existing.length === 0,
           createdAt: now().toISOString(),
         };
         store.data.sites.push(site);
@@ -422,7 +419,6 @@ export function createMockApiClient(options: MockApiClientOptions): MockApiClien
         await delay();
         const site = ownedSite(id);
         const data = parse<Partial<SiteInput>>(siteInputSchema.partial(), input);
-        if (data.isDefault) for (const s of store.sitesOf(site.customerId)) s.isDefault = false;
         Object.assign(site, data);
         return site;
       },
@@ -466,7 +462,7 @@ export function createMockApiClient(options: MockApiClientOptions): MockApiClien
             details: { field: 'pumpOptionId' },
           });
         }
-        if (!product.slumpOptions.includes(data.slump)) {
+        if (data.slump !== null && !product.slumpOptions.includes(data.slump)) {
           throw new ApiClientError(ErrorCode.VALIDATION_ERROR, { details: { field: 'slump' } });
         }
         const pump = data.pumpRequired ? pumpById(data.pumpOptionId) : null;
@@ -488,6 +484,8 @@ export function createMockApiClient(options: MockApiClientOptions): MockApiClien
           supplierId: store.data.supplier.id,
           customerId: customer.id,
           siteId: site.id,
+          siteContactName: site.contactName,
+          siteContactPhone: site.contactPhone,
           productId: product.id,
           volumeM3: data.volumeM3,
           slump: data.slump,

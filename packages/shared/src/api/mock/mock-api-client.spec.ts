@@ -158,7 +158,7 @@ describe('mock api client — sites', () => {
     await loginAsOrxan(api, setToken);
     const sites = await api.sites.list();
     expect(sites).toHaveLength(3);
-    expect(sites[0]!.isDefault).toBe(true);
+    expect(sites[0]!.id).toBe(SITE_IDS.yasamal);
     await expectApiError(api.sites.get(SITE_IDS.binagadi), 'NOT_FOUND'); // other customer's site
 
     const created = await api.sites.create({
@@ -167,11 +167,10 @@ describe('mock api client — sites', () => {
       location: { lat: 40.4, lng: 49.87 },
       accessNotes: null,
       contactName: null,
-      contactPhone: null,
-      isDefault: true,
+      contactPhone: '+994501234567',
     });
     expect(created.customerId).toBe(CUSTOMER_IDS.orxan);
-    expect((await api.sites.list()).filter((s) => s.isDefault)).toHaveLength(1);
+    expect(await api.sites.list()).toHaveLength(4);
     const updated = await api.sites.update(created.id, { name: 'Nərimanov' });
     expect(updated.name).toBe('Nərimanov');
     await api.sites.remove(created.id);
@@ -183,8 +182,19 @@ describe('mock api client — sites', () => {
         location: { lat: 0, lng: 0 },
         accessNotes: null,
         contactName: null,
-        contactPhone: null,
-        isDefault: false,
+        contactPhone: '+994501234567',
+      }),
+      'VALIDATION_ERROR',
+    );
+    // the contact phone is mandatory (owner, 2026-10-09)
+    await expectApiError(
+      api.sites.create({
+        name: 'Ok',
+        addressLine: 'x',
+        location: { lat: 40.4, lng: 49.87 },
+        accessNotes: null,
+        contactName: null,
+        contactPhone: '',
       }),
       'VALIDATION_ERROR',
     );
@@ -241,6 +251,8 @@ describe('mock api client — orders', () => {
     expect(created.status).toBe('PENDING');
     expect(created.number).toBe('CN-2026-000107');
     expect(created.totalAmount).toBe('1298.00');
+    expect(created.siteContactName).toBe('Orxan');
+    expect(created.siteContactPhone).toBe('+994500000001');
     expect(created.events).toHaveLength(1);
     expect((await api.orders.list()).items[0]!.id).toBe(created.id);
   });
@@ -293,6 +305,8 @@ describe('mock api client — orders', () => {
       timeWindowEnd: '00:00',
     });
     expect(night.timeWindowEnd).toBe('00:00');
+    const noSlump = await api.orders.create({ ...base, slump: null });
+    expect(noSlump.slump).toBeNull();
   });
 
   it('applies the cancellation rules of the state machine', async () => {

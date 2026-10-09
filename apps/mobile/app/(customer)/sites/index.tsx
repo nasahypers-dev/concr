@@ -44,23 +44,9 @@ export default function SitesScreen() {
                   <Icon name="location" size="md" color={colors.ink} />
                 </View>
                 <View className="flex-1 gap-0.5">
-                  <View className="flex-row items-center gap-2">
-                    <Text weight="semibold" numberOfLines={1} className="shrink">
-                      {item.name}
-                    </Text>
-                    {item.isDefault ? (
-                      <View className="rounded-full bg-accent-soft px-2 dark:bg-accent-soft-dark py-0.5">
-                        <Text
-                          variant="caption"
-                          weight="semibold"
-                          tone="none"
-                          className="text-accent-strong dark:text-accent-light"
-                        >
-                          {t('sites.default')}
-                        </Text>
-                      </View>
-                    ) : null}
-                  </View>
+                  <Text weight="semibold" numberOfLines={1}>
+                    {item.name}
+                  </Text>
                   <Text variant="bodySm" tone="muted" numberOfLines={2}>
                     {item.addressLine}
                   </Text>

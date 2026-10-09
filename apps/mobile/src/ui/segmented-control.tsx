@@ -13,6 +13,8 @@ export interface SegmentedControlProps<T extends string> {
   options: SegmentedOption<T>[];
   value: T | null;
   onChange: (value: T) => void;
+  /** When given, pressing the selected option clears it (optional choices). */
+  onDeselect?: () => void;
   className?: string;
   accessibilityLabel?: string;
 }
@@ -22,6 +24,7 @@ export function SegmentedControl<T extends string>({
   options,
   value,
   onChange,
+  onDeselect,
   className,
   accessibilityLabel,
 }: SegmentedControlProps<T>) {
@@ -43,9 +46,10 @@ export function SegmentedControl<T extends string>({
             accessibilityState={{ selected, disabled: option.disabled }}
             disabled={option.disabled}
             onPress={() => {
-              if (selected) return;
+              if (selected && !onDeselect) return;
               void Haptics.selectionAsync().catch(() => undefined);
-              onChange(option.value);
+              if (selected) onDeselect?.();
+              else onChange(option.value);
             }}
             className={cn(
               'min-h-11 flex-1 items-center justify-center rounded-lg px-3',

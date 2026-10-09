@@ -9,8 +9,8 @@ export interface Site {
   location: GeoPoint;
   accessNotes: string | null;
   contactName: string | null;
-  contactPhone: string | null;
-  isDefault: boolean;
+  /** Required: the person on site the driver calls (owner, 2026-10-09). */
+  contactPhone: string;
   createdAt: IsoDateTime;
 }
 

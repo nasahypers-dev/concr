@@ -5,11 +5,11 @@ import { View } from 'react-native';
 import { useProducts, usePumpOptions, useQuote } from '@/features/catalog/use-catalog';
 import { useErrorMessage } from '@/features/common/use-error-message';
 import { useWindowLabel } from '@/features/orders/order-card';
+import { useOrderSummary, useSiteContactLabel } from '@/features/orders/order-summary';
 import { draftToCreateOrderInput, useOrderDraftStore } from '@/features/orders/order-draft.store';
 import { useCreateOrder } from '@/features/orders/use-orders';
 import { WizardFrame } from '@/features/orders/wizard-frame';
 import { useSites } from '@/features/sites/use-sites';
-import { formatVolume } from '@/lib/format';
 import {
   Banner,
   Card,
@@ -32,6 +32,8 @@ export default function WizardReviewScreen() {
   const createOrder = useCreateOrder();
   const errorMessage = useErrorMessage();
   const windowLabel = useWindowLabel();
+  const summary = useOrderSummary();
+  const contactLabel = useSiteContactLabel();
 
   const input = draftToCreateOrderInput(draft);
   const product = products.data?.find((p) => p.id === draft.productId);
@@ -65,19 +67,20 @@ export default function WizardReviewScreen() {
       onNext={() => void submit()}
     >
       <Scroll contentContainerClassName="gap-4 p-4">
-        {!product || !site || !draft.window || !draft.slump ? (
+        {!product || !site || !draft.window ? (
           <Banner tone="warning" message={t('states.errorDescription')} />
         ) : (
           <Card compact>
             <ListRow
               icon="cube-outline"
-              title={t('order.summary', {
-                grade: product.grade,
-                volume: formatVolume(draft.volumeM3),
-                slump: draft.slump,
-              })}
+              title={summary(product.grade, draft.volumeM3, draft.slump)}
             />
             <ListRow icon="location-outline" title={site.name} subtitle={site.addressLine} />
+            <ListRow
+              icon="call-outline"
+              title={contactLabel(site.contactName, site.contactPhone)}
+              subtitle={t('order.siteContact')}
+            />
             <ListRow
               icon="water-outline"
               title={

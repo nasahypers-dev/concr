@@ -29,9 +29,13 @@ export interface Order {
   supplierId: Id;
   customerId: Id;
   siteId: Id;
+  /** Contact on site, frozen at order time (the site may be edited later). */
+  siteContactName: string | null;
+  siteContactPhone: string;
   productId: Id;
   volumeM3: number;
-  slump: SlumpClass;
+  /** null when the customer left the choice to the dispatcher (owner, 2026-10-09). */
+  slump: SlumpClass | null;
   pumpRequired: boolean;
   pumpOptionId: Id | null;
   requestedDate: IsoDate;
@@ -99,7 +103,7 @@ export interface CreateOrderInput {
   productId: Id;
   siteId: Id;
   volumeM3: number;
-  slump: SlumpClass;
+  slump: SlumpClass | null;
   pumpRequired: boolean;
   pumpOptionId: Id | null;
   requestedDate: IsoDate;

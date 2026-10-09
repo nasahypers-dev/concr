@@ -2,6 +2,7 @@ import type { GeoPoint, Id, IsoDate, IsoDateTime, TimeOfDay } from '../domain/co
 import type { Delivery, DeliveryDocument, DeliveryLocation } from '../domain/delivery';
 import type { Order, OrderEvent, PricingBreakdown } from '../domain/order';
 import type { Product, PumpOption } from '../domain/product';
+import type { Site } from '../domain/site';
 import type { Supplier } from '../domain/supplier';
 import {
   DeliveryStatus,
@@ -48,6 +49,7 @@ export interface OrderFixtureContext {
   supplier: Supplier;
   products: Product[];
   pumpOptions: PumpOption[];
+  sites: Site[];
   routeToYasamal: GeoPoint[];
 }
 
@@ -56,7 +58,7 @@ export function orderNumber(seq: number, year = 2026): string {
 }
 
 export function createOrderFixtures(ctx: OrderFixtureContext): OrderFixtureSet {
-  const { now, supplier, products, pumpOptions, routeToYasamal } = ctx;
+  const { now, supplier, products, pumpOptions, sites, routeToYasamal } = ctx;
   const set: OrderFixtureSet = {
     orders: [],
     deliveries: [],
@@ -71,6 +73,11 @@ export function createOrderFixtures(ctx: OrderFixtureContext): OrderFixtureSet {
     return product;
   };
   const pump = pumpOptions.find((p) => p.id === PUMP_24M_ID) ?? null;
+  const siteById = (id: Id): Site => {
+    const site = sites.find((s) => s.id === id);
+    if (!site) throw new Error(`fixture site missing: ${id}`);
+    return site;
+  };
 
   const price = (product: Product, volumeM3: number, withPump: boolean): PricingBreakdown => {
     const result = calculateQuote({
@@ -131,7 +138,7 @@ export function createOrderFixtures(ctx: OrderFixtureContext): OrderFixtureSet {
     siteId: Id;
     grade: string;
     volumeM3: number;
-    slump: SlumpClass;
+    slump: SlumpClass | null;
     withPump: boolean;
     requestedDate: IsoDate;
     window: [TimeOfDay, TimeOfDay];
@@ -149,12 +156,15 @@ export function createOrderFixtures(ctx: OrderFixtureContext): OrderFixtureSet {
   const makeOrder = (o: BaseOrder): Order => {
     const product = productByGrade(o.grade);
     const pricing = price(product, o.volumeM3, o.withPump);
+    const site = siteById(o.siteId);
     const order: Order = {
       id: o.id,
       number: orderNumber(o.seq),
       supplierId: SUPPLIER_ID,
       customerId: CUSTOMER_IDS.orxan,
       siteId: o.siteId,
+      siteContactName: site.contactName,
+      siteContactPhone: site.contactPhone,
       productId: product.id,
       volumeM3: o.volumeM3,
       slump: o.slump,
@@ -528,7 +538,7 @@ export function createOrderFixtures(ctx: OrderFixtureContext): OrderFixtureSet {
       siteId: SITE_IDS.yasamal,
       grade: 'M350',
       volumeM3: 8,
-      slump: SlumpClass.P3,
+      slump: null, // left to the dispatcher (optional since 2026-10-09)
       withPump: false,
       requestedDate: bakuDate(now, -6),
       window: ['16:00', '18:00'],

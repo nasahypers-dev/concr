@@ -52,7 +52,8 @@ export default function WizardProductScreen() {
     draft.patch({ productId: product.id, slump });
   };
 
-  const canContinue = selected !== null && draft.slump !== null && draft.volumeM3 >= minVolume;
+  // The slump is optional (owner, 2026-10-09): the dispatcher confirms it when left empty.
+  const canContinue = selected !== null && draft.volumeM3 >= minVolume;
 
   return (
     <WizardFrame
@@ -146,10 +147,17 @@ export default function WizardProductScreen() {
             <SegmentedControl<SlumpClass>
               value={draft.slump}
               onChange={(slump) => draft.patch({ slump })}
+              onDeselect={() => draft.patch({ slump: null })}
               options={selected.slumpOptions.map((s) => ({ value: s, label: s }))}
               accessibilityLabel={t('wizard.slump')}
             />
-            <Text variant="bodySm" tone={draft.slump ? 'default' : 'muted'}>
+            {/* Fixed height so the volume section below never moves when the text changes. */}
+            <Text
+              variant="bodySm"
+              tone={draft.slump ? 'default' : 'muted'}
+              numberOfLines={3}
+              className="min-h-[60px]"
+            >
               {draft.slump ? t(slumpDescriptionKey[draft.slump]) : t('wizard.slumpHint')}
             </Text>
           </View>

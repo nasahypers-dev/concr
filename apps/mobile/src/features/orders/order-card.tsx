@@ -1,7 +1,8 @@
 import { formatAzn, type OrderSummary } from '@concr/shared';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import { dayOffsetFromToday, formatDate, formatVolume, formatWindow } from '@/lib/format';
+import { dayOffsetFromToday, formatDate, formatWindow } from '@/lib/format';
+import { useOrderSummary, useSiteContactLabel } from './order-summary';
 import { Card, Icon, StatusBadge, Text, colors } from '@/ui';
 
 export interface OrderCardProps {
@@ -31,6 +32,8 @@ export function useWindowLabel(): (date: string, start: string, end: string) => 
 export function OrderCard({ order, onPress, emphasis = false }: OrderCardProps) {
   const { t } = useTranslation();
   const windowLabel = useWindowLabel();
+  const summary = useOrderSummary();
+  const contactLabel = useSiteContactLabel();
   const inProgress = order.status === 'IN_PROGRESS';
   return (
     <Card onPress={onPress} accessibilityLabel={order.number} compact={!emphasis}>
@@ -40,11 +43,7 @@ export function OrderCard({ order, onPress, emphasis = false }: OrderCardProps) 
             {order.number}
           </Text>
           <Text variant={emphasis ? 'heading' : 'subheading'} numberOfLines={1}>
-            {t('order.summary', {
-              grade: order.productGrade,
-              volume: formatVolume(order.volumeM3),
-              slump: order.slump,
-            })}
+            {summary(order.productGrade, order.volumeM3, order.slump)}
           </Text>
         </View>
         <StatusBadge kind="order" status={order.status} size={emphasis ? 'md' : 'sm'} />
@@ -60,6 +59,12 @@ export function OrderCard({ order, onPress, emphasis = false }: OrderCardProps) 
           <Icon name="time-outline" size="sm" color={colors.inkMuted} />
           <Text variant="bodySm" tone="muted" numberOfLines={1} className="flex-1">
             {windowLabel(order.requestedDate, order.timeWindowStart, order.timeWindowEnd)}
+          </Text>
+        </View>
+        <View className="flex-row items-center gap-2">
+          <Icon name="call-outline" size="sm" color={colors.inkMuted} />
+          <Text variant="bodySm" tone="muted" numberOfLines={1} className="flex-1">
+            {contactLabel(order.siteContactName, order.siteContactPhone)}
           </Text>
         </View>
       </View>

@@ -11,6 +11,7 @@ import { Linking, Pressable, View } from 'react-native';
 import { useSupplier } from '@/features/catalog/use-catalog';
 import { useErrorMessage } from '@/features/common/use-error-message';
 import { useWindowLabel } from '@/features/orders/order-card';
+import { useOrderSummary, useSiteContactLabel } from '@/features/orders/order-summary';
 import { useOrderDraftStore } from '@/features/orders/order-draft.store';
 import {
   useCancelOrder,
@@ -51,6 +52,8 @@ export default function OrderDetailScreen() {
   const loadDraft = useOrderDraftStore((s) => s.loadFrom);
   const errorMessage = useErrorMessage();
   const windowLabel = useWindowLabel();
+  const summary = useOrderSummary();
+  const contactLabel = useSiteContactLabel();
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
 
@@ -128,11 +131,7 @@ export default function OrderDetailScreen() {
 
       <View className="flex-row items-center justify-between">
         <Text variant="heading">
-          {t('order.summary', {
-            grade: detail.product.grade,
-            volume: formatVolume(detail.volumeM3),
-            slump: detail.slump,
-          })}
+          {summary(detail.product.grade, detail.volumeM3, detail.slump)}
         </Text>
         <StatusBadge kind="order" status={detail.status} />
       </View>
@@ -169,6 +168,11 @@ export default function OrderDetailScreen() {
             icon="location-outline"
             title={detail.site.name}
             subtitle={detail.site.addressLine}
+          />
+          <ListRow
+            icon="call-outline"
+            title={contactLabel(detail.siteContactName, detail.siteContactPhone)}
+            subtitle={t('order.siteContact')}
           />
           <ListRow
             icon="time-outline"

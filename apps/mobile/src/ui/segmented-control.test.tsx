@@ -25,4 +25,20 @@ describe('SegmentedControl', () => {
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(screen.getByRole('radio', { name: 'P2' })).toBeSelected();
   });
+
+  it('clears the selection when the selected option is pressed and onDeselect is given', async () => {
+    const onChange = jest.fn();
+    const onDeselect = jest.fn();
+    await render(
+      <SegmentedControl
+        options={[...options]}
+        value="P2"
+        onChange={onChange}
+        onDeselect={onDeselect}
+      />,
+    );
+    await fireEvent.press(screen.getByText('P2'));
+    expect(onDeselect).toHaveBeenCalledTimes(1);
+    expect(onChange).not.toHaveBeenCalled();
+  });
 });

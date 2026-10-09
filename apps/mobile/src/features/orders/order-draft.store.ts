@@ -60,7 +60,7 @@ export const useOrderDraftStore = create<OrderDraftState>()((set) => ({
 
 /** The request body once every step is complete, otherwise null. */
 export function draftToCreateOrderInput(draft: OrderDraft): CreateOrderInput | null {
-  if (!draft.productId || !draft.slump || !draft.siteId || !draft.window) return null;
+  if (!draft.productId || !draft.siteId || !draft.window) return null;
   if (draft.pumpRequired && !draft.pumpOptionId) return null;
   return {
     productId: draft.productId,

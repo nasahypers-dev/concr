@@ -97,7 +97,6 @@ export function createSites(now: Date): Site[] {
       accessNotes: 'Dar küçə, mikser üçün giriş həyətin arxa tərəfindən.',
       contactName: 'Orxan',
       contactPhone: '+994500000001',
-      isDefault: true,
       createdAt,
     },
     {
@@ -109,7 +108,6 @@ export function createSites(now: Date): Site[] {
       accessNotes: null,
       contactName: 'Usta Vüqar',
       contactPhone: '+994500000021',
-      isDefault: false,
       createdAt,
     },
     {
@@ -120,8 +118,7 @@ export function createSites(now: Date): Site[] {
       location: { lat: 40.492, lng: 50.142 },
       accessNotes: 'Darvazanı zəng edib açdırın.',
       contactName: null,
-      contactPhone: null,
-      isDefault: false,
+      contactPhone: '+994500000031', // TODO(nurlan): placeholder
       createdAt,
     },
     {
@@ -133,7 +130,6 @@ export function createSites(now: Date): Site[] {
       accessNotes: 'Obyekt rəhbəri ilə əvvəlcədən razılaşdırın.',
       contactName: 'Aysel Hüseynova',
       contactPhone: '+994500000002',
-      isDefault: true,
       createdAt,
     },
   ];

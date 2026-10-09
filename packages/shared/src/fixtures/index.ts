@@ -50,11 +50,13 @@ export function createFixtures(now: Date = new Date()): FixtureSet {
   const products = createProducts();
   const pumpOptions = createPumpOptions();
   const customers = createCustomers(now);
+  const sites = createSites(now);
   const orderSet = createOrderFixtures({
     now,
     supplier,
     products,
     pumpOptions,
+    sites,
     routeToYasamal: createRouteNovxaniToYasamal(),
   });
   return {
@@ -72,7 +74,7 @@ export function createFixtures(now: Date = new Date()): FixtureSet {
       ...createStaffUsers(now),
     ],
     customers,
-    sites: createSites(now),
+    sites,
     ...orderSet,
   };
 }

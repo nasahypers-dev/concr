@@ -34,7 +34,7 @@ export const createOrderSchema = z.object({
   productId: z.string().min(1),
   siteId: z.string().min(1),
   volumeM3: volumeM3Schema,
-  slump: z.enum(SlumpClass),
+  slump: z.enum(SlumpClass).nullable(),
   pumpRequired: z.boolean(),
   pumpOptionId: z.string().min(1).nullable(),
   requestedDate: isoDateSchema,
@@ -62,8 +62,7 @@ export const siteInputSchema = z.object({
   location: geoPointSchema,
   accessNotes: z.string().trim().max(500).nullable(),
   contactName: z.string().trim().max(80).nullable(),
-  contactPhone: phoneE164Schema.nullable(),
-  isDefault: z.boolean(),
+  contactPhone: phoneE164Schema,
 });
 
 export const updateProfileSchema = z.object({

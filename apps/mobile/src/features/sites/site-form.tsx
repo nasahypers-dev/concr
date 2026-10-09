@@ -1,10 +1,10 @@
 import { type GeoPoint, type Site, type SiteInput, siteInputSchema } from '@concr/shared';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Switch, View } from 'react-native';
+import { View } from 'react-native';
 import { normalizePhone } from '@/features/auth/normalize-phone';
 import { useSupplier } from '@/features/catalog/use-catalog';
-import { Banner, Button, MapView, Text, TextField, colors } from '@/ui';
+import { Banner, Button, MapView, Text, TextField } from '@/ui';
 
 export interface SiteFormProps {
   initial?: Site;
@@ -26,7 +26,6 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
   const [accessNotes, setAccessNotes] = useState(initial?.accessNotes ?? '');
   const [contactName, setContactName] = useState(initial?.contactName ?? '');
   const [contactPhone, setContactPhone] = useState(initial?.contactPhone ?? '');
-  const [isDefault, setIsDefault] = useState(initial?.isDefault ?? false);
   const [errors, setErrors] = useState<FieldErrors>({});
 
   const submit = () => {
@@ -36,8 +35,7 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
       location: location ?? { lat: Number.NaN, lng: Number.NaN },
       accessNotes: accessNotes.trim() === '' ? null : accessNotes.trim(),
       contactName: contactName.trim() === '' ? null : contactName.trim(),
-      contactPhone: contactPhone.trim() === '' ? null : normalizePhone(contactPhone),
-      isDefault,
+      contactPhone: contactPhone.trim() === '' ? '' : normalizePhone(contactPhone),
     };
     const result = siteInputSchema.safeParse(candidate);
     if (!result.success) {
@@ -45,7 +43,10 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
       for (const issue of result.error.issues) {
         const field = issue.path[0] as keyof SiteInput | undefined;
         if (!field || next[field]) continue;
-        next[field] = field === 'contactPhone' ? t('auth.invalidPhone') : t('sites.required');
+        next[field] =
+          field === 'contactPhone' && contactPhone.trim() !== ''
+            ? t('auth.invalidPhone')
+            : t('sites.required');
       }
       if (!location) next.location = t('sites.pinHint');
       setErrors(next);
@@ -115,16 +116,6 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
         icon="call-outline"
         placeholder={t('auth.phonePlaceholder')}
       />
-      <View className="flex-row items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 dark:border-border-dark dark:bg-surface-dark">
-        <Text weight="medium">{t('sites.default')}</Text>
-        <Switch
-          value={isDefault}
-          onValueChange={setIsDefault}
-          trackColor={{ true: colors.accent, false: colors.border }}
-          thumbColor={colors.surface}
-          accessibilityLabel={t('sites.default')}
-        />
-      </View>
       {error ? <Banner tone="danger" message={error} /> : null}
       <Button label={t('sites.save')} icon="checkmark" loading={submitting} onPress={submit} />
       {onDelete ? (
