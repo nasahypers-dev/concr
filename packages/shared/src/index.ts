@@ -11,3 +11,4 @@ export * from './state-machines/errors';
 export * from './state-machines/order-state.machine';
 export * from './state-machines/delivery-state.machine';
 export * from './fixtures';
+export * from './api';
