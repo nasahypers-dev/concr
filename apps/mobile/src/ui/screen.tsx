@@ -3,8 +3,8 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { type Edge, SafeAreaView } from 'react-native-safe-area-context';
@@ -24,7 +24,8 @@ export interface ScreenProps extends PropsWithChildren {
 
 /**
  * Every screen starts here: safe area, app background, 16 px gutters, dark mode aware.
- * A tap on any empty area closes the keyboard (inputs and buttons keep their own taps).
+ * In scroll mode a tap on empty content closes the keyboard. The dismiss target is a child of
+ * the ScrollView on purpose: a touchable *around* a scroll view steals the gesture on iOS.
  */
 export function Screen({
   children,
@@ -37,12 +38,18 @@ export function Screen({
   const gutters = bare ? '' : 'p-4';
   const content = scroll ? (
     <ScrollView
-      contentContainerClassName={cn('flex-grow gap-4', gutters, className)}
+      contentContainerClassName="flex-grow"
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
       showsVerticalScrollIndicator={false}
     >
-      {children}
+      <Pressable
+        accessible={false}
+        onPress={Keyboard.dismiss}
+        className={cn('flex-grow gap-4', gutters, className)}
+      >
+        {children}
+      </Pressable>
     </ScrollView>
   ) : (
     <View className={cn('flex-1 gap-4', gutters, className)}>{children}</View>
@@ -59,9 +66,7 @@ export function Screen({
   );
   return (
     <SafeAreaView edges={edges} className="flex-1 bg-background dark:bg-background-dark">
-      <TouchableWithoutFeedback accessible={false} onPress={Keyboard.dismiss}>
-        <View className="flex-1">{body}</View>
-      </TouchableWithoutFeedback>
+      {body}
     </SafeAreaView>
   );
 }
