@@ -15,6 +15,8 @@ export { MapView, type MapTruck, type MapViewProps } from './map-view';
 export { PriceBreakdown, type PriceBreakdownProps } from './price-breakdown';
 export { QuantityStepper, type QuantityStepperProps } from './quantity-stepper';
 export { Screen, type ScreenProps } from './screen';
+export { Scroll, type ScrollProps } from './scroll';
+export { Section, type SectionProps } from './section';
 export {
   SegmentedControl,
   type SegmentedControlProps,

@@ -1,15 +1,89 @@
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Screen, StateView } from '@/ui';
+import { FlatList, RefreshControl, View } from 'react-native';
+import { useSites } from '@/features/sites/use-sites';
+import { Button, Card, Icon, Screen, SkeletonList, StateView, Text, colors } from '@/ui';
 
 export default function SitesScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const sites = useSites();
+  const items = sites.data ?? [];
+
   return (
-    <Screen edges={['left', 'right']}>
-      <StateView
-        status="empty"
-        title={t('customer.sitesEmpty')}
-        description={t('customer.comingSoon')}
-      />
+    <Screen bare>
+      <View className="flex-row items-center justify-between px-4 pt-2">
+        <Text variant="title">{t('sites.title')}</Text>
+        <Button
+          size="sm"
+          variant="secondary"
+          icon="add"
+          label={t('common.add')}
+          onPress={() => router.push('/sites/new')}
+        />
+      </View>
+      {sites.isPending ? (
+        <View className="p-4">
+          <SkeletonList />
+        </View>
+      ) : sites.isError ? (
+        <StateView status="error" onRetry={() => void sites.refetch()} />
+      ) : (
+        <FlatList
+          data={items}
+          keyExtractor={(site) => site.id}
+          contentContainerClassName="gap-3 p-4"
+          renderItem={({ item }) => (
+            <Card
+              compact
+              onPress={() => router.push({ pathname: '/sites/[id]', params: { id: item.id } })}
+              accessibilityLabel={item.name}
+            >
+              <View className="flex-row items-center gap-3">
+                <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-soft dark:bg-surface-muted-dark">
+                  <Icon name="location" size="md" color={colors.ink} />
+                </View>
+                <View className="flex-1 gap-0.5">
+                  <View className="flex-row items-center gap-2">
+                    <Text weight="semibold" numberOfLines={1} className="shrink">
+                      {item.name}
+                    </Text>
+                    {item.isDefault ? (
+                      <View className="rounded-full bg-accent-soft px-2 py-0.5">
+                        <Text variant="caption" weight="semibold" className="text-accent-strong">
+                          {t('sites.default')}
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
+                  <Text variant="bodySm" tone="muted" numberOfLines={2}>
+                    {item.addressLine}
+                  </Text>
+                </View>
+                <Icon name="chevron-forward" size="md" color={colors.inkSubtle} />
+              </View>
+            </Card>
+          )}
+          ListEmptyComponent={
+            <StateView
+              status="empty"
+              compact
+              icon="location-outline"
+              title={t('sites.empty')}
+              description={t('sites.emptyHint')}
+              retryLabel={t('sites.add')}
+              onRetry={() => router.push('/sites/new')}
+            />
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={sites.isRefetching}
+              onRefresh={() => void sites.refetch()}
+              tintColor={colors.accent}
+            />
+          }
+        />
+      )}
     </Screen>
   );
 }

@@ -6,33 +6,42 @@ import { tabBarOptions } from '@/ui';
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
-function tabIcon(name: IconName) {
-  return function TabIcon({ color, size }: { color: ColorValue; size: number }) {
-    return <Ionicons name={name} color={color} size={size} />;
+function tabIcon(outline: IconName, filled: IconName) {
+  return function TabIcon({
+    color,
+    size,
+    focused,
+  }: {
+    color: ColorValue;
+    size: number;
+    focused: boolean;
+  }) {
+    return <Ionicons name={focused ? filled : outline} color={color} size={size} />;
   };
 }
 
-/** Customer tabs (spec §13): Home | My orders | Sites | Profile. */
+/** Customer tabs (spec §13): Home | My orders | Sites | Profile. The order wizard is a hidden route. */
 export default function CustomerLayout() {
   const { t } = useTranslation();
   return (
-    <Tabs screenOptions={{ ...tabBarOptions, headerShown: true }}>
+    <Tabs screenOptions={{ ...tabBarOptions, headerShown: false }}>
       <Tabs.Screen
         name="index"
-        options={{ title: t('nav.home'), tabBarIcon: tabIcon('home-outline') }}
+        options={{ title: t('nav.home'), tabBarIcon: tabIcon('home-outline', 'home') }}
       />
       <Tabs.Screen
         name="orders"
-        options={{ title: t('nav.orders'), tabBarIcon: tabIcon('receipt-outline') }}
+        options={{ title: t('nav.orders'), tabBarIcon: tabIcon('receipt-outline', 'receipt') }}
       />
       <Tabs.Screen
         name="sites"
-        options={{ title: t('nav.sites'), tabBarIcon: tabIcon('location-outline') }}
+        options={{ title: t('nav.sites'), tabBarIcon: tabIcon('location-outline', 'location') }}
       />
       <Tabs.Screen
         name="profile"
-        options={{ title: t('nav.profile'), tabBarIcon: tabIcon('person-outline') }}
+        options={{ title: t('nav.profile'), tabBarIcon: tabIcon('person-outline', 'person') }}
       />
+      <Tabs.Screen name="order" options={{ href: null, tabBarStyle: { display: 'none' } }} />
     </Tabs>
   );
 }
