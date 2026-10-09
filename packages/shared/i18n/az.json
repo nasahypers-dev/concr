@@ -73,6 +73,28 @@
     "onShift": "Növbədəyəm",
     "offShift": "Növbədə deyiləm"
   },
+  "status": {
+    "order": {
+      "PENDING": "Gözləyir",
+      "CONFIRMED": "Təsdiqləndi",
+      "SCHEDULED": "Planlaşdırıldı",
+      "IN_PROGRESS": "İcradadır",
+      "COMPLETED": "Tamamlandı",
+      "CANCELLED": "Ləğv edildi",
+      "REJECTED": "Rədd edildi"
+    },
+    "delivery": {
+      "PLANNED": "Planlanıb",
+      "ASSIGNED": "Təyin edilib",
+      "LOADING": "Yüklənir",
+      "EN_ROUTE": "Yoldadır",
+      "ARRIVED": "Obyektdədir",
+      "UNLOADING": "Boşaldılır",
+      "COMPLETED": "Tamamlandı",
+      "CANCELLED": "Ləğv edildi",
+      "FAILED": "Uğursuz"
+    }
+  },
   "errors": {
     "VALIDATION_ERROR": "Daxil edilən məlumatlar düzgün deyil",
     "BAD_REQUEST": "Yanlış sorğu",

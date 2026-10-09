@@ -73,6 +73,28 @@
     "onShift": "On shift",
     "offShift": "Off shift"
   },
+  "status": {
+    "order": {
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "SCHEDULED": "Scheduled",
+      "IN_PROGRESS": "In progress",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "REJECTED": "Rejected"
+    },
+    "delivery": {
+      "PLANNED": "Planned",
+      "ASSIGNED": "Assigned",
+      "LOADING": "Loading",
+      "EN_ROUTE": "En route",
+      "ARRIVED": "On site",
+      "UNLOADING": "Unloading",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "FAILED": "Failed"
+    }
+  },
   "errors": {
     "VALIDATION_ERROR": "The submitted data is invalid",
     "BAD_REQUEST": "Bad request",

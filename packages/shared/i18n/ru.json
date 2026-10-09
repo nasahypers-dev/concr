@@ -73,6 +73,28 @@
     "onShift": "На смене",
     "offShift": "Не на смене"
   },
+  "status": {
+    "order": {
+      "PENDING": "Ожидает",
+      "CONFIRMED": "Подтверждён",
+      "SCHEDULED": "Запланирован",
+      "IN_PROGRESS": "Выполняется",
+      "COMPLETED": "Завершён",
+      "CANCELLED": "Отменён",
+      "REJECTED": "Отклонён"
+    },
+    "delivery": {
+      "PLANNED": "Запланирован",
+      "ASSIGNED": "Назначен",
+      "LOADING": "Загрузка",
+      "EN_ROUTE": "В пути",
+      "ARRIVED": "На объекте",
+      "UNLOADING": "Разгрузка",
+      "COMPLETED": "Завершён",
+      "CANCELLED": "Отменён",
+      "FAILED": "Не выполнен"
+    }
+  },
   "errors": {
     "VALIDATION_ERROR": "Введённые данные некорректны",
     "BAD_REQUEST": "Неверный запрос",
