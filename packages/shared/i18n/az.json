@@ -43,7 +43,10 @@
     "passwordTooShort": "Şifrə ən azı 8 simvoldan ibarət olmalıdır",
     "invalidPhone": "Nömrəni +994 formatında daxil edin",
     "devEnterAsCustomer": "DEV: müştəri kimi daxil ol",
-    "devEnterAsDriver": "DEV: sürücü kimi daxil ol"
+    "devEnterAsDriver": "DEV: sürücü kimi daxil ol",
+    "devQuickLogin": "DEV: test müştərisi kimi daxil ol",
+    "devCodeHint": "Dev rejimi: kod {code}",
+    "codeResent": "Kod yenidən göndərildi"
   },
   "states": {
     "loading": "Yüklənir…",

@@ -2,34 +2,46 @@ import { phoneE164Schema } from '@concr/shared';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
-import { Button, Screen, TextField } from '@/ui';
+import { View } from 'react-native';
+import { useRequestOtp } from '@/features/auth/use-auth';
+import { useErrorMessage } from '@/features/common/use-error-message';
+import { AppHeader, Banner, Button, Screen, Text, TextField } from '@/ui';
 
-/** Phase 0 stub: validates the number locally; the OTP request arrives in Phase 1. */
+/** Normalises "050 620 95 84" / "+994 50 ..." into E.164 before validation. */
+export function normalizePhone(input: string): string {
+  const digits = input.replace(/[^\d+]/g, '');
+  if (digits.startsWith('+')) return digits;
+  if (digits.startsWith('994')) return `+${digits}`;
+  if (digits.startsWith('0')) return `+994${digits.slice(1)}`;
+  return `+994${digits}`;
+}
+
 export default function PhoneScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const requestOtp = useRequestOtp();
+  const errorMessage = useErrorMessage();
   const [phone, setPhone] = useState('+994');
   const [error, setError] = useState<string | undefined>();
 
-  const submit = () => {
-    const normalized = phone.replace(/[\s()-]/g, '');
+  const submit = async () => {
+    const normalized = normalizePhone(phone);
     if (!phoneE164Schema.safeParse(normalized).success) {
       setError(t('auth.invalidPhone'));
       return;
     }
     setError(undefined);
-    router.push({ pathname: '/otp', params: { phone: normalized } });
+    const result = await requestOtp.mutateAsync({ phone: normalized });
+    router.push({ pathname: '/otp', params: { phone: normalized, devCode: result.devCode ?? '' } });
   };
 
   return (
-    <Screen scroll>
-      <View className="gap-2">
-        <Text className="text-2xl font-semibold text-ink">{t('auth.phoneTitle')}</Text>
-        <Text className="text-base text-ink-muted">{t('auth.phoneHint')}</Text>
-      </View>
+    <Screen scroll keyboard>
+      <AppHeader title={t('auth.phoneTitle')} onBack={() => router.back()} />
+      <Text tone="muted">{t('auth.phoneHint')}</Text>
       <TextField
         label={t('auth.phoneTitle')}
+        icon="call-outline"
         value={phone}
         onChangeText={(value) => {
           setPhone(value);
@@ -42,9 +54,15 @@ export default function PhoneScreen() {
         autoComplete="tel"
         autoFocus
       />
+      {requestOtp.isError ? (
+        <Banner tone="danger" message={errorMessage(requestOtp.error)} />
+      ) : null}
       <View className="flex-1" />
-      <Button label={t('auth.sendCode')} onPress={submit} />
-      <Button variant="ghost" label={t('common.back')} onPress={() => router.back()} />
+      <Button
+        label={t('auth.sendCode')}
+        loading={requestOtp.isPending}
+        onPress={() => void submit()}
+      />
     </Screen>
   );
 }

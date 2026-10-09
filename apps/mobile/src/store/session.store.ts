@@ -7,12 +7,14 @@ export interface SessionTokens {
   role: UserRole;
   accessToken: string;
   refreshToken: string;
+  userId?: string | null;
 }
 
 export interface SessionState {
   /** false until the persisted session has been read from secure storage. */
   hydrated: boolean;
   role: UserRole | null;
+  userId: string | null;
   accessToken: string | null;
   refreshToken: string | null;
   setSession: (tokens: SessionTokens) => void;
@@ -30,16 +32,23 @@ export const useSessionStore = create<SessionState>()(
     (set) => ({
       hydrated: false,
       role: null,
+      userId: null,
       accessToken: null,
       refreshToken: null,
-      setSession: ({ role, accessToken, refreshToken }) => set({ role, accessToken, refreshToken }),
-      clear: () => set({ role: null, accessToken: null, refreshToken: null }),
+      setSession: ({ role, accessToken, refreshToken, userId }) =>
+        set({ role, accessToken, refreshToken, userId: userId ?? null }),
+      clear: () => set({ role: null, userId: null, accessToken: null, refreshToken: null }),
       markHydrated: () => set({ hydrated: true }),
     }),
     {
       name: SESSION_STORAGE_KEY,
       storage: createJSONStorage(() => secureStorage),
-      partialize: ({ role, accessToken, refreshToken }) => ({ role, accessToken, refreshToken }),
+      partialize: ({ role, userId, accessToken, refreshToken }) => ({
+        role,
+        userId,
+        accessToken,
+        refreshToken,
+      }),
       onRehydrateStorage: () => (state) => state?.markHydrated(),
     },
   ),

@@ -43,7 +43,10 @@
     "passwordTooShort": "Пароль должен содержать не менее 8 символов",
     "invalidPhone": "Введите номер в формате +994",
     "devEnterAsCustomer": "DEV: войти как клиент",
-    "devEnterAsDriver": "DEV: войти как водитель"
+    "devEnterAsDriver": "DEV: войти как водитель",
+    "devQuickLogin": "DEV: войти как тестовый клиент",
+    "devCodeHint": "Dev-режим: код {code}",
+    "codeResent": "Код отправлен повторно"
   },
   "states": {
     "loading": "Загрузка…",

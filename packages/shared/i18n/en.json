@@ -43,7 +43,10 @@
     "passwordTooShort": "Password must be at least 8 characters",
     "invalidPhone": "Enter the number in +994 format",
     "devEnterAsCustomer": "DEV: enter as customer",
-    "devEnterAsDriver": "DEV: enter as driver"
+    "devEnterAsDriver": "DEV: enter as driver",
+    "devQuickLogin": "DEV: sign in as the test customer",
+    "devCodeHint": "Dev mode: code {code}",
+    "codeResent": "Code sent again"
   },
   "states": {
     "loading": "Loading…",
