@@ -32,9 +32,15 @@ describe('API skeleton (e2e)', () => {
   });
 
   it('GET /api/v1/health/ready -> 200 with components up, or 503 envelope when infra is down', async () => {
-    const res = await request(app.getHttpServer()).get('/api/v1/health/ready');
     // CI provides PostGIS + Redis services and sets E2E_REQUIRE_INFRA; locally both outcomes are valid.
-    if (process.env.E2E_REQUIRE_INFRA === 'true') expect(res.status).toBe(200);
+    // Readiness may flip to 200 a moment after boot (Redis connects in the background), so poll.
+    const requireInfra = process.env.E2E_REQUIRE_INFRA === 'true';
+    let res = await request(app.getHttpServer()).get('/api/v1/health/ready');
+    for (let attempt = 0; requireInfra && res.status !== 200 && attempt < 10; attempt += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      res = await request(app.getHttpServer()).get('/api/v1/health/ready');
+    }
+    if (requireInfra) expect(res.status).toBe(200);
     expect([200, 503]).toContain(res.status);
     if (res.status === 200) {
       expect(res.body.status).toBe('ok');

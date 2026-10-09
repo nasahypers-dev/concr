@@ -5,6 +5,9 @@ import { REDIS } from '../redis/redis.module';
 
 const PING_TIMEOUT_MS = 1500;
 
+/** ioredis statuses in which a connection attempt is in flight and may succeed shortly. */
+const CONNECTING_STATUSES: ReadonlySet<string> = new Set(['connecting', 'connect', 'reconnecting']);
+
 @Injectable()
 export class RedisHealthIndicator {
   constructor(
@@ -15,13 +18,37 @@ export class RedisHealthIndicator {
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
     const indicator = this.healthIndicatorService.check(key);
     try {
-      const reply: string = await withTimeout(this.redis.ping(), PING_TIMEOUT_MS);
+      // The client connects in the background (lazyConnect + no offline queue), so a probe
+      // right after boot would fail although Redis is fine. Give an in-flight connect a moment.
+      const reply: string = await withTimeout(this.pingWhenReady(), PING_TIMEOUT_MS);
       return reply === 'PONG'
         ? indicator.up()
         : indicator.down({ message: `unexpected reply: ${reply}` });
     } catch (error) {
       return indicator.down({ message: error instanceof Error ? error.message : String(error) });
     }
+  }
+
+  private async pingWhenReady(): Promise<string> {
+    if (CONNECTING_STATUSES.has(this.redis.status)) {
+      await new Promise<void>((resolve, reject) => {
+        const onReady = () => {
+          cleanup();
+          resolve();
+        };
+        const onError = (error: Error) => {
+          cleanup();
+          reject(error);
+        };
+        const cleanup = () => {
+          this.redis.off('ready', onReady);
+          this.redis.off('error', onError);
+        };
+        this.redis.once('ready', onReady);
+        this.redis.once('error', onError);
+      });
+    }
+    return this.redis.ping();
   }
 }
 
