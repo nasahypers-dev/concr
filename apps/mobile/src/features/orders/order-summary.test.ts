@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-native';
 import { initI18n } from '@/i18n';
 import { formatVolume } from '@/lib/format';
-import { useOrderSummary, useSiteContactLabel } from './order-summary';
+import { siteContactLines, useOrderSummary } from './order-summary';
 
 beforeAll(() => {
   initI18n('az');
@@ -15,10 +15,12 @@ describe('useOrderSummary', () => {
   });
 });
 
-describe('useSiteContactLabel', () => {
-  it('formats the phone and falls back when the name is missing', async () => {
-    const { result } = await renderHook(() => useSiteContactLabel());
-    expect(result.current('Orxan', '+994503260343')).toBe('Orxan · +994 50 326 03 43');
-    expect(result.current(null, '+994503260343')).toBe('ad göstərilməyib · +994 50 326 03 43');
+describe('siteContactLines', () => {
+  it('puts the phone under the name, or shows the phone alone', () => {
+    expect(siteContactLines('Orxan', '+994503260343')).toEqual({
+      title: 'Orxan',
+      subtitle: '+994 50 326 03 43',
+    });
+    expect(siteContactLines(null, '+994503260343')).toEqual({ title: '+994 50 326 03 43' });
   });
 });

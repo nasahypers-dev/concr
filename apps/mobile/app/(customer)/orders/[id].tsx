@@ -11,7 +11,7 @@ import { Linking, Pressable, View } from 'react-native';
 import { useSupplier } from '@/features/catalog/use-catalog';
 import { useErrorMessage } from '@/features/common/use-error-message';
 import { useWindowLabel } from '@/features/orders/order-card';
-import { useOrderSummary, useSiteContactLabel } from '@/features/orders/order-summary';
+import { siteContactLines, useOrderSummary } from '@/features/orders/order-summary';
 import { useOrderDraftStore } from '@/features/orders/order-draft.store';
 import {
   useCancelOrder,
@@ -52,7 +52,6 @@ export default function OrderDetailScreen() {
   const errorMessage = useErrorMessage();
   const windowLabel = useWindowLabel();
   const summary = useOrderSummary();
-  const contactLabel = useSiteContactLabel();
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
 
@@ -170,8 +169,7 @@ export default function OrderDetailScreen() {
           />
           <ListRow
             icon="call-outline"
-            title={contactLabel(detail.siteContactName, detail.siteContactPhone)}
-            subtitle={t('order.siteContact')}
+            {...siteContactLines(detail.siteContactName, detail.siteContactPhone)}
           />
           <ListRow
             icon="time-outline"

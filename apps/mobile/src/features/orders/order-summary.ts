@@ -15,8 +15,13 @@ export function useOrderSummary(): (
       : t('order.summary', { grade, volume: formatVolume(volumeM3) });
 }
 
-/** "Orxan · +994 50 326 03 43"; the name falls back to a translated placeholder. */
-export function useSiteContactLabel(): (name: string | null, phone: string) => string {
-  const { t } = useTranslation();
-  return (name, phone) => `${name ?? t('sites.noContactName')} · ${formatPhoneAz(phone)}`;
+export interface SiteContactLines {
+  title: string;
+  subtitle?: string;
+}
+
+/** Name on the first line with the phone under it; just the phone when no name was given. */
+export function siteContactLines(name: string | null, phone: string): SiteContactLines {
+  const formatted = formatPhoneAz(phone);
+  return name ? { title: name, subtitle: formatted } : { title: formatted };
 }

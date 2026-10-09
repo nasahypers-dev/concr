@@ -1,8 +1,8 @@
 import { formatAzn, type OrderSummary } from '@concr/shared';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import { dayOffsetFromToday, formatDate, formatWindow } from '@/lib/format';
-import { useOrderSummary, useSiteContactLabel } from './order-summary';
+import { dayOffsetFromToday, formatDate, formatPhoneAz, formatWindow } from '@/lib/format';
+import { useOrderSummary } from './order-summary';
 import { Card, Icon, StatusBadge, Text } from '@/ui';
 
 export interface OrderCardProps {
@@ -33,7 +33,6 @@ export function OrderCard({ order, onPress, emphasis = false }: OrderCardProps) 
   const { t } = useTranslation();
   const windowLabel = useWindowLabel();
   const summary = useOrderSummary();
-  const contactLabel = useSiteContactLabel();
   const inProgress = order.status === 'IN_PROGRESS';
   return (
     <Card onPress={onPress} accessibilityLabel={order.number} compact={!emphasis}>
@@ -61,11 +60,18 @@ export function OrderCard({ order, onPress, emphasis = false }: OrderCardProps) 
             {windowLabel(order.requestedDate, order.timeWindowStart, order.timeWindowEnd)}
           </Text>
         </View>
-        <View className="flex-row items-center gap-2">
+        <View className="flex-row items-start gap-2">
           <Icon name="call-outline" size="sm" tone="muted" />
-          <Text variant="bodySm" tone="muted" numberOfLines={1} className="flex-1">
-            {contactLabel(order.siteContactName, order.siteContactPhone)}
-          </Text>
+          <View className="flex-1">
+            {order.siteContactName ? (
+              <Text variant="bodySm" tone="muted" numberOfLines={1}>
+                {order.siteContactName}
+              </Text>
+            ) : null}
+            <Text variant="bodySm" tone="muted" numberOfLines={1}>
+              {formatPhoneAz(order.siteContactPhone)}
+            </Text>
+          </View>
         </View>
       </View>
       <View className="mt-3 flex-row items-center justify-between">

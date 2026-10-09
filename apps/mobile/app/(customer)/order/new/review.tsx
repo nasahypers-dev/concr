@@ -6,7 +6,7 @@ import { useProducts, usePumpOptions, useQuote } from '@/features/catalog/use-ca
 import { useErrorMessage } from '@/features/common/use-error-message';
 import { CardDetailsForm } from '@/features/orders/card-details-form';
 import { useWindowLabel } from '@/features/orders/order-card';
-import { useOrderSummary, useSiteContactLabel } from '@/features/orders/order-summary';
+import { siteContactLines, useOrderSummary } from '@/features/orders/order-summary';
 import { draftToCreateOrderInput, useOrderDraftStore } from '@/features/orders/order-draft.store';
 import { useCreateOrder } from '@/features/orders/use-orders';
 import { WizardFrame } from '@/features/orders/wizard-frame';
@@ -34,7 +34,6 @@ export default function WizardReviewScreen() {
   const errorMessage = useErrorMessage();
   const windowLabel = useWindowLabel();
   const summary = useOrderSummary();
-  const contactLabel = useSiteContactLabel();
 
   const input = draftToCreateOrderInput(draft);
   const product = products.data?.find((p) => p.id === draft.productId);
@@ -79,8 +78,7 @@ export default function WizardReviewScreen() {
             <ListRow icon="location-outline" title={site.name} subtitle={site.addressLine} />
             <ListRow
               icon="call-outline"
-              title={contactLabel(site.contactName, site.contactPhone)}
-              subtitle={t('order.siteContact')}
+              {...siteContactLines(site.contactName, site.contactPhone)}
             />
             <ListRow
               icon="water-outline"
