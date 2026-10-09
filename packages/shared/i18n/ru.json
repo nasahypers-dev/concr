@@ -73,6 +73,45 @@
     "onShift": "На смене",
     "offShift": "Не на смене"
   },
+  "time": {
+    "today": "Сегодня",
+    "tomorrow": "Завтра",
+    "yesterday": "Вчера",
+    "etaMinutes": "~{minutes} мин",
+    "minutesShort": "{minutes} мин",
+    "window": "{date}, {window}"
+  },
+  "price": {
+    "base": "{grade} · {volume} × {price}",
+    "subtotal": "Бетон (без НДС)",
+    "pump": "Насос",
+    "pumpPending": "Цену подтвердит диспетчер",
+    "delivery": "Доставка",
+    "deliveryIncluded": "Включена в цену",
+    "vat": "НДС {rate}%",
+    "total": "Итого (с НДС)",
+    "perM3ExVat": "{price} + НДС"
+  },
+  "timeline": {
+    "CREATED": "Заказ создан",
+    "STATUS_CHANGED": "Статус: {status}",
+    "PRICE_OVERRIDDEN": "Цена изменена",
+    "SCHEDULE_CHANGED": "Время изменено",
+    "DELIVERY_STATUS_CHANGED": "Рейс {sequence}: {status}",
+    "NOTE_ADDED": "Добавлена заметка",
+    "reason": "Причина: {reason}"
+  },
+  "delivery": {
+    "trip": "Рейс {sequence}/{total}",
+    "driver": "Водитель",
+    "truck": "Миксер",
+    "call": "Позвонить",
+    "eta": "Прибытие: ~{minutes} мин",
+    "arrived": "На объекте",
+    "noSignal": "Нет сигнала GPS",
+    "document": "Акт приёма {number}",
+    "receivedBy": "Принял: {name}"
+  },
   "status": {
     "order": {
       "PENDING": "Ожидает",

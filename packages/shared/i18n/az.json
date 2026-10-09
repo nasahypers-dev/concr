@@ -73,6 +73,45 @@
     "onShift": "Növbədəyəm",
     "offShift": "Növbədə deyiləm"
   },
+  "time": {
+    "today": "Bu gün",
+    "tomorrow": "Sabah",
+    "yesterday": "Dünən",
+    "etaMinutes": "~{minutes} dəq",
+    "minutesShort": "{minutes} dəq",
+    "window": "{date}, {window}"
+  },
+  "price": {
+    "base": "{grade} · {volume} × {price}",
+    "subtotal": "Beton (ƏDV-siz)",
+    "pump": "Nasos",
+    "pumpPending": "Qiymət dispetçer tərəfindən təsdiqlənəcək",
+    "delivery": "Çatdırılma",
+    "deliveryIncluded": "Qiymətə daxildir",
+    "vat": "ƏDV {rate}%",
+    "total": "Cəmi (ƏDV daxil)",
+    "perM3ExVat": "{price} + ƏDV"
+  },
+  "timeline": {
+    "CREATED": "Sifariş yaradıldı",
+    "STATUS_CHANGED": "Status: {status}",
+    "PRICE_OVERRIDDEN": "Qiymət dəyişdirildi",
+    "SCHEDULE_CHANGED": "Vaxt dəyişdirildi",
+    "DELIVERY_STATUS_CHANGED": "Reys {sequence}: {status}",
+    "NOTE_ADDED": "Qeyd əlavə edildi",
+    "reason": "Səbəb: {reason}"
+  },
+  "delivery": {
+    "trip": "Reys {sequence}/{total}",
+    "driver": "Sürücü",
+    "truck": "Mikser",
+    "call": "Zəng et",
+    "eta": "Gəliş: ~{minutes} dəq",
+    "arrived": "Obyektdədir",
+    "noSignal": "GPS siqnalı yoxdur",
+    "document": "Təhvil aktı {number}",
+    "receivedBy": "Qəbul etdi: {name}"
+  },
   "status": {
     "order": {
       "PENDING": "Gözləyir",

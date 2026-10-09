@@ -73,6 +73,45 @@
     "onShift": "On shift",
     "offShift": "Off shift"
   },
+  "time": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday",
+    "etaMinutes": "~{minutes} min",
+    "minutesShort": "{minutes} min",
+    "window": "{date}, {window}"
+  },
+  "price": {
+    "base": "{grade} · {volume} × {price}",
+    "subtotal": "Concrete (excl. VAT)",
+    "pump": "Pump",
+    "pumpPending": "Price to be confirmed by the dispatcher",
+    "delivery": "Delivery",
+    "deliveryIncluded": "Included in the price",
+    "vat": "VAT {rate}%",
+    "total": "Total (incl. VAT)",
+    "perM3ExVat": "{price} + VAT"
+  },
+  "timeline": {
+    "CREATED": "Order created",
+    "STATUS_CHANGED": "Status: {status}",
+    "PRICE_OVERRIDDEN": "Price overridden",
+    "SCHEDULE_CHANGED": "Schedule changed",
+    "DELIVERY_STATUS_CHANGED": "Trip {sequence}: {status}",
+    "NOTE_ADDED": "Note added",
+    "reason": "Reason: {reason}"
+  },
+  "delivery": {
+    "trip": "Trip {sequence}/{total}",
+    "driver": "Driver",
+    "truck": "Mixer",
+    "call": "Call",
+    "eta": "Arrival: ~{minutes} min",
+    "arrived": "On site",
+    "noSignal": "No GPS signal",
+    "document": "Delivery note {number}",
+    "receivedBy": "Received by: {name}"
+  },
   "status": {
     "order": {
       "PENDING": "Pending",

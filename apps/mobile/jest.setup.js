@@ -16,3 +16,29 @@ jest.mock('expo-secure-store', () => ({
 jest.mock('expo-localization', () => ({
   getLocales: () => [{ languageCode: 'az', languageTag: 'az-AZ' }],
 }));
+
+// react-native-maps is native; the manual mock in __mocks__/react-native-maps.tsx renders views.
+// (Kept out of this file: NativeWind's Babel plugin rewrites createElement calls, which breaks
+// jest.mock factory hoisting.)
+jest.mock('react-native-maps');
+
+jest.mock('expo-haptics', () => ({
+  selectionAsync: jest.fn(() => Promise.resolve()),
+  impactAsync: jest.fn(() => Promise.resolve()),
+  notificationAsync: jest.fn(() => Promise.resolve()),
+  ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
+  NotificationFeedbackType: { Success: 'success', Warning: 'warning', Error: 'error' },
+}));
+
+jest.mock('expo-font', () => ({
+  useFonts: () => [true, null],
+  isLoaded: () => true,
+  loadAsync: () => Promise.resolve(),
+}));
+
+jest.mock('@expo-google-fonts/inter', () => ({
+  Inter_400Regular: 'Inter_400Regular',
+  Inter_500Medium: 'Inter_500Medium',
+  Inter_600SemiBold: 'Inter_600SemiBold',
+  Inter_700Bold: 'Inter_700Bold',
+}));
