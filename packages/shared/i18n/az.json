@@ -91,8 +91,12 @@
     "stepReview": "Təsdiq",
     "chooseGrade": "Beton markası",
     "popular": "Populyar",
-    "slump": "Konus çökməsi",
-    "slumpHint": "Nasosla tökmək üçün adətən P4 seçilir",
+    "slump": "Betonun axıcılığı (konus çökməsi)",
+    "slumpIntro": "Beton nə qədər axıcı olsun? Tökmə üsuluna görə seçilir.",
+    "slumpHint": "Əmin deyilsinizsə P3 seçin, dispetçer dəqiqləşdirəcək.",
+    "slumpP2": "P2 · az axıcı (5–9 sm): əl ilə tökmə, maili səthlər, pilləkən.",
+    "slumpP3": "P3 · orta axıcı (10–15 sm): təməl, döşəmə, ən çox seçilən.",
+    "slumpP4": "P4 · axıcı (16–20 sm): nasosla tökmə, kolon, sıx armaturlu yerlər.",
     "volume": "Həcm",
     "volumeHint": "Minimum {min} m³ · mikserlər 8, 10, 12 m³",
     "pricePreview": "Təxmini qiymət",
@@ -102,7 +106,7 @@
     "pumpYes": "Bəli, nasosla",
     "pumpNo": "Xeyr, mikserdən birbaşa",
     "boomLength": "Bum uzunluğu {length} m",
-    "pumpPriceNote": "Nasosun qiyməti dispetçer tərəfindən təsdiqlənəcək və sifariş təsdiqində bildiriləcək.",
+    "pumpPriceNote": "Nasosun qiyməti sifariş üzrədir (Bakı və Abşeron) və yekun məbləğə əlavə olunur.",
     "chooseWindow": "Çatdırılma vaxtı",
     "leadTimeHint": "Ən erkən: {date}, {window}",
     "nightHint": "Zavod 7/24 işləyir, gecə saatları da mümkündür.",
@@ -117,8 +121,7 @@
   },
   "payment": {
     "CASH": "Nağd",
-    "BANK_TRANSFER": "Köçürmə",
-    "CREDIT": "Kredit (hesab)"
+    "CARD": "Kartla"
   },
   "order": {
     "title": "Sifariş {number}",

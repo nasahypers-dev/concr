@@ -49,8 +49,7 @@ export const TRACKING_DELIVERY_STATUSES: readonly DeliveryStatus[] = [
 
 export const PaymentMethod = {
   CASH: 'CASH',
-  BANK_TRANSFER: 'BANK_TRANSFER',
-  CREDIT: 'CREDIT',
+  CARD: 'CARD',
 } as const;
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
 

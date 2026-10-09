@@ -47,14 +47,21 @@ export const PUMP_24M_ID = 'pump_24m';
 
 /** One 24 m pump exists (spec §3). TODO(nurlan): price model and other boom lengths. */
 export function createPumpOptions(): PumpOption[] {
-  return [
-    {
-      id: PUMP_24M_ID,
-      supplierId: SUPPLIER_ID,
-      boomLengthM: 24,
-      pricePerOrder: null,
-      pricePerM3: null,
-      isActive: true,
-    },
+  // Owner's price list (2026-10-09): per order, Baku + Absheron; +50 ₼ per step above 32 m.
+  const priceByBoom: ReadonlyArray<readonly [boomLengthM: number, pricePerOrder: string]> = [
+    [24, '200.00'],
+    [28, '250.00'],
+    [32, '250.00'],
+    [36, '300.00'],
+    [38, '350.00'],
+    [42, '400.00'],
   ];
+  return priceByBoom.map(([boomLengthM, pricePerOrder]) => ({
+    id: boomLengthM === 24 ? PUMP_24M_ID : `pump_${boomLengthM}m`,
+    supplierId: SUPPLIER_ID,
+    boomLengthM,
+    pricePerOrder,
+    pricePerM3: null,
+    isActive: true,
+  }));
 }

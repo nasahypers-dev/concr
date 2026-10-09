@@ -12,6 +12,7 @@ export function createSupplier(): Supplier {
     legalName: null, // TODO(nurlan): legal entity name for documents
     taxId: null, // TODO(nurlan): VÖEN
     phone: '+994506209584',
+    dispatchPhone: '+994503260343',
     email: 'info@novxanibeton.az',
     website: 'https://novxanibeton.az',
     address: 'Novxanı şossesi, Bakı',

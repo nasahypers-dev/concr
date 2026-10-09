@@ -14,19 +14,20 @@ Owner: Nurlan. Everything marked **open** is a `TODO(nurlan)` placeholder in cod
 | D5  | Mixer capacities                    | 8, 10, 12 m³                                                                              | `Truck.capacityM3`                                    |
 | D6  | Slump options                       | P2, P3, P4                                                                                | `Product.slumpOptions`                                |
 | D7  | Concrete lifetime                   | 90 min from `departedAt`, warning at 75 min                                               | `settings.concreteLifetimeMin`                        |
-| D8  | Payment                             | Cash / bank transfer / credit note only, no online card                                   | `PaymentMethod`                                       |
+| D8  | Payment                             | Cash or card on delivery (owner, 2026-10-09); no online payment                                   | `PaymentMethod`                                       |
 | D9  | GPS source in MVP                   | Driver's phone (background location)                                                      | spec §9                                               |
 | D10 | Auth                                | Customer & driver: phone + SMS OTP; staff: email + password                               | `auth` module                                         |
 | D11 | Supplier contact                    | Novxanı şossesi, Bakı · +994 50 620 95 84 · info@novxanibeton.az · novxanibeton.az · 24/7 | `prisma/seed.ts` only                                 |
 | D12 | Working hours                       | 24/7, night slots allowed                                                                 | `settings.workingHours`                               |
 | D13 | Brand (temporary)                   | CONCR, scheme `concr://`, bundle id `az.concr.app`                                        | `apps/mobile/app.config.ts`                           |
+| D14 | Order line phone shown in the app ("Zavoda zəng et") | +994 50 326 03 43 (owner, 2026-10-09); official listing stays +994 50 620 95 84 | `fixtures/supplier.ts` `dispatchPhone` |
 
 ## Open questions (spec §22) — placeholders in code until answered
 
 | #   | Question                                                                                                         | Assumption used now                                    | Status |
 | --- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | ------ |
 | Q1  | Minimum order volume? Earliest delivery (lead time) in hours?                                                    | 3 m³ · 6 h                                             | open   |
-| Q2  | Pump boom lengths besides 24 m; price model (per order / per m³ / per hour)?                                     | 24 m only, price unknown                               | open   |
+| Q2  | Pump boom lengths besides 24 m; price model (per order / per m³ / per hour)?                                     | 24/28/32/36/38/42 m; per order 200/250/250/300/350/400 ₼ (owner, 2026-10-09) | answered |
 | Q3  | Number of mixers per capacity and plate numbers; number of drivers; their phones (Android/iPhone)?               | 2×8, 2×10, 2×12, 1 pump, 3 drivers, placeholder plates | open   |
 | Q4  | Do trucks already have a GPS tracker (which vendor)?                                                             | No; `TrackingSource = PHONE`                           | open   |
 | Q5  | Cancellation rules and demurrage (waiting) fee?                                                                  | cancel cutoff 12 h, no demurrage                       | open   |

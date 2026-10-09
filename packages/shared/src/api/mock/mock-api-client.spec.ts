@@ -124,7 +124,8 @@ describe('mock api client — catalog', () => {
       volumeM3: 10,
       pumpOptionId: 'pump_24m',
     });
-    expect(pumped.pumpPriceKnown).toBe(false);
+    expect(pumped.pumpPriceKnown).toBe(true);
+    expect(pumped.breakdown.pumpFee).toBe('200.00');
     await expectApiError(
       api.catalog.quote({ productId: m300.id, volumeM3: 1, pumpOptionId: null }),
       'MIN_VOLUME_NOT_MET',

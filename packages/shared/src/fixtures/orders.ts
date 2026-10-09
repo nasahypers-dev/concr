@@ -241,7 +241,7 @@ export function createOrderFixtures(ctx: OrderFixtureContext): OrderFixtureSet {
       status: OrderStatus.CONFIRMED,
       createdAt: minutesAgo(now, 300),
       confirmedAt: minutesAgo(now, 240),
-      paymentMethod: PaymentMethod.BANK_TRANSFER,
+      paymentMethod: PaymentMethod.CARD,
     });
     statusChange(
       order.id,

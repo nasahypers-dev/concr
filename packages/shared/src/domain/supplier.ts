@@ -32,6 +32,8 @@ export interface Supplier {
   /** VÖEN */
   taxId: string | null;
   phone: string;
+  /** Number customers call from the app (order line); may differ from the official contact. */
+  dispatchPhone: string;
   email: string;
   website: string | null;
   address: string;

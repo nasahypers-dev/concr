@@ -91,8 +91,12 @@
     "stepReview": "Review",
     "chooseGrade": "Concrete grade",
     "popular": "Popular",
-    "slump": "Slump class",
-    "slumpHint": "P4 is the usual choice for pumping",
+    "slump": "Concrete workability (slump)",
+    "slumpIntro": "How fluid should the concrete be? It depends on how it is placed.",
+    "slumpHint": "Not sure? Pick P3; the dispatcher will confirm.",
+    "slumpP2": "P2 · stiff (5–9 cm): hand placing, sloped surfaces, stairs.",
+    "slumpP3": "P3 · plastic (10–15 cm): foundations, slabs, the usual choice.",
+    "slumpP4": "P4 · fluid (16–20 cm): pumping, columns, dense reinforcement.",
     "volume": "Volume",
     "volumeHint": "Minimum {min} m³ · mixers hold 8, 10, 12 m³",
     "pricePreview": "Estimated price",
@@ -102,7 +106,7 @@
     "pumpYes": "Yes, with a pump",
     "pumpNo": "No, straight from the mixer",
     "boomLength": "Boom length {length} m",
-    "pumpPriceNote": "The pump price is confirmed by the dispatcher and shown when the order is confirmed.",
+    "pumpPriceNote": "The pump price is per order (Baku and Absheron) and is added to the total.",
     "chooseWindow": "Delivery time",
     "leadTimeHint": "Earliest: {date}, {window}",
     "nightHint": "The plant works 24/7; night slots are available.",
@@ -117,8 +121,7 @@
   },
   "payment": {
     "CASH": "Cash",
-    "BANK_TRANSFER": "Bank transfer",
-    "CREDIT": "Credit (invoice)"
+    "CARD": "Card"
   },
   "order": {
     "title": "Order {number}",
