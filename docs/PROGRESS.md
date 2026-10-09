@@ -69,6 +69,25 @@ backend afterwards** (`docs/DECISIONS.md` P1–P4, ADR 0006–0008). Update this
 - A persisted session whose user no longer exists in the rebuilt mock store now signs out (UNAUTHORIZED →
   login) instead of leaving every screen in an error state.
 
+### Sprint U1.1 — second device test, 25 owner items (2026-10-09)
+
+Five commits, all green in CI:
+
+1. Pricing: VAT on the concrete only, pump fee added untaxed (D15); minimum order 8 m³ (Q1); "Pompa"
+   wording (D16); grade caption without "+ ƏDV"; night hint, tagline and the empty "documents" state removed;
+   handover acts shown only when an order has one (D18).
+2. Slump optional (dispatcher confirms), site contact phone required and frozen on the order
+   (`siteContactName/Phone`, shown on cards, detail and review); default-site feature removed (D17).
+3. Theme preference System/Dark/Light in the profile (ADR 0009); `Icon` tones and palette-aware button
+   icons fix the invisible "+" / arrow / logout icons in dark mode.
+4. Keyboard closes on tap outside and on drag; "Yadda saxlanıldı" auto-hides (6 s / tab switch); visual-only
+   card form behind "Kartla".
+5. Bolt-style site picker (centre pin, full-screen modal) with "use my location" (`expo-location`,
+   foreground, Expo Go); markers no longer turn into the default pin on tap.
+
+Device checks still pending on the iPhone: marker tap, picker gestures, GPS permission flow, theme switch
+persistence after a cold start, keyboard dismissal on every form.
+
 ### CI (2026-10-09)
 
 - First push to GitHub (`nasahypers-dev/concr`) went through; the workflow is green after four fixes:

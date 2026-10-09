@@ -11,7 +11,7 @@ export {
 } from './date-window-picker';
 export { Icon, type IconName, type IconProps, type IconSize } from './icon';
 export { ListRow, type ListRowProps } from './list-row';
-export { MapView, type MapTruck, type MapViewProps } from './map-view';
+export { MapView, type MapTruck, type MapViewHandle, type MapViewProps } from './map-view';
 export { PriceBreakdown, type PriceBreakdownProps } from './price-breakdown';
 export { QuantityStepper, type QuantityStepperProps } from './quantity-stepper';
 export { Screen, type ScreenProps } from './screen';

@@ -1,10 +1,11 @@
 import { type GeoPoint, type Site, type SiteInput, siteInputSchema } from '@concr/shared';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { normalizePhone } from '@/features/auth/normalize-phone';
 import { useSupplier } from '@/features/catalog/use-catalog';
 import { Banner, Button, MapView, Text, TextField } from '@/ui';
+import { LocationPicker } from './location-picker';
 
 export interface SiteFormProps {
   initial?: Site;
@@ -27,6 +28,7 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
   const [contactName, setContactName] = useState(initial?.contactName ?? '');
   const [contactPhone, setContactPhone] = useState(initial?.contactPhone ?? '');
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   const submit = () => {
     const candidate = {
@@ -56,7 +58,7 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
     onSubmit(result.data);
   };
 
-  const mapCenter = location ?? supplier.data?.plant.location ?? null;
+  const plantLocation = supplier.data?.plant.location ?? null;
 
   return (
     <View className="gap-4">
@@ -80,18 +82,43 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
         <Text variant="bodySm" weight="medium">
           {t('sites.pin')}
         </Text>
-        <MapView
-          className="h-56"
-          site={location}
-          plant={location ? null : mapCenter}
-          onPickLocation={(point) => {
+        {/* Read-only preview; the pin is chosen in the full-screen picker (Bolt-style). */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('sites.pickOnMap')}
+          onPress={() => setPickerOpen(true)}
+          className="active:opacity-90"
+        >
+          <View pointerEvents="none">
+            <MapView
+              className="h-44"
+              interactive={false}
+              site={location}
+              plant={location ? null : plantLocation}
+              testID="site-map"
+            />
+          </View>
+        </Pressable>
+        <Button
+          variant="outline"
+          size="md"
+          icon="map-outline"
+          label={t('sites.pickOnMap')}
+          onPress={() => setPickerOpen(true)}
+        />
+        <LocationPicker
+          visible={pickerOpen}
+          initial={location}
+          plant={plantLocation}
+          onClose={() => setPickerOpen(false)}
+          onConfirm={(point) => {
             setLocation(point);
             setErrors((prev) => ({ ...prev, location: undefined }));
+            setPickerOpen(false);
           }}
-          testID="site-map"
         />
         <Text variant="bodySm" tone={errors.location ? 'danger' : 'muted'}>
-          {errors.location ?? t('sites.pinHint')}
+          {errors.location ?? (location ? t('sites.pinChosen') : t('sites.pinMissing'))}
         </Text>
       </View>
       <TextField

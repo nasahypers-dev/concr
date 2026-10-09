@@ -58,8 +58,9 @@ live map. The backend is integrated in the B-phases (`docs/PROGRESS.md`).
 
 ## Mobile: Expo Go is enough for now
 
-Phase 0 and 1 run in Expo Go. A development build (`eas build --profile development`) becomes required in
-Phase 2 when maps, background location and push notifications are added. See `docs/SETUP_GUIDE.md`.
+Phase 0 and 1 run in Expo Go, including maps (`react-native-maps`) and the foreground location used by the
+site picker (`expo-location`). A development build (`eas build --profile development`) becomes required in
+Phase 2 for background location (driver tracking) and push notifications. See `docs/SETUP_GUIDE.md`.
 
 ## Conventions
 

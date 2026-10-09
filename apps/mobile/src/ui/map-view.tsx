@@ -1,5 +1,5 @@
 import type { GeoPoint } from '@concr/shared';
-import { useEffect, useRef } from 'react';
+import { type Ref, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { useColorScheme, View } from 'react-native';
 import RNMapView, { Marker, Polyline } from 'react-native-maps';
 import { cn } from './cn';
@@ -16,6 +16,11 @@ export interface MapTruck {
   idle?: boolean;
 }
 
+/** Imperative API for the few cases a screen must move the camera (location picker). */
+export interface MapViewHandle {
+  animateTo: (point: GeoPoint, delta?: number) => void;
+}
+
 export interface MapViewProps {
   plant?: GeoPoint | null;
   site?: GeoPoint | null;
@@ -24,16 +29,30 @@ export interface MapViewProps {
   /** Tailwind height class, e.g. "h-64"; the map fills its width. */
   className?: string;
   interactive?: boolean;
-  /** Called with the map centre when the user taps (site pin picker). */
-  onPickLocation?: (point: GeoPoint) => void;
+  /**
+   * Picker mode: a fixed pin is drawn at the centre and the map pans underneath it
+   * (Bolt-style). The map no longer auto-fits; use `initialCenter` instead.
+   */
+  centerPin?: boolean;
+  /** Picker mode: fires after every pan/zoom with the new centre. */
+  onCenterChange?: (point: GeoPoint, isGesture: boolean) => void;
+  initialCenter?: GeoPoint | null;
+  /** Latitude/longitude delta of the initial region (smaller = closer). */
+  initialDelta?: number;
+  ref?: Ref<MapViewHandle>;
   testID?: string;
 }
 
 const EDGE_PADDING = { top: 48, right: 48, bottom: 48, left: 48 };
+const BAKU_CENTER: GeoPoint = { lat: 40.4093, lng: 49.8671 };
+const DEFAULT_DELTA = 0.08;
+const PIN_SIZE = 36;
 
 /**
  * react-native-maps wrapper (Apple Maps on iOS, Google Maps on Android; both work in Expo Go).
  * Fits all given points, draws the route, rotates truck markers by heading (spec §9.3).
+ * Markers stop their taps from reaching the map: on Apple Maps a propagated tap used to swap the
+ * plant marker for a default pin (owner item 13).
  */
 export function MapView({
   plant,
@@ -42,22 +61,46 @@ export function MapView({
   route,
   className,
   interactive = true,
-  onPickLocation,
+  centerPin = false,
+  onCenterChange,
+  initialCenter,
+  initialDelta = DEFAULT_DELTA,
+  ref,
   testID,
 }: MapViewProps) {
-  const ref = useRef<RNMapView>(null);
+  const mapRef = useRef<RNMapView>(null);
   const scheme = useColorScheme();
   const points: GeoPoint[] = [
     ...(plant ? [plant] : []),
     ...(site ? [site] : []),
     ...trucks.map((t) => ({ lat: t.lat, lng: t.lng })),
   ];
-  const fitKey = points.map((p) => `${p.lat.toFixed(3)},${p.lng.toFixed(3)}`).join('|');
+  const fitKey = centerPin
+    ? ''
+    : points.map((p) => `${p.lat.toFixed(3)},${p.lng.toFixed(3)}`).join('|');
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      animateTo: (point, delta = 0.005) => {
+        mapRef.current?.animateToRegion(
+          {
+            latitude: point.lat,
+            longitude: point.lng,
+            latitudeDelta: delta,
+            longitudeDelta: delta,
+          },
+          400,
+        );
+      },
+    }),
+    [],
+  );
 
   useEffect(() => {
-    if (points.length === 0) return;
+    if (fitKey === '' || points.length === 0) return;
     const timer = setTimeout(() => {
-      ref.current?.fitToCoordinates(
+      mapRef.current?.fitToCoordinates(
         points.map((p) => ({ latitude: p.lat, longitude: p.lng })),
         { edgePadding: EDGE_PADDING, animated: true },
       );
@@ -66,33 +109,65 @@ export function MapView({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fitKey summarises `points`
   }, [fitKey]);
 
-  const initial = points[0] ?? { lat: 40.4093, lng: 49.8671 };
+  const initial = initialCenter ?? points[0] ?? BAKU_CENTER;
+
+  // Static markers keep a stable element tree so MapKit never re-creates their views.
+  const plantMarker = useMemo(
+    () =>
+      plant ? (
+        <Marker
+          coordinate={{ latitude: plant.lat, longitude: plant.lng }}
+          anchor={{ x: 0.5, y: 0.5 }}
+          tracksViewChanges={false}
+          stopPropagation
+        >
+          <View className="h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-primary">
+            <Icon name="business" size="sm" color={colors.primaryForeground} />
+          </View>
+        </Marker>
+      ) : null,
+    [plant],
+  );
+  const siteMarker = useMemo(
+    () =>
+      site && !centerPin ? (
+        <Marker
+          coordinate={{ latitude: site.lat, longitude: site.lng }}
+          anchor={{ x: 0.5, y: 1 }}
+          tracksViewChanges={false}
+          stopPropagation
+        >
+          <Icon name="location" size={PIN_SIZE} color={colors.danger} />
+        </Marker>
+      ) : null,
+    [site, centerPin],
+  );
 
   return (
     <View className={cn('overflow-hidden rounded-2xl', className)} testID={testID}>
       <RNMapView
-        ref={ref}
+        ref={mapRef}
         style={{ flex: 1 }}
         initialRegion={{
           latitude: initial.lat,
           longitude: initial.lng,
-          latitudeDelta: 0.08,
-          longitudeDelta: 0.08,
+          latitudeDelta: initialDelta,
+          longitudeDelta: initialDelta,
         }}
         scrollEnabled={interactive}
         zoomEnabled={interactive}
         rotateEnabled={false}
-        userInterfaceStyle={scheme === 'dark' ? 'dark' : 'light'}
         pitchEnabled={false}
+        userInterfaceStyle={scheme === 'dark' ? 'dark' : 'light'}
         showsCompass={false}
         toolbarEnabled={false}
-        onPress={
-          onPickLocation
-            ? (e) =>
-                onPickLocation({
-                  lat: e.nativeEvent.coordinate.latitude,
-                  lng: e.nativeEvent.coordinate.longitude,
-                })
+        onRegionChangeComplete={
+          onCenterChange
+            ? (region, details) =>
+                onCenterChange(
+                  { lat: region.latitude, lng: region.longitude },
+                  details?.isGesture ?? true,
+                )
             : undefined
         }
       >
@@ -104,26 +179,8 @@ export function MapView({
             lineDashPattern={[1, 0]}
           />
         ) : null}
-        {plant ? (
-          <Marker
-            coordinate={{ latitude: plant.lat, longitude: plant.lng }}
-            anchor={{ x: 0.5, y: 0.5 }}
-            tracksViewChanges={false}
-          >
-            <View className="h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-primary">
-              <Icon name="business" size="sm" color={colors.primaryForeground} />
-            </View>
-          </Marker>
-        ) : null}
-        {site ? (
-          <Marker
-            coordinate={{ latitude: site.lat, longitude: site.lng }}
-            anchor={{ x: 0.5, y: 1 }}
-            tracksViewChanges={false}
-          >
-            <Icon name="location" size={36} color={colors.danger} />
-          </Marker>
-        ) : null}
+        {plantMarker}
+        {siteMarker}
         {trucks.map((truck) => (
           <Marker
             key={truck.id}
@@ -132,6 +189,7 @@ export function MapView({
             rotation={truck.heading ?? 0}
             flat
             tracksViewChanges={false}
+            stopPropagation
           >
             <View
               className={cn(
@@ -148,6 +206,18 @@ export function MapView({
           </Marker>
         ))}
       </RNMapView>
+      {centerPin ? (
+        <View
+          pointerEvents="none"
+          className="absolute inset-0 items-center justify-center"
+          testID="map-center-pin"
+        >
+          {/* The pin tip must sit exactly on the map centre: lift the glyph by half its height. */}
+          <View style={{ transform: [{ translateY: -PIN_SIZE / 2 }] }}>
+            <Icon name="location" size={PIN_SIZE} color={colors.danger} />
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 }

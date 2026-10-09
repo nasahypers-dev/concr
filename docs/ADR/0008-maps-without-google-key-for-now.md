@@ -20,6 +20,16 @@ Platform billing account, which the owner prefers to set up later (`docs/DECISIO
   the API gets Google Routes for ETA and route geometry; mobile keeps `react-native-maps` and only
   adds the key to `app.config.ts` for the development build.
 
+## Addendum (2026-10-09): site picker and current location
+
+- The site form no longer picks a point by tapping the map. `MapView` has a `centerPin` mode
+  (fixed pin overlay, `onRegionChangeComplete` → centre) used by the full-screen
+  `LocationPicker` modal, which also offers "use my location" through `expo-location`
+  (foreground permission only; bundled in Expo Go). The config plugin in `app.config.ts` only
+  matters for the dev build.
+- Markers set `stopPropagation` and keep a stable element tree: on Apple Maps a marker tap that
+  reached the map `onPress` swapped the plant marker for a default pin (owner item 13).
+
 ## Consequences
 
 - Nothing in the screens knows which map provider renders.

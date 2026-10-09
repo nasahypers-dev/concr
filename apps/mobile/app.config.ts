@@ -39,7 +39,20 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundler: 'metro',
     favicon: './assets/favicon.png',
   },
-  plugins: ['expo-router', 'expo-localization', 'expo-secure-store'],
+  plugins: [
+    'expo-router',
+    'expo-localization',
+    'expo-secure-store',
+    [
+      'expo-location',
+      {
+        // Foreground only: the site picker's "use my location". Driver background tracking
+        // (spec §9) adds `isAndroidBackgroundLocationEnabled` with the dev build in Phase 2.
+        locationWhenInUsePermission:
+          'CONCR uses your location to place the concrete pour spot on the map.',
+      },
+    ],
+  ],
   experiments: {
     typedRoutes: true,
   },

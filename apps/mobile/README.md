@@ -13,7 +13,8 @@ Copy `.env.example` to `.env` and put your laptop's LAN IP in `EXPO_PUBLIC_API_U
 
 ## Expo Go vs development build
 
-Everything in Phase 0–1 runs in **Expo Go** (scan the QR code). Maps, background location and push
+Everything in Phase 0–1 runs in **Expo Go** (scan the QR code), including `react-native-maps` and the
+foreground `expo-location` fix behind "use my location" in the site picker. Background location and push
 notifications (Phase 2) need native modules that Expo Go does not contain; from then on build a
 development client once with `eas build --profile development` and install it on the phone.
 
