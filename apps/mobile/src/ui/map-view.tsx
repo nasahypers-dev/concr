@@ -34,8 +34,8 @@ export interface MapViewProps {
    * (Bolt-style). The map no longer auto-fits; use `initialCenter` instead.
    */
   centerPin?: boolean;
-  /** Picker mode: fires after every pan/zoom with the new centre. */
-  onCenterChange?: (point: GeoPoint, isGesture: boolean) => void;
+  /** Picker mode: fires after every pan/zoom (and after `animateTo`) with the new centre. */
+  onCenterChange?: (point: GeoPoint) => void;
   initialCenter?: GeoPoint | null;
   /** Latitude/longitude delta of the initial region (smaller = closer). */
   initialDelta?: number;
@@ -163,11 +163,7 @@ export function MapView({
         toolbarEnabled={false}
         onRegionChangeComplete={
           onCenterChange
-            ? (region, details) =>
-                onCenterChange(
-                  { lat: region.latitude, lng: region.longitude },
-                  details?.isGesture ?? true,
-                )
+            ? (region) => onCenterChange({ lat: region.latitude, lng: region.longitude })
             : undefined
         }
       >

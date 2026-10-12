@@ -6,6 +6,7 @@ import { useSupplier } from '@/features/catalog/use-catalog';
 import { localDigits, toAzE164 } from '@/lib/phone';
 import { Banner, Button, MapView, PhoneField, Text, TextField } from '@/ui';
 import { LocationPicker } from './location-picker';
+import { useReverseGeocode } from './use-reverse-geocode';
 
 export interface SiteFormProps {
   initial?: Site;
@@ -30,6 +31,9 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
   const [contactPhone, setContactPhone] = useState(localDigits(initial?.contactPhone ?? ''));
   const [errors, setErrors] = useState<FieldErrors>({});
   const [pickerOpen, setPickerOpen] = useState(false);
+  // Last address written by reverse geocoding; only that text may be replaced by the next lookup.
+  const [autoAddress, setAutoAddress] = useState<string | null>(null);
+  const geocode = useReverseGeocode();
 
   const submit = () => {
     const candidate = {
@@ -61,11 +65,22 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
 
   const plantLocation = supplier.data?.plant.location ?? null;
 
+  // One lookup per confirmed point; text the customer typed is never overwritten (owner item 6).
+  const fillAddress = async (point: GeoPoint) => {
+    const found = await geocode.lookup(point);
+    if (!found) return;
+    setAddressLine((current) =>
+      current.trim() === '' || current === autoAddress ? found : current,
+    );
+    setAutoAddress(found);
+  };
+
   return (
     <View className="gap-4">
       <TextField
         label={t('sites.name')}
         placeholder={t('sites.namePlaceholder')}
+        hint={t('sites.nameHint')}
         value={name}
         onChangeText={setName}
         error={errors.name}
@@ -77,6 +92,11 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
         value={addressLine}
         onChangeText={setAddressLine}
         error={errors.addressLine}
+        hint={
+          addressLine !== '' && addressLine === autoAddress
+            ? t('sites.addressAutoFilled')
+            : undefined
+        }
         icon="map-outline"
       />
       <View className="gap-1.5">
@@ -116,6 +136,7 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
             setLocation(point);
             setErrors((prev) => ({ ...prev, location: undefined }));
             setPickerOpen(false);
+            void fillAddress(point);
           }}
         />
         <Text variant="bodySm" tone={errors.location ? 'danger' : 'muted'}>

@@ -25,6 +25,24 @@ describe('LocationPicker', () => {
     expect(screen.getByRole('button', { name: 'Bu yeri təsdiqlə' })).toBeDisabled();
   });
 
+  it('enables confirm once the map was panned, even without a gesture flag (Apple Maps)', async () => {
+    const onConfirm = jest.fn();
+    await render(
+      <LocationPicker
+        visible
+        initial={null}
+        plant={plant}
+        onClose={jest.fn()}
+        onConfirm={onConfirm}
+      />,
+    );
+    await fireEvent.press(screen.getByTestId('map-pan'));
+    const confirm = screen.getByRole('button', { name: 'Bu yeri təsdiqlə' });
+    expect(confirm).not.toBeDisabled();
+    await fireEvent.press(confirm);
+    expect(onConfirm).toHaveBeenCalledWith({ lat: plant.lat + 0.01, lng: plant.lng });
+  });
+
   it('confirms the previously chosen point when editing', async () => {
     const onConfirm = jest.fn();
     const initial = { lat: 40.39, lng: 49.81 };

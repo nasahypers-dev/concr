@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Linking, Modal, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppHeader, Banner, Button, MapView, type MapViewHandle } from '@/ui';
+import { movedFrom } from './picker-geo';
 import { useCurrentLocation } from './use-current-location';
 
 export interface LocationPickerProps {
@@ -22,8 +23,9 @@ const DELTA_AREA = 0.05;
 
 /**
  * Full-screen Bolt-style picker: the pin stays in the centre, the map moves underneath.
- * The point counts as chosen only after the user panned or used the GPS fix, so the plant
- * coordinates are never saved by accident.
+ * The point counts as chosen once the centre is a few metres away from where the picker opened,
+ * after a GPS fix, or when editing an existing site. Distance is used instead of the map's
+ * `isGesture` flag, which Apple Maps does not report (owner item 5, 2026-10-12).
  */
 export function LocationPicker({
   visible,
@@ -35,6 +37,7 @@ export function LocationPicker({
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const mapRef = useRef<MapViewHandle>(null);
+  const start = initial ?? plant ?? BAKU_CENTER;
   const [center, setCenter] = useState<GeoPoint | null>(initial);
   const [chosen, setChosen] = useState(initial !== null);
   const current = useCurrentLocation();
@@ -71,11 +74,11 @@ export function LocationPicker({
             className="flex-1"
             centerPin
             plant={plant}
-            initialCenter={initial ?? plant ?? BAKU_CENTER}
+            initialCenter={start}
             initialDelta={initial ? DELTA_CLOSE : DELTA_AREA}
-            onCenterChange={(point, isGesture) => {
+            onCenterChange={(point) => {
               setCenter(point);
-              if (isGesture) setChosen(true);
+              if (movedFrom(start, point)) setChosen(true);
             }}
             testID="location-picker-map"
           />
