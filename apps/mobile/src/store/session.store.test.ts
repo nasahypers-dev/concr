@@ -24,14 +24,12 @@ describe('session store', () => {
   });
 
   it('tracks whether the profile still needs a name', () => {
-    useSessionStore
-      .getState()
-      .setSession({
-        role: UserRole.CUSTOMER,
-        accessToken: 'a',
-        refreshToken: 'r',
-        profileComplete: false,
-      });
+    useSessionStore.getState().setSession({
+      role: UserRole.CUSTOMER,
+      accessToken: 'a',
+      refreshToken: 'r',
+      profileComplete: false,
+    });
     expect(useSessionStore.getState().profileComplete).toBe(false);
     useSessionStore.getState().markProfileComplete();
     expect(useSessionStore.getState().profileComplete).toBe(true);
