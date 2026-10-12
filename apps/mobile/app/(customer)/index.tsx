@@ -51,7 +51,12 @@ export default function CustomerHomeScreen() {
         <>
           {active ? (
             <Section title={t('home.activeOrder')}>
-              <OrderCard order={active} emphasis onPress={() => openOrder(active.id)} />
+              <OrderCard
+                order={active}
+                emphasis
+                customerPhone={me.data?.phone}
+                onPress={() => openOrder(active.id)}
+              />
             </Section>
           ) : null}
           {recent.length > 0 ? (
@@ -60,7 +65,12 @@ export default function CustomerHomeScreen() {
               action={{ label: t('home.seeAll'), onPress: () => router.navigate('/orders') }}
             >
               {recent.map((order) => (
-                <OrderCard key={order.id} order={order} onPress={() => openOrder(order.id)} />
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  customerPhone={me.data?.phone}
+                  onPress={() => openOrder(order.id)}
+                />
               ))}
             </Section>
           ) : null}

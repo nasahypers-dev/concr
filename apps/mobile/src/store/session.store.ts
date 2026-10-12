@@ -8,6 +8,8 @@ export interface SessionTokens {
   accessToken: string;
   refreshToken: string;
   userId?: string | null;
+  /** false when the account still lacks a name; the (setup) group collects it (D21). */
+  profileComplete?: boolean;
 }
 
 export interface SessionState {
@@ -17,7 +19,9 @@ export interface SessionState {
   userId: string | null;
   accessToken: string | null;
   refreshToken: string | null;
+  profileComplete: boolean;
   setSession: (tokens: SessionTokens) => void;
+  markProfileComplete: () => void;
   clear: () => void;
   markHydrated: () => void;
 }
@@ -35,19 +39,36 @@ export const useSessionStore = create<SessionState>()(
       userId: null,
       accessToken: null,
       refreshToken: null,
-      setSession: ({ role, accessToken, refreshToken, userId }) =>
-        set({ role, accessToken, refreshToken, userId: userId ?? null }),
-      clear: () => set({ role: null, userId: null, accessToken: null, refreshToken: null }),
+      // true by default so sessions persisted before D21 keep working.
+      profileComplete: true,
+      setSession: ({ role, accessToken, refreshToken, userId, profileComplete }) =>
+        set({
+          role,
+          accessToken,
+          refreshToken,
+          userId: userId ?? null,
+          profileComplete: profileComplete ?? true,
+        }),
+      markProfileComplete: () => set({ profileComplete: true }),
+      clear: () =>
+        set({
+          role: null,
+          userId: null,
+          accessToken: null,
+          refreshToken: null,
+          profileComplete: true,
+        }),
       markHydrated: () => set({ hydrated: true }),
     }),
     {
       name: SESSION_STORAGE_KEY,
       storage: createJSONStorage(() => secureStorage),
-      partialize: ({ role, userId, accessToken, refreshToken }) => ({
+      partialize: ({ role, userId, accessToken, refreshToken, profileComplete }) => ({
         role,
         userId,
         accessToken,
         refreshToken,
+        profileComplete,
       }),
       onRehydrateStorage: () => (state) => state?.markHydrated(),
     },

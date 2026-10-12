@@ -53,6 +53,13 @@
     "devCodeHint": "Dev rejimi: kod {code}",
     "codeResent": "Kod yenidən göndərildi"
   },
+  "setup": {
+    "title": "Sizi necə çağıraq?",
+    "subtitle": "Sifarişləriniz və sənədlər bu adla hazırlanacaq.",
+    "firstName": "Ad",
+    "lastName": "Soyad",
+    "continue": "Davam et"
+  },
   "states": {
     "loading": "Yüklənir…",
     "emptyTitle": "Hələ heç nə yoxdur",
@@ -144,6 +151,7 @@
     "payment": "Ödəniş",
     "summary": "{grade} · {volume}",
     "summaryWithSlump": "{grade} · {volume} · {slump}",
+    "yourPhone": "Sizin nömrəniz",
     "pumpIncluded": "Pompa {length} m",
     "noPump": "Pompasız",
     "deliveries": "Reyslər",

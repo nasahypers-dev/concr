@@ -53,6 +53,13 @@
     "devCodeHint": "Dev-режим: код {code}",
     "codeResent": "Код отправлен повторно"
   },
+  "setup": {
+    "title": "Как к вам обращаться?",
+    "subtitle": "Заказы и документы будут оформлены на это имя.",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "continue": "Продолжить"
+  },
   "states": {
     "loading": "Загрузка…",
     "emptyTitle": "Пока ничего нет",
@@ -144,6 +151,7 @@
     "payment": "Оплата",
     "summary": "{grade} · {volume}",
     "summaryWithSlump": "{grade} · {volume} · {slump}",
+    "yourPhone": "Ваш номер",
     "pumpIncluded": "Насос {length} м",
     "noPump": "Без насоса",
     "deliveries": "Рейсы",

@@ -39,6 +39,7 @@ export default function RootLayout() {
   const theme = useThemeColors();
   const role = useSessionStore((state) => state.role);
   const isAuthenticated = useSessionStore(selectIsAuthenticated);
+  const profileComplete = useSessionStore((state) => state.profileComplete);
 
   // Without fonts the type scale is wrong; wait briefly, but never block on a font error.
   // Settings carry the theme preference; waiting for them avoids a light→dark flash.
@@ -59,10 +60,13 @@ export default function RootLayout() {
           <Stack.Protected guard={!isAuthenticated}>
             <Stack.Screen name="(auth)" />
           </Stack.Protected>
-          <Stack.Protected guard={isAuthenticated && role === UserRole.CUSTOMER}>
+          <Stack.Protected guard={isAuthenticated && !profileComplete}>
+            <Stack.Screen name="(setup)" />
+          </Stack.Protected>
+          <Stack.Protected guard={isAuthenticated && profileComplete && role === UserRole.CUSTOMER}>
             <Stack.Screen name="(customer)" />
           </Stack.Protected>
-          <Stack.Protected guard={isAuthenticated && role === UserRole.DRIVER}>
+          <Stack.Protected guard={isAuthenticated && profileComplete && role === UserRole.DRIVER}>
             <Stack.Screen name="(driver)" />
           </Stack.Protected>
         </Stack>

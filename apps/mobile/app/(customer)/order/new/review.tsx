@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useProducts, usePumpOptions, useQuote } from '@/features/catalog/use-catalog';
+import { useMe } from '@/features/auth/use-auth';
 import { useErrorMessage } from '@/features/common/use-error-message';
 import { CardDetailsForm } from '@/features/orders/card-details-form';
 import { useWindowLabel } from '@/features/orders/order-card';
@@ -11,6 +12,7 @@ import { draftToCreateOrderInput, useOrderDraftStore } from '@/features/orders/o
 import { useCreateOrder } from '@/features/orders/use-orders';
 import { WizardFrame } from '@/features/orders/wizard-frame';
 import { useSites } from '@/features/sites/use-sites';
+import { formatPhoneAz } from '@/lib/format';
 import {
   Banner,
   Card,
@@ -30,6 +32,7 @@ export default function WizardReviewScreen() {
   const products = useProducts();
   const pumps = usePumpOptions();
   const sites = useSites();
+  const me = useMe();
   const createOrder = useCreateOrder();
   const errorMessage = useErrorMessage();
   const windowLabel = useWindowLabel();
@@ -80,6 +83,13 @@ export default function WizardReviewScreen() {
               icon="call-outline"
               {...siteContactLines(site.contactName, site.contactPhone)}
             />
+            {me.data ? (
+              <ListRow
+                icon="person-outline"
+                title={t('order.yourPhone')}
+                subtitle={formatPhoneAz(me.data.phone)}
+              />
+            ) : null}
             <ListRow
               icon="water-outline"
               title={

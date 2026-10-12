@@ -34,6 +34,8 @@ export function useVerifyOtp() {
         accessToken: session.accessToken,
         refreshToken: session.refreshToken,
         userId: session.user.id,
+        // New accounts have no name yet; the (setup) group collects it (D21).
+        profileComplete: session.user.fullName !== null,
       });
     },
   });
@@ -73,6 +75,7 @@ export function useUpdateProfile() {
     mutationFn: (input: UpdateProfileInput) => api.auth.updateProfile(input),
     onSuccess: (user) => {
       queryClient.setQueryData(queryKeys.me, user);
+      if (user.fullName !== null) useSessionStore.getState().markProfileComplete();
     },
   });
 }

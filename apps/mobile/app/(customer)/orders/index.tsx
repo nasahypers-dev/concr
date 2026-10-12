@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, RefreshControl, View } from 'react-native';
+import { useMe } from '@/features/auth/use-auth';
 import { OrderCard } from '@/features/orders/order-card';
 import { useOrders } from '@/features/orders/use-orders';
 import { Screen, SegmentedControl, SkeletonList, StateView, Text, colors } from '@/ui';
@@ -20,6 +21,7 @@ export default function OrdersScreen() {
   const router = useRouter();
   const [filter, setFilter] = useState<Filter>('all');
   const orders = useOrders(statusesFor[filter]);
+  const me = useMe();
   const items = orders.data?.items ?? [];
 
   return (
@@ -50,6 +52,7 @@ export default function OrdersScreen() {
           renderItem={({ item }) => (
             <OrderCard
               order={item}
+              customerPhone={me.data?.phone}
               onPress={() => router.push({ pathname: '/orders/[id]', params: { id: item.id } })}
             />
           )}

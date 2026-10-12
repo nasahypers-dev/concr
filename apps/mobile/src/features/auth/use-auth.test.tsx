@@ -9,6 +9,7 @@ import {
   DEV_OTP_CODE,
   useLogout,
   useRequestOtp,
+  useUpdateProfile,
   useVerifyOtp,
 } from './use-auth';
 
@@ -49,6 +50,26 @@ describe('auth hooks on the mock client', () => {
     await waitFor(() => expect(useSessionStore.getState().accessToken).toMatch(/^mock\./));
     expect(useSessionStore.getState().role).toBe('CUSTOMER');
     expect(useSessionStore.getState().userId).toBe('cust_1');
+    expect(useSessionStore.getState().profileComplete).toBe(true);
+  });
+
+  it('flags a brand-new account as incomplete until a name is saved (D21)', async () => {
+    const wrapper = makeWrapper();
+    const { result } = await renderHook(
+      () => ({ request: useRequestOtp(), verify: useVerifyOtp(), update: useUpdateProfile() }),
+      { wrapper },
+    );
+    const phone = '+994500000099';
+    await act(async () => {
+      await result.current.request.mutateAsync({ phone });
+      await result.current.verify.mutateAsync({ phone, code: DEV_OTP_CODE });
+    });
+    await waitFor(() => expect(useSessionStore.getState().accessToken).not.toBeNull());
+    expect(useSessionStore.getState().profileComplete).toBe(false);
+    await act(async () => {
+      await result.current.update.mutateAsync({ fullName: 'Nurlan Əsədli' });
+    });
+    await waitFor(() => expect(useSessionStore.getState().profileComplete).toBe(true));
   });
 
   it('surfaces a wrong code as an API error and clears the session on logout', async () => {

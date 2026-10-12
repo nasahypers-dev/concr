@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, Pressable, View } from 'react-native';
 import { useSupplier } from '@/features/catalog/use-catalog';
+import { useMe } from '@/features/auth/use-auth';
 import { useErrorMessage } from '@/features/common/use-error-message';
 import { useWindowLabel } from '@/features/orders/order-card';
 import { siteContactLines, useOrderSummary } from '@/features/orders/order-summary';
@@ -19,7 +20,7 @@ import {
   useOrderLive,
   useReorderDraft,
 } from '@/features/orders/use-orders';
-import { formatDateTime, formatVolume } from '@/lib/format';
+import { formatDateTime, formatVolume, formatPhoneAz } from '@/lib/format';
 import {
   AppHeader,
   Banner,
@@ -45,6 +46,7 @@ export default function OrderDetailScreen() {
   const router = useRouter();
   const { id, created } = useLocalSearchParams<{ id: string; created?: string }>();
   const order = useOrder(id);
+  const me = useMe();
   const supplier = useSupplier();
   const cancelOrder = useCancelOrder(id);
   const reorder = useReorderDraft();
@@ -171,6 +173,13 @@ export default function OrderDetailScreen() {
             icon="call-outline"
             {...siteContactLines(detail.siteContactName, detail.siteContactPhone)}
           />
+          {me.data ? (
+            <ListRow
+              icon="person-outline"
+              title={t('order.yourPhone')}
+              subtitle={formatPhoneAz(me.data.phone)}
+            />
+          ) : null}
           <ListRow
             icon="time-outline"
             title={windowLabel(detail.requestedDate, detail.timeWindowStart, detail.timeWindowEnd)}

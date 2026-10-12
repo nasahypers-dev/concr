@@ -23,6 +23,22 @@ describe('session store', () => {
     expect(selectIsAuthenticated(useSessionStore.getState())).toBe(false);
   });
 
+  it('tracks whether the profile still needs a name', () => {
+    useSessionStore
+      .getState()
+      .setSession({
+        role: UserRole.CUSTOMER,
+        accessToken: 'a',
+        refreshToken: 'r',
+        profileComplete: false,
+      });
+    expect(useSessionStore.getState().profileComplete).toBe(false);
+    useSessionStore.getState().markProfileComplete();
+    expect(useSessionStore.getState().profileComplete).toBe(true);
+    useSessionStore.getState().clear();
+    expect(useSessionStore.getState().profileComplete).toBe(true);
+  });
+
   it('persists tokens to secure storage and clears them', async () => {
     useSessionStore
       .getState()

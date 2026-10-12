@@ -53,6 +53,13 @@
     "devCodeHint": "Dev mode: code {code}",
     "codeResent": "Code sent again"
   },
+  "setup": {
+    "title": "What should we call you?",
+    "subtitle": "Your orders and documents will carry this name.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "continue": "Continue"
+  },
   "states": {
     "loading": "Loading…",
     "emptyTitle": "Nothing here yet",
@@ -144,6 +151,7 @@
     "payment": "Payment",
     "summary": "{grade} · {volume}",
     "summaryWithSlump": "{grade} · {volume} · {slump}",
+    "yourPhone": "Your number",
     "pumpIncluded": "Pump {length} m",
     "noPump": "No pump",
     "deliveries": "Trips",

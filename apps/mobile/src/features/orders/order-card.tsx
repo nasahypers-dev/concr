@@ -10,6 +10,8 @@ export interface OrderCardProps {
   onPress: () => void;
   /** Larger variant for the home screen's active order. */
   emphasis?: boolean;
+  /** The signed-in customer's own number, shown next to the site contact (owner, 2026-10-12). */
+  customerPhone?: string;
 }
 
 /** Relative day label for the delivery window ("Bu gün", "Sabah" or the date). */
@@ -29,7 +31,7 @@ export function useWindowLabel(): (date: string, start: string, end: string) => 
   };
 }
 
-export function OrderCard({ order, onPress, emphasis = false }: OrderCardProps) {
+export function OrderCard({ order, onPress, emphasis = false, customerPhone }: OrderCardProps) {
   const { t } = useTranslation();
   const windowLabel = useWindowLabel();
   const summary = useOrderSummary();
@@ -73,6 +75,14 @@ export function OrderCard({ order, onPress, emphasis = false }: OrderCardProps) 
             </Text>
           </View>
         </View>
+        {customerPhone ? (
+          <View className="flex-row items-center gap-2">
+            <Icon name="person-outline" size="sm" tone="muted" />
+            <Text variant="bodySm" tone="muted" numberOfLines={1} className="flex-1">
+              {t('order.yourPhone')}: {formatPhoneAz(customerPhone)}
+            </Text>
+          </View>
+        ) : null}
       </View>
       <View className="mt-3 flex-row items-center justify-between">
         {inProgress ? (
