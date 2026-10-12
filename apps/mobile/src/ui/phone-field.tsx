@@ -61,7 +61,7 @@ export function PhoneField({
           textContentType="telephoneNumber"
           autoComplete="tel"
           placeholderTextColor={theme.inkSubtle}
-          className="flex-1 font-inter text-body text-ink dark:text-ink-dark"
+          className="h-14 flex-1 py-0 font-inter text-[16px] text-ink dark:text-ink-dark"
           {...rest}
         />
       </View>

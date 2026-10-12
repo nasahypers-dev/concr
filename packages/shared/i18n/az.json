@@ -228,7 +228,7 @@
     "logoutTitle": "Hesabdan çıxırsınız?",
     "logoutConfirm": "Bəli, çıx",
     "version": "Versiya {version}",
-    "replayTour": "Bələdçi turu yenidən göstər (dev)"
+    "showTour": "Tətbiqlə tanışlıq turu"
   },
   "theme": {
     "system": "Sistem",

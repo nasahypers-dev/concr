@@ -79,7 +79,7 @@ export function QuantityStepper({
           keyboardType="decimal-pad"
           selectTextOnFocus
           accessibilityLabel={accessibilityLabel}
-          className="min-w-[64px] text-center font-inter-bold text-heading text-ink dark:text-ink-dark"
+          className="h-14 min-w-[64px] py-0 text-center font-inter-bold text-[22px] text-ink dark:text-ink-dark"
         />
         {unit ? (
           <Text variant="subheading" tone="muted">

@@ -228,7 +228,7 @@
     "logoutTitle": "Выйти из аккаунта?",
     "logoutConfirm": "Да, выйти",
     "version": "Версия {version}",
-    "replayTour": "Показать обучение снова (dev)"
+    "showTour": "Обучающий тур по приложению"
   },
   "theme": {
     "system": "Системная",

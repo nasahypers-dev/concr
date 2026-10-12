@@ -3,8 +3,8 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useMe } from '@/features/auth/use-auth';
-import { TourOverlay } from '@/features/onboarding/tour-overlay';
-import { useHomeTour } from '@/features/onboarding/use-home-tour';
+import { TourCallout } from '@/features/onboarding/tour-callout';
+import { ORDERS_TAB, SITES_TAB, useHomeTour } from '@/features/onboarding/use-home-tour';
 import { OrderCard } from '@/features/orders/order-card';
 import { useOrderDraftStore } from '@/features/orders/order-draft.store';
 import { useOrders } from '@/features/orders/use-orders';
@@ -17,14 +17,9 @@ export default function CustomerHomeScreen() {
   const me = useMe();
   const orders = useOrders();
   const resetDraft = useOrderDraftStore((s) => s.reset);
-  const {
-    rootRef,
-    ctaRef,
-    measure,
-    visible: tourVisible,
-    steps: tourSteps,
-    finish: finishTour,
-  } = useHomeTour(me.isSuccess);
+  const tour = useHomeTour(me.isSuccess);
+  const tourOnCta = tour.visible && tour.step === 0;
+  const tourOnTabs = tour.visible && tour.step > 0;
 
   const items = orders.data?.items ?? [];
   const active = items.find((o) => ACTIVE_ORDER_STATUSES.includes(o.status));
@@ -38,17 +33,28 @@ export default function CustomerHomeScreen() {
   const openOrder = (id: string) => router.push({ pathname: '/orders/[id]', params: { id } });
 
   return (
-    // The wrapper's bottom edge is where the tab bar starts; the tour measures it.
-    <View ref={rootRef} collapsable={false} className="flex-1" onLayout={measure}>
+    <View className="flex-1">
       <Screen scroll>
         <View className="gap-1 pt-2">
           <Text variant="title">
             {firstName ? t('home.greeting', { name: firstName }) : t('home.greetingAnonymous')}
           </Text>
         </View>
-        <View ref={ctaRef} collapsable={false} onLayout={measure}>
+        <View className={tourOnCta ? 'rounded-2xl border-2 border-accent p-1' : undefined}>
           <Button label={t('customer.orderCta')} icon="add-circle-outline" onPress={startOrder} />
         </View>
+        {tourOnCta ? (
+          <TourCallout
+            arrow="up"
+            title={tour.current.title}
+            body={tour.current.body}
+            step={tour.step + 1}
+            total={tour.total}
+            last={tour.last}
+            onSkip={tour.skip}
+            onNext={tour.next}
+          />
+        ) : null}
         {orders.isPending ? (
           <SkeletonList count={2} />
         ) : orders.isError ? (
@@ -91,7 +97,22 @@ export default function CustomerHomeScreen() {
           </>
         )}
       </Screen>
-      <TourOverlay visible={tourVisible} steps={tourSteps} onDone={finishTour} />
+      {tourOnTabs ? (
+        // Pinned just above the tab bar; the arrow points down at the Orders / Sites tab.
+        <View className="absolute bottom-0 left-0 right-0 px-4 pb-1" pointerEvents="box-none">
+          <TourCallout
+            arrow="down"
+            arrowX={tour.tabArrowX(tour.step === 1 ? ORDERS_TAB : SITES_TAB)}
+            title={tour.current.title}
+            body={tour.current.body}
+            step={tour.step + 1}
+            total={tour.total}
+            last={tour.last}
+            onSkip={tour.skip}
+            onNext={tour.next}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }

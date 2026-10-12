@@ -48,7 +48,11 @@ export function TextField({
           multiline={multiline}
           placeholderTextColor={theme.inkSubtle}
           textAlignVertical={multiline ? 'top' : 'center'}
-          className="flex-1 font-inter text-body text-ink dark:text-ink-dark"
+          // No line-height on a single-line input: iOS would top-align the glyphs next to the icon.
+          className={cn(
+            'flex-1 font-inter text-[16px] text-ink dark:text-ink-dark',
+            multiline ? 'leading-6' : 'h-14 py-0',
+          )}
           {...rest}
         />
       </View>

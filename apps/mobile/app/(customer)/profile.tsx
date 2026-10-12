@@ -148,16 +148,14 @@ export default function CustomerProfileScreen() {
                 void Linking.openURL(supplier.data.supplier.website);
             }}
           />
-          {__DEV__ ? (
-            <ListRow
-              icon="help-circle-outline"
-              title={t('profile.replayTour')}
-              onPress={() => {
-                setTourDone(false);
-                router.navigate('/');
-              }}
-            />
-          ) : null}
+          <ListRow
+            icon="help-circle-outline"
+            title={t('profile.showTour')}
+            onPress={() => {
+              setTourDone(false);
+              router.navigate('/');
+            }}
+          />
         </Card>
       </Section>
 

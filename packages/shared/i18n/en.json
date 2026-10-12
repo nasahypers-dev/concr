@@ -228,7 +228,7 @@
     "logoutTitle": "Sign out of your account?",
     "logoutConfirm": "Yes, sign out",
     "version": "Version {version}",
-    "replayTour": "Replay the guided tour (dev)"
+    "showTour": "App walkthrough"
   },
   "theme": {
     "system": "System",

@@ -84,7 +84,7 @@ Five commits, each green locally and in CI:
    a confirmed point is reverse-geocoded into the address field unless the customer typed one; site name
    hint ("Obyektin adı").
 5. First-run guided tour on the home screen (three steps with arrows and a Skip button, per install,
-   `__DEV__` replay row in the profile); lead time 2 h (temporary, Q1).
+   "App walkthrough" row in the profile replays it); lead time 2 h (temporary, Q1).
 
 Device checks pending on the iPhone: tour geometry on the real screen, keyboard insets on the site form,
 geocoding text quality (Apple returns the phone's language), "+994" autofill behaviour.
