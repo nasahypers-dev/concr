@@ -1,8 +1,8 @@
-import { changeLocale, detectDeviceLocale, initI18n } from './index';
+import { changeLocale, initI18n } from './index';
 
 describe('i18n', () => {
-  it('detects the mocked device locale', () => {
-    expect(detectDeviceLocale()).toBe('az');
+  it('starts in Azerbaijani regardless of the device language (D19)', () => {
+    expect(initI18n().language).toBe('az');
   });
 
   it('renders Azerbaijani letters from the shared bundle', () => {

@@ -5,53 +5,42 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useRequestOtp } from '@/features/auth/use-auth';
 import { useErrorMessage } from '@/features/common/use-error-message';
-import { AppHeader, Banner, Button, Screen, Text, TextField } from '@/ui';
-
-/** Normalises "050 620 95 84" / "+994 50 ..." into E.164 before validation. */
-export function normalizePhone(input: string): string {
-  const digits = input.replace(/[^\d+]/g, '');
-  if (digits.startsWith('+')) return digits;
-  if (digits.startsWith('994')) return `+${digits}`;
-  if (digits.startsWith('0')) return `+994${digits.slice(1)}`;
-  return `+994${digits}`;
-}
+import { isCompleteAzLocal, toAzE164 } from '@/lib/phone';
+import { AppHeader, Banner, Button, PhoneField, Screen, Text } from '@/ui';
 
 export default function PhoneScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const requestOtp = useRequestOtp();
   const errorMessage = useErrorMessage();
-  const [phone, setPhone] = useState('+994');
+  // Local digits only; the "+994" prefix is fixed in the field (owner, 2026-10-12).
+  const [digits, setDigits] = useState('');
   const [error, setError] = useState<string | undefined>();
 
   const submit = async () => {
-    const normalized = normalizePhone(phone);
-    if (!phoneE164Schema.safeParse(normalized).success) {
+    const phone = toAzE164(digits);
+    if (!isCompleteAzLocal(digits) || !phoneE164Schema.safeParse(phone).success) {
       setError(t('auth.invalidPhone'));
       return;
     }
     setError(undefined);
-    const result = await requestOtp.mutateAsync({ phone: normalized });
-    router.push({ pathname: '/otp', params: { phone: normalized, devCode: result.devCode ?? '' } });
+    const result = await requestOtp.mutateAsync({ phone });
+    router.push({ pathname: '/otp', params: { phone, devCode: result.devCode ?? '' } });
   };
 
   return (
     <Screen scroll keyboard>
       <AppHeader title={t('auth.phoneTitle')} onBack={() => router.back()} />
       <Text tone="muted">{t('auth.phoneHint')}</Text>
-      <TextField
+      <PhoneField
         label={t('auth.phoneTitle')}
-        icon="call-outline"
-        value={phone}
+        value={digits}
         onChangeText={(value) => {
-          setPhone(value);
+          setDigits(value);
           if (error) setError(undefined);
         }}
         error={error}
         placeholder={t('auth.phonePlaceholder')}
-        keyboardType="phone-pad"
-        textContentType="telephoneNumber"
-        autoComplete="tel"
         autoFocus
       />
       {requestOtp.isError ? (

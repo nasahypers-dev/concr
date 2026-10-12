@@ -8,7 +8,6 @@ import { useLogout, useMe, useUpdateProfile } from '@/features/auth/use-auth';
 import { useSupplier } from '@/features/catalog/use-catalog';
 import { useAutoHide } from '@/features/common/use-auto-hide';
 import { useErrorMessage } from '@/features/common/use-error-message';
-import { changeLocale } from '@/i18n';
 import { formatPhoneAz } from '@/lib/format';
 import { THEME_PREFERENCES, type ThemePreference, useSettingsStore } from '@/store/settings.store';
 import {
@@ -28,7 +27,7 @@ import {
 const localeLabels: Record<Locale, string> = { az: 'Azərbaycan', ru: 'Русский', en: 'English' };
 
 export default function CustomerProfileScreen() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const me = useMe();
   const supplier = useSupplier();
   const updateProfile = useUpdateProfile();
@@ -36,6 +35,8 @@ export default function CustomerProfileScreen() {
   const errorMessage = useErrorMessage();
   const theme = useSettingsStore((s) => s.theme);
   const setTheme = useSettingsStore((s) => s.setTheme);
+  const locale = useSettingsStore((s) => s.locale);
+  const setLocale = useSettingsStore((s) => s.setLocale);
   const [name, setName] = useState<string | null>(null);
   const [saved, showSaved, hideSaved] = useAutoHide();
   const [logoutOpen, setLogoutOpen] = useState(false);
@@ -58,9 +59,9 @@ export default function CustomerProfileScreen() {
     );
   };
 
-  const switchLocale = async (locale: Locale) => {
-    await changeLocale(locale);
-    updateProfile.mutate({ locale });
+  const switchLocale = (next: Locale) => {
+    setLocale(next);
+    updateProfile.mutate({ locale: next });
   };
 
   const version = Constants.expoConfig?.version ?? '0.0.0';
@@ -87,7 +88,7 @@ export default function CustomerProfileScreen() {
             />
             <TextField
               label={t('profile.phone')}
-              value={me.data?.phone ?? ''}
+              value={me.data ? formatPhoneAz(me.data.phone) : ''}
               editable={false}
               icon="call-outline"
             />
@@ -109,8 +110,8 @@ export default function CustomerProfileScreen() {
 
       <Section title={t('profile.language')}>
         <SegmentedControl<Locale>
-          value={(i18n.language as Locale) ?? 'az'}
-          onChange={(locale) => void switchLocale(locale)}
+          value={locale}
+          onChange={switchLocale}
           options={locales.map((locale) => ({ value: locale, label: localeLabels[locale] }))}
         />
       </Section>

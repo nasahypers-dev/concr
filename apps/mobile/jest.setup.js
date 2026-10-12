@@ -13,10 +13,6 @@ jest.mock('expo-secure-store', () => ({
   }),
 }));
 
-jest.mock('expo-localization', () => ({
-  getLocales: () => [{ languageCode: 'az', languageTag: 'az-AZ' }],
-}));
-
 // react-native-maps is native; the manual mock in __mocks__/react-native-maps.tsx renders views.
 // (Kept out of this file: NativeWind's Babel plugin rewrites createElement calls, which breaks
 // jest.mock factory hoisting.)

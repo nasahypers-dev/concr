@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useRequestOtp, useVerifyOtp } from '@/features/auth/use-auth';
 import { useErrorMessage } from '@/features/common/use-error-message';
+import { formatPhoneAz } from '@/lib/format';
 import { AppHeader, Banner, Button, Screen, Text, TextField } from '@/ui';
 
 export default function OtpScreen() {
@@ -34,7 +35,7 @@ export default function OtpScreen() {
   return (
     <Screen scroll keyboard>
       <AppHeader title={t('auth.otpTitle')} onBack={() => router.back()} />
-      <Text tone="muted">{t('auth.otpHint', { phone })}</Text>
+      <Text tone="muted">{t('auth.otpHint', { phone: formatPhoneAz(phone) })}</Text>
       <TextField
         label={t('auth.otpTitle')}
         icon="key-outline"

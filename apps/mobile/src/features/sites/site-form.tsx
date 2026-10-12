@@ -2,9 +2,9 @@ import { type GeoPoint, type Site, type SiteInput, siteInputSchema } from '@conc
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
-import { normalizePhone } from '@/features/auth/normalize-phone';
 import { useSupplier } from '@/features/catalog/use-catalog';
-import { Banner, Button, MapView, Text, TextField } from '@/ui';
+import { localDigits, toAzE164 } from '@/lib/phone';
+import { Banner, Button, MapView, PhoneField, Text, TextField } from '@/ui';
 import { LocationPicker } from './location-picker';
 
 export interface SiteFormProps {
@@ -26,7 +26,8 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
   const [location, setLocation] = useState<GeoPoint | null>(initial?.location ?? null);
   const [accessNotes, setAccessNotes] = useState(initial?.accessNotes ?? '');
   const [contactName, setContactName] = useState(initial?.contactName ?? '');
-  const [contactPhone, setContactPhone] = useState(initial?.contactPhone ?? '');
+  // Local digits only; PhoneField shows the fixed +994 (owner, 2026-10-12).
+  const [contactPhone, setContactPhone] = useState(localDigits(initial?.contactPhone ?? ''));
   const [errors, setErrors] = useState<FieldErrors>({});
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -37,7 +38,7 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
       location: location ?? { lat: Number.NaN, lng: Number.NaN },
       accessNotes: accessNotes.trim() === '' ? null : accessNotes.trim(),
       contactName: contactName.trim() === '' ? null : contactName.trim(),
-      contactPhone: contactPhone.trim() === '' ? '' : normalizePhone(contactPhone),
+      contactPhone: toAzE164(contactPhone),
     };
     const result = siteInputSchema.safeParse(candidate);
     if (!result.success) {
@@ -46,7 +47,7 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
         const field = issue.path[0] as keyof SiteInput | undefined;
         if (!field || next[field]) continue;
         next[field] =
-          field === 'contactPhone' && contactPhone.trim() !== ''
+          field === 'contactPhone' && contactPhone !== ''
             ? t('auth.invalidPhone')
             : t('sites.required');
       }
@@ -134,13 +135,11 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
         onChangeText={setContactName}
         icon="person-outline"
       />
-      <TextField
+      <PhoneField
         label={t('sites.contactPhone')}
         value={contactPhone}
         onChangeText={setContactPhone}
         error={errors.contactPhone}
-        keyboardType="phone-pad"
-        icon="call-outline"
         placeholder={t('auth.phonePlaceholder')}
       />
       {error ? <Banner tone="danger" message={error} /> : null}
