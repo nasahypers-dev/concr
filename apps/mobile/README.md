@@ -28,3 +28,9 @@ src/store/      zustand session store persisted in expo-secure-store
 src/api/        fetch wrapper that understands the API error envelope, QueryClient
 src/features/   feature hooks (Phase 1+)
 ```
+
+## First-run tour and language
+
+The home screen shows a three-step guided tour once per install (order button, Orders tab, Sites tab) with a
+Skip button; the flag lives in the settings store. In development the profile has a "replay tour" row. The UI
+starts in Azerbaijani regardless of the phone's language; the language picked in the profile persists (D19).

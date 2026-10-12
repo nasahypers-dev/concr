@@ -12,7 +12,7 @@ export interface SupplierSettings {
   deliveryIncluded: boolean;
   /** Concrete lifetime counted from `departedAt`, minutes (spec §3). */
   concreteLifetimeMin: number;
-  /** Earliest delivery window starts this many hours after ordering (TODO(nurlan)). */
+  /** Earliest delivery window starts this many hours after ordering (2 h for now, Q1). */
   leadTimeHours: number;
   /** Customer may cancel a confirmed order until this many hours before the window (TODO(nurlan)). */
   cancelCutoffHours: number;

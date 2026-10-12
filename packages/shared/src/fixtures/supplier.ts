@@ -24,7 +24,7 @@ export function createSupplier(): Supplier {
       pricesIncludeVat: false,
       deliveryIncluded: true,
       concreteLifetimeMin: 90,
-      leadTimeHours: 6, // TODO(nurlan): earliest delivery after ordering
+      leadTimeHours: 2, // owner decision 2026-10-12 (temporary value, Q1)
       cancelCutoffHours: 12, // TODO(nurlan): customer cancellation cutoff
       workingHours: '24/7',
       locationUpdateIntervalSec: 10,

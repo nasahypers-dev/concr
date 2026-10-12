@@ -89,6 +89,18 @@
     "seeAll": "Hamısı",
     "firstOrderHint": "İlk sifarişinizi 2 dəqiqəyə verin: marka, həcm, ünvan, vaxt."
   },
+  "tour": {
+    "progress": "{current}/{total}",
+    "skip": "Keç",
+    "next": "Növbəti",
+    "done": "Başla",
+    "orderTitle": "Beton sifarişi buradan başlayır",
+    "orderBody": "Marka, həcm, obyekt və vaxtı seçin; qiyməti dərhal görəcəksiniz.",
+    "ordersTitle": "Sifarişləriniz",
+    "ordersBody": "Bütün sifarişlər və mikserin canlı xəritəsi bu bölmədədir.",
+    "sitesTitle": "Obyektlər",
+    "sitesBody": "Tökmə yerlərini bir dəfə əlavə edin, hər sifarişdə seçin."
+  },
   "wizard": {
     "title": "Yeni sifariş",
     "stepProduct": "Marka",
@@ -215,7 +227,8 @@
     "logout": "Çıxış",
     "logoutTitle": "Hesabdan çıxırsınız?",
     "logoutConfirm": "Bəli, çıx",
-    "version": "Versiya {version}"
+    "version": "Versiya {version}",
+    "replayTour": "Bələdçi turu yenidən göstər (dev)"
   },
   "theme": {
     "system": "Sistem",

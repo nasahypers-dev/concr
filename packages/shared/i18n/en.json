@@ -89,6 +89,18 @@
     "seeAll": "See all",
     "firstOrderHint": "Place your first order in 2 minutes: grade, volume, address, time."
   },
+  "tour": {
+    "progress": "{current}/{total}",
+    "skip": "Skip",
+    "next": "Next",
+    "done": "Start",
+    "orderTitle": "Ordering concrete starts here",
+    "orderBody": "Pick the grade, volume, site and time; the price shows right away.",
+    "ordersTitle": "Your orders",
+    "ordersBody": "All orders and the live mixer map live in this tab.",
+    "sitesTitle": "Sites",
+    "sitesBody": "Add your pour locations once and pick them in every order."
+  },
   "wizard": {
     "title": "New order",
     "stepProduct": "Grade",
@@ -215,7 +227,8 @@
     "logout": "Sign out",
     "logoutTitle": "Sign out of your account?",
     "logoutConfirm": "Yes, sign out",
-    "version": "Version {version}"
+    "version": "Version {version}",
+    "replayTour": "Replay the guided tour (dev)"
   },
   "theme": {
     "system": "System",

@@ -1,6 +1,6 @@
 import { type Locale, locales } from '@concr/shared';
 import Constants from 'expo-constants';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, View } from 'react-native';
@@ -28,6 +28,7 @@ const localeLabels: Record<Locale, string> = { az: 'Azərbaycan', ru: 'Русс�
 
 export default function CustomerProfileScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
   const me = useMe();
   const supplier = useSupplier();
   const updateProfile = useUpdateProfile();
@@ -37,6 +38,7 @@ export default function CustomerProfileScreen() {
   const setTheme = useSettingsStore((s) => s.setTheme);
   const locale = useSettingsStore((s) => s.locale);
   const setLocale = useSettingsStore((s) => s.setLocale);
+  const setTourDone = useSettingsStore((s) => s.setTourDone);
   const [name, setName] = useState<string | null>(null);
   const [saved, showSaved, hideSaved] = useAutoHide();
   const [logoutOpen, setLogoutOpen] = useState(false);
@@ -146,6 +148,16 @@ export default function CustomerProfileScreen() {
                 void Linking.openURL(supplier.data.supplier.website);
             }}
           />
+          {__DEV__ ? (
+            <ListRow
+              icon="help-circle-outline"
+              title={t('profile.replayTour')}
+              onPress={() => {
+                setTourDone(false);
+                router.navigate('/');
+              }}
+            />
+          ) : null}
         </Card>
       </Section>
 

@@ -344,7 +344,7 @@ app/
 ## 18. Dev mühiti və seed
 - `infra/docker-compose.yml`: `postgis/postgis:16`, `redis:7`. `.env.example` izahlı.
 - `npm run dev` (api+dispatch), `npm run dev:mobile`, `db:migrate|seed|reset`.
-- **Seed:** Supplier `novxani-beton` ("Novxanı Beton", website novxanibeton.az, phone +994506209584, email info@novxanibeton.az, address "Novxanı şossesi, Bakı", settings: vatRate 0.18, pricesIncludeVat false, deliveryIncluded true, minOrderM3 3 `TODO`, leadTimeHours 6 `TODO`, cancelCutoffHours 12 `TODO`, concreteLifetimeMin 90); Plant "Novxanı" (40.4858529, 49.8294278); **Products M100–M600 (11 marka) real qiymətlərlə (§4)**, slump ["P2","P3","P4"]; PumpOption 24 m (qiymət `TODO`); ServiceArea "Bakı və Abşeron" (kobud polygon, `TODO` dəqiqləşdir); Trucks: 2×8 m³, 2×10 m³, 2×12 m³ (nömrələr placeholder), 1 nasos 24 m; 3 sürücü; dispatcher `dispatcher@novxanibeton.az / Dispatcher123!`; admin; 2 müştəri; 6 nümunə sifariş müxtəlif statusda (biri EN_ROUTE, saxta GPS tarixçəsi ilə — xəritə testi üçün).
+- **Seed:** Supplier `novxani-beton` ("Novxanı Beton", website novxanibeton.az, phone +994506209584, email info@novxanibeton.az, address "Novxanı şossesi, Bakı", settings: vatRate 0.18, pricesIncludeVat false, deliveryIncluded true, minOrderM3 3 `TODO`, leadTimeHours 2 (owner, 2026-10-12, müvəqqəti), cancelCutoffHours 12 `TODO`, concreteLifetimeMin 90); Plant "Novxanı" (40.4858529, 49.8294278); **Products M100–M600 (11 marka) real qiymətlərlə (§4)**, slump ["P2","P3","P4"]; PumpOption 24 m (qiymət `TODO`); ServiceArea "Bakı və Abşeron" (kobud polygon, `TODO` dəqiqləşdir); Trucks: 2×8 m³, 2×10 m³, 2×12 m³ (nömrələr placeholder), 1 nasos 24 m; 3 sürücü; dispatcher `dispatcher@novxanibeton.az / Dispatcher123!`; admin; 2 müştəri; 6 nümunə sifariş müxtəlif statusda (biri EN_ROUTE, saxta GPS tarixçəsi ilə — xəritə testi üçün).
 - Dev OTP `123456`. `npm run sim:driver` — saxta sürücü skripti: seed-dəki reysi Novxanıdan obyektə doğru 10 saniyədə bir hərəkət etdirir (xəritəni real telefon olmadan test etmək üçün).
 
 ---
@@ -380,7 +380,7 @@ API Docker → VPS (Hetzner) + Caddy HTTPS + pg backup; veb Vercel; mobil EAS pr
 ## 20. Fərziyyələr (dəyişdirilə bilər)
 1. ƏDV 18%, qiymətlər ƏDV-siz saxlanılır, ƏDV yekunda əlavə olunur.
 2. Çatdırılma Bakı+Abşeronun hər yerinə qiymətə daxildir; xidmət ərazisi polygon-u yalnız yoxlama üçündür.
-3. Min sifariş 3 m³ (`TODO`), ləğv cutoff 12 saat (`TODO`), lead time 6 saat (`TODO`).
+3. Min sifariş 3 m³ (`TODO`), ləğv cutoff 12 saat (`TODO`), lead time 2 saat (müvəqqəti, owner 2026-10-12).
 4. Müştəri və sürücü OTP ilə; staff email+şifrə.
 5. Ödəniş onlayn deyil.
 6. Bir sifariş = bir marka.

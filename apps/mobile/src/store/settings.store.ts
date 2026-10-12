@@ -14,8 +14,11 @@ export interface SettingsState {
   theme: ThemePreference;
   /** UI language; Azerbaijani until the user picks another one in the profile (D19). */
   locale: Locale;
+  /** The first-run guided tour was finished or skipped (per install). */
+  tourDone: boolean;
   setTheme: (theme: ThemePreference) => void;
   setLocale: (locale: Locale) => void;
+  setTourDone: (done: boolean) => void;
   markHydrated: () => void;
 }
 
@@ -40,6 +43,7 @@ export const useSettingsStore = create<SettingsState>()(
       hydrated: false,
       theme: 'system',
       locale: defaultLocale,
+      tourDone: false,
       setTheme: (theme) => {
         applyTheme(theme);
         set({ theme });
@@ -48,12 +52,13 @@ export const useSettingsStore = create<SettingsState>()(
         applyLocale(locale);
         set({ locale });
       },
+      setTourDone: (tourDone) => set({ tourDone }),
       markHydrated: () => set({ hydrated: true }),
     }),
     {
       name: SETTINGS_STORAGE_KEY,
       storage: createJSONStorage(() => secureStorage),
-      partialize: ({ theme, locale }) => ({ theme, locale }),
+      partialize: ({ theme, locale, tourDone }) => ({ theme, locale, tourDone }),
       // Apply before the first paint: the root layout waits for `hydrated`.
       onRehydrateStorage: () => (state) => {
         applyTheme(state?.theme ?? 'system');

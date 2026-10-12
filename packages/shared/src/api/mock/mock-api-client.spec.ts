@@ -113,11 +113,11 @@ describe('mock api client — catalog', () => {
     const quote = await api.catalog.quote({ productId: m300.id, volumeM3: 10, pumpOptionId: null });
     expect(formatAzn(quote.breakdown.total)).toBe('1 298,00 ₼');
     expect(quote.pumpPriceKnown).toBe(true);
-    // 12:30 Baku + 6 h lead = 18:30 → next 2-hour slot 20:00–22:00 today
+    // 12:30 Baku + 2 h lead = 14:30 → next 2-hour slot 16:00–18:00 today (owner, 2026-10-12)
     expect(quote.earliestSlot).toEqual({
       date: '2026-10-09',
-      timeWindowStart: '20:00',
-      timeWindowEnd: '22:00',
+      timeWindowStart: '16:00',
+      timeWindowEnd: '18:00',
     });
     const pumped = await api.catalog.quote({
       productId: m300.id,

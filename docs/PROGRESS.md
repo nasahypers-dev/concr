@@ -69,6 +69,26 @@ backend afterwards** (`docs/DECISIONS.md` P1–P4, ADR 0006–0008). Update this
 - A persisted session whose user no longer exists in the rebuilt mock store now signs out (UNAUTHORIZED →
   login) instead of leaving every screen in an error state.
 
+### Sprint U1.2 — third device test, 10 owner items (2026-10-12)
+
+Five commits, each green locally and in CI:
+
+1. Phone fields carry a fixed "+994" and take the 9 local digits (`PhoneField`, `src/lib/phone.ts`); the app
+   starts in Azerbaijani on every device and the profile language choice is persisted (D19, D20);
+   `expo-localization` removed.
+2. A brand-new OTP account must enter name and surname in the new `(setup)` group before the app opens
+   (`profileComplete` in the session, D21); the customer's own number is shown next to the site contact on
+   cards, detail and review.
+3. Site form screens use native keyboard insets so the tapped field rises above the keyboard (ADR 0010).
+4. Location picker: confirm enables by distance from the start centre (Apple Maps has no gesture flag);
+   a confirmed point is reverse-geocoded into the address field unless the customer typed one; site name
+   hint ("Obyektin adı").
+5. First-run guided tour on the home screen (three steps with arrows and a Skip button, per install,
+   `__DEV__` replay row in the profile); lead time 2 h (temporary, Q1).
+
+Device checks pending on the iPhone: tour geometry on the real screen, keyboard insets on the site form,
+geocoding text quality (Apple returns the phone's language), "+994" autofill behaviour.
+
 ### Sprint U1.1 — second device test, 25 owner items (2026-10-09)
 
 Five commits, all green in CI:

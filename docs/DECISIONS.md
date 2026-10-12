@@ -33,7 +33,7 @@ Owner: Nurlan. Everything marked **open** is a `TODO(nurlan)` placeholder in cod
 
 | #   | Question                                                                                                         | Assumption used now                                                          | Status   |
 | --- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | -------- |
-| Q1  | Minimum order volume? Earliest delivery (lead time) in hours?                                                    | 8 m³ (owner, 2026-10-09) · 6 h                                               | open     |
+| Q1  | Minimum order volume? Earliest delivery (lead time) in hours?                                                    | 8 m³ (owner, 2026-10-09) · 2 h (owner, 2026-10-12, temporary)                | answered |
 | Q2  | Pump boom lengths besides 24 m; price model (per order / per m³ / per hour)?                                     | 24/28/32/36/38/42 m; per order 200/250/250/300/350/400 ₼ (owner, 2026-10-09) | answered |
 | Q3  | Number of mixers per capacity and plate numbers; number of drivers; their phones (Android/iPhone)?               | 2×8, 2×10, 2×12, 1 pump, 3 drivers, placeholder plates                       | open     |
 | Q4  | Do trucks already have a GPS tracker (which vendor)?                                                             | No; `TrackingSource = PHONE`                                                 | open     |
