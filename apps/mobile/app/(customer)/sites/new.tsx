@@ -12,7 +12,7 @@ export default function NewSiteScreen() {
   const errorMessage = useErrorMessage();
 
   return (
-    <Screen scroll keyboard>
+    <Screen scroll keyboard="insets">
       <AppHeader title={t('sites.add')} onBack={() => router.back()} />
       <SiteForm
         submitting={createSite.isPending}

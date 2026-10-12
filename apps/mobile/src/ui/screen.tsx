@@ -17,8 +17,14 @@ export interface ScreenProps extends PropsWithChildren {
   edges?: Edge[];
   /** Remove the default 16 px gutters (full-bleed maps, lists with their own padding). */
   bare?: boolean;
-  /** Keyboard-aware (forms). */
-  keyboard?: boolean;
+  /**
+   * Keyboard handling (ADR 0010):
+   * - `true`: KeyboardAvoidingView shrinks the view so a pinned bottom button stays visible
+   *   (login, OTP, profile).
+   * - `'insets'`: scroll mode only; the ScrollView insets itself for the keyboard and scrolls the
+   *   focused field above it natively (long forms such as the site form).
+   */
+  keyboard?: boolean | 'insets';
   className?: string;
 }
 
@@ -41,6 +47,7 @@ export function Screen({
       contentContainerClassName="flex-grow"
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
+      automaticallyAdjustKeyboardInsets={keyboard === 'insets' && Platform.OS === 'ios'}
       showsVerticalScrollIndicator={false}
     >
       <Pressable
@@ -54,16 +61,17 @@ export function Screen({
   ) : (
     <View className={cn('flex-1 gap-4', gutters, className)}>{children}</View>
   );
-  const body = keyboard ? (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      className="flex-1"
-    >
-      {content}
-    </KeyboardAvoidingView>
-  ) : (
-    content
-  );
+  const body =
+    keyboard === true ? (
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        className="flex-1"
+      >
+        {content}
+      </KeyboardAvoidingView>
+    ) : (
+      content
+    );
   return (
     <SafeAreaView edges={edges} className="flex-1 bg-background dark:bg-background-dark">
       {body}

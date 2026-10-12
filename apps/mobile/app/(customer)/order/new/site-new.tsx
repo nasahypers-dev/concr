@@ -15,7 +15,7 @@ export default function WizardNewSiteScreen() {
   const patch = useOrderDraftStore((s) => s.patch);
 
   return (
-    <Screen scroll keyboard>
+    <Screen scroll keyboard="insets">
       <AppHeader title={t('sites.add')} onBack={() => router.back()} />
       <SiteForm
         submitting={createSite.isPending}

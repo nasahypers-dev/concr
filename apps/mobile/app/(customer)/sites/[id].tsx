@@ -18,7 +18,7 @@ export default function EditSiteScreen() {
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   return (
-    <Screen scroll keyboard>
+    <Screen scroll keyboard="insets">
       <AppHeader title={t('sites.edit')} onBack={() => router.back()} />
       {site.isPending ? (
         <>
