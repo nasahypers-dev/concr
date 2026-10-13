@@ -8,6 +8,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useApi } from '@/api/api-provider';
 import { queryKeys } from '@/api/query-keys';
 import { selectIsAuthenticated, useSessionStore } from '@/store/session.store';
+import { useSettingsStore } from '@/store/settings.store';
 
 /** Dev/mock OTP (spec §18). The mock API also returns it as `devCode`. */
 export const DEV_OTP_CODE = '123456';
@@ -29,6 +30,8 @@ export function useVerifyOtp() {
     mutationFn: (input: OtpVerifyInput) => api.auth.verifyOtp(input),
     onSuccess: (session: AuthSession) => {
       queryClient.clear();
+      // Every sign-in replays the home tour (owner, 2026-10-13); the profile can replay it too.
+      useSettingsStore.getState().setTourDone(false);
       setSession({
         role: session.user.role,
         accessToken: session.accessToken,

@@ -86,6 +86,10 @@ Five commits, each green locally and in CI:
 5. First-run guided tour on the home screen (three steps with arrows and a Skip button, per install,
    "App walkthrough" row in the profile replays it); lead time 2 h (temporary, Q1).
 
+Follow-ups (2026-10-13): the tour replays on every sign-in and sits inline next to the order button / above the
+tab bar (no measuring); single-marker maps zoom to street level instead of grey tiles; addresses come from
+Nominatim in the app language (Apple geocoder as fallback).
+
 Device checks pending on the iPhone: tour geometry on the real screen, keyboard insets on the site form,
 geocoding text quality (Apple returns the phone's language), "+994" autofill behaviour.
 

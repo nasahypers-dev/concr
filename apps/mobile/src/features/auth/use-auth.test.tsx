@@ -4,6 +4,7 @@ import { act, renderHook, waitFor } from '@testing-library/react-native';
 import type { PropsWithChildren } from 'react';
 import { ApiProvider } from '@/api/api-provider';
 import { useSessionStore } from '@/store/session.store';
+import { useSettingsStore } from '@/store/settings.store';
 import {
   DEV_CUSTOMER_PHONE,
   DEV_OTP_CODE,
@@ -12,6 +13,8 @@ import {
   useUpdateProfile,
   useVerifyOtp,
 } from './use-auth';
+
+jest.mock('nativewind', () => ({ colorScheme: { set: jest.fn() } }));
 
 function makeWrapper() {
   const client = createMockApiClient({
@@ -32,6 +35,7 @@ function makeWrapper() {
 describe('auth hooks on the mock client', () => {
   beforeEach(() => {
     useSessionStore.getState().clear();
+    useSettingsStore.getState().setTourDone(true);
   });
 
   it('requests and verifies an OTP, then stores the session', async () => {
@@ -51,6 +55,7 @@ describe('auth hooks on the mock client', () => {
     expect(useSessionStore.getState().role).toBe('CUSTOMER');
     expect(useSessionStore.getState().userId).toBe('cust_1');
     expect(useSessionStore.getState().profileComplete).toBe(true);
+    expect(useSettingsStore.getState().tourDone).toBe(false); // replayed on every sign-in
   });
 
   it('flags a brand-new account as incomplete until a name is saved (D21)', async () => {

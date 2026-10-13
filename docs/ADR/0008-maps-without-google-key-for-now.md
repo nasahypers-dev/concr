@@ -30,6 +30,15 @@ Platform billing account, which the owner prefers to set up later (`docs/DECISIO
 - Markers set `stopPropagation` and keep a stable element tree: on Apple Maps a marker tap that
   reached the map `onPress` swapped the plant marker for a default pin (owner item 13).
 
+## Addendum (2026-10-13): address language
+
+- Apple's reverse geocoder answers in the phone's language ("Street"), so the site form asks
+  OpenStreetMap Nominatim first with `Accept-Language` set from the app language
+  (`src/features/sites/reverse-geocode.ts`): Azerbaijani street and district names for Baku, no
+  key, one request per confirmed point with an identifying User-Agent (Nominatim policy). The
+  device geocoder remains the offline fallback. Google Geocoding (`language=az`) replaces it when
+  the key exists.
+
 ## Consequences
 
 - Nothing in the screens knows which map provider renders.

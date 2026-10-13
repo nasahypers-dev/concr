@@ -40,6 +40,9 @@ jest.mock('expo-location', () => ({
   PermissionStatus: { GRANTED: 'granted', DENIED: 'denied', UNDETERMINED: 'undetermined' },
 }));
 
+// Nominatim reverse geocoding goes through fetch; tests stay offline unless they stub it.
+global.fetch = jest.fn(() => Promise.reject(new Error('offline in tests')));
+
 jest.mock('expo-haptics', () => ({
   selectionAsync: jest.fn(() => Promise.resolve()),
   impactAsync: jest.fn(() => Promise.resolve()),

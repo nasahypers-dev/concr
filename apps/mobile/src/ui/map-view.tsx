@@ -46,6 +46,8 @@ export interface MapViewProps {
 const EDGE_PADDING = { top: 48, right: 48, bottom: 48, left: 48 };
 const BAKU_CENTER: GeoPoint = { lat: 40.4093, lng: 49.8671 };
 const DEFAULT_DELTA = 0.08;
+/** Street-level zoom for a single marker (fitting one point would zoom past the imagery). */
+const SINGLE_POINT_DELTA = 0.008;
 const PIN_SIZE = 36;
 
 /**
@@ -100,6 +102,19 @@ export function MapView({
   useEffect(() => {
     if (fitKey === '' || points.length === 0) return;
     const timer = setTimeout(() => {
+      const [only] = points;
+      if (points.length === 1 && only) {
+        mapRef.current?.animateToRegion(
+          {
+            latitude: only.lat,
+            longitude: only.lng,
+            latitudeDelta: SINGLE_POINT_DELTA,
+            longitudeDelta: SINGLE_POINT_DELTA,
+          },
+          300,
+        );
+        return;
+      }
       mapRef.current?.fitToCoordinates(
         points.map((p) => ({ latitude: p.lat, longitude: p.lng })),
         { edgePadding: EDGE_PADDING, animated: true },
@@ -110,6 +125,8 @@ export function MapView({
   }, [fitKey]);
 
   const initial = initialCenter ?? points[0] ?? BAKU_CENTER;
+  const initialSpan =
+    initialCenter === undefined && points.length === 1 ? SINGLE_POINT_DELTA : initialDelta;
 
   // Static markers keep a stable element tree so MapKit never re-creates their views.
   const plantMarker = useMemo(
@@ -151,8 +168,8 @@ export function MapView({
         initialRegion={{
           latitude: initial.lat,
           longitude: initial.lng,
-          latitudeDelta: initialDelta,
-          longitudeDelta: initialDelta,
+          latitudeDelta: initialSpan,
+          longitudeDelta: initialSpan,
         }}
         scrollEnabled={interactive}
         zoomEnabled={interactive}
