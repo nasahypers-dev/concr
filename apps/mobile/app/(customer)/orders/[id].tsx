@@ -108,14 +108,22 @@ export default function OrderDetailScreen() {
   const documents = detail.deliveries.flatMap((d) => (d.document ? [d.document] : []));
 
   const submitCancel = async () => {
-    await cancelOrder.mutateAsync(cancelReason.trim() === '' ? null : cancelReason.trim());
-    setCancelOpen(false);
+    try {
+      await cancelOrder.mutateAsync(cancelReason.trim() === '' ? null : cancelReason.trim());
+      setCancelOpen(false);
+    } catch {
+      // Shown by the banner in the sheet.
+    }
   };
 
   const submitReorder = async () => {
-    const draft = await reorder.mutateAsync(detail.id);
-    loadDraft(draft);
-    router.navigate('/order/new/schedule');
+    try {
+      const draft = await reorder.mutateAsync(detail.id);
+      loadDraft(draft);
+      router.navigate('/order/new/schedule');
+    } catch {
+      // Shown by the banner above the button.
+    }
   };
 
   return (
@@ -265,6 +273,13 @@ export default function OrderDetailScreen() {
             onPress={() => setCancelOpen(true)}
           />
         ) : null}
+        {reorder.isError ? (
+          <Banner
+            tone="danger"
+            message={errorMessage(reorder.error)}
+            onClose={() => reorder.reset()}
+          />
+        ) : null}
         <Button
           variant="secondary"
           label={t('order.reorder')}
@@ -287,7 +302,11 @@ export default function OrderDetailScreen() {
             multiline
           />
           {cancelOrder.isError ? (
-            <Banner tone="danger" message={errorMessage(cancelOrder.error)} />
+            <Banner
+              tone="danger"
+              message={errorMessage(cancelOrder.error)}
+              onClose={() => cancelOrder.reset()}
+            />
           ) : null}
           <Button
             variant="danger"

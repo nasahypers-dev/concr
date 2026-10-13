@@ -22,14 +22,24 @@ export default function OtpScreen() {
 
   const submit = async () => {
     if (!canSubmit) return;
-    await verifyOtp.mutateAsync({ phone, code });
-    // Session is set in the mutation; the root layout switches to the customer group.
+    setResent(false);
+    try {
+      await verifyOtp.mutateAsync({ phone, code });
+      // Session is set in the mutation; the root layout switches to the next group.
+    } catch {
+      // Shown by the banner below; an unhandled rejection would raise the dev LogBox toast.
+    }
   };
 
   const resend = async () => {
     setResent(false);
-    await requestOtp.mutateAsync({ phone });
-    setResent(true);
+    verifyOtp.reset();
+    try {
+      await requestOtp.mutateAsync({ phone });
+      setResent(true);
+    } catch {
+      // Shown by the banner below.
+    }
   };
 
   return (
@@ -40,7 +50,10 @@ export default function OtpScreen() {
         label={t('auth.otpTitle')}
         icon="key-outline"
         value={code}
-        onChangeText={(value) => setCode(value.replace(/\D/g, '').slice(0, OTP_CODE_LENGTH))}
+        onChangeText={(value) => {
+          setCode(value.replace(/\D/g, '').slice(0, OTP_CODE_LENGTH));
+          if (verifyOtp.isError) verifyOtp.reset();
+        }}
         keyboardType="number-pad"
         textContentType="oneTimeCode"
         autoComplete="sms-otp"
@@ -48,7 +61,20 @@ export default function OtpScreen() {
         autoFocus
         hint={__DEV__ && devCode ? t('auth.devCodeHint', { code: devCode }) : undefined}
       />
-      {verifyOtp.isError ? <Banner tone="danger" message={errorMessage(verifyOtp.error)} /> : null}
+      {verifyOtp.isError ? (
+        <Banner
+          tone="danger"
+          message={errorMessage(verifyOtp.error)}
+          onClose={() => verifyOtp.reset()}
+        />
+      ) : null}
+      {requestOtp.isError ? (
+        <Banner
+          tone="danger"
+          message={errorMessage(requestOtp.error)}
+          onClose={() => requestOtp.reset()}
+        />
+      ) : null}
       {resent ? <Banner tone="success" message={t('auth.codeResent')} /> : null}
       <View className="flex-1" />
       <Button

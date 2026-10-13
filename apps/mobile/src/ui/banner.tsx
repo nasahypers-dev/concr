@@ -1,4 +1,5 @@
-import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { Pressable, View } from 'react-native';
 import { Button } from './button';
 import { cn } from './cn';
 import { Icon, type IconName } from './icon';
@@ -13,6 +14,8 @@ export interface BannerProps {
   message: string;
   actionLabel?: string;
   onAction?: () => void;
+  /** Shows an × on the right; the parent decides what "closed" means (reset, hide). */
+  onClose?: () => void;
   className?: string;
 }
 
@@ -46,8 +49,10 @@ export function Banner({
   message,
   actionLabel,
   onAction,
+  onClose,
   className,
 }: BannerProps) {
+  const { t } = useTranslation();
   const style = toneStyle[tone];
   return (
     <View
@@ -72,6 +77,17 @@ export function Banner({
           />
         ) : null}
       </View>
+      {onClose ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('common.close')}
+          hitSlop={8}
+          onPress={onClose}
+          className="-mr-1 -mt-1 h-8 w-8 items-center justify-center rounded-full active:opacity-70"
+        >
+          <Icon name="close" size="md" tone="muted" />
+        </Pressable>
+      ) : null}
     </View>
   );
 }

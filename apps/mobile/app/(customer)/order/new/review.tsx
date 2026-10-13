@@ -55,9 +55,13 @@ export default function WizardReviewScreen() {
 
   const submit = async () => {
     if (!input) return;
-    const order = await createOrder.mutateAsync(input);
-    draft.reset();
-    router.replace({ pathname: '/orders/[id]', params: { id: order.id, created: '1' } });
+    try {
+      const order = await createOrder.mutateAsync(input);
+      draft.reset();
+      router.replace({ pathname: '/orders/[id]', params: { id: order.id, created: '1' } });
+    } catch {
+      // Shown by the banner below.
+    }
   };
 
   return (
@@ -144,7 +148,11 @@ export default function WizardReviewScreen() {
         />
 
         {createOrder.isError ? (
-          <Banner tone="danger" message={errorMessage(createOrder.error)} />
+          <Banner
+            tone="danger"
+            message={errorMessage(createOrder.error)}
+            onClose={() => createOrder.reset()}
+          />
         ) : null}
       </Scroll>
     </WizardFrame>

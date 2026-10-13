@@ -24,8 +24,12 @@ export default function PhoneScreen() {
       return;
     }
     setError(undefined);
-    const result = await requestOtp.mutateAsync({ phone });
-    router.push({ pathname: '/otp', params: { phone, devCode: result.devCode ?? '' } });
+    try {
+      const result = await requestOtp.mutateAsync({ phone });
+      router.push({ pathname: '/otp', params: { phone, devCode: result.devCode ?? '' } });
+    } catch {
+      // Shown by the banner below.
+    }
   };
 
   return (
@@ -44,7 +48,11 @@ export default function PhoneScreen() {
         autoFocus
       />
       {requestOtp.isError ? (
-        <Banner tone="danger" message={errorMessage(requestOtp.error)} />
+        <Banner
+          tone="danger"
+          message={errorMessage(requestOtp.error)}
+          onClose={() => requestOtp.reset()}
+        />
       ) : null}
       <View className="flex-1" />
       <Button

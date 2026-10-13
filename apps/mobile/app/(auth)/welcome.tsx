@@ -17,8 +17,12 @@ export default function WelcomeScreen() {
 
   // Dev only: runs the real (mock) OTP flow for the seeded customer in one tap.
   const quickLogin = async () => {
-    await requestOtp.mutateAsync({ phone: DEV_CUSTOMER_PHONE });
-    await verifyOtp.mutateAsync({ phone: DEV_CUSTOMER_PHONE, code: DEV_OTP_CODE });
+    try {
+      await requestOtp.mutateAsync({ phone: DEV_CUSTOMER_PHONE });
+      await verifyOtp.mutateAsync({ phone: DEV_CUSTOMER_PHONE, code: DEV_OTP_CODE });
+    } catch {
+      // Dev shortcut only; the normal phone flow reports errors on its own screens.
+    }
   };
 
   return (
