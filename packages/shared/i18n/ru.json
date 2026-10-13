@@ -50,7 +50,7 @@
     "devEnterAsCustomer": "DEV: войти как клиент",
     "devEnterAsDriver": "DEV: войти как водитель",
     "devQuickLogin": "DEV: войти как тестовый клиент",
-    "devCodeHint": "Dev-режим: код {code}",
+    "devCodeHint": "Код: {code}",
     "codeResent": "Код отправлен повторно"
   },
   "setup": {

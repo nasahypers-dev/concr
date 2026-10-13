@@ -25,6 +25,10 @@ describe('PhoneField', () => {
     await fireEvent.changeText(input, '503260343');
     expect(onChange).toHaveBeenLastCalledWith('503260343');
     expect(input.props.value).toBe('50 326 03 43');
+    // complete: the native input now refuses a 10th digit
+    expect(input.props.maxLength).toBe('50 326 03 43'.length);
+    await fireEvent.changeText(input, '50 326 03 43 9');
+    expect(onChange).toHaveBeenLastCalledWith('503260343');
   });
 
   it('reduces an autofilled full number to its local part', async () => {

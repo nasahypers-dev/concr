@@ -50,7 +50,7 @@
     "devEnterAsCustomer": "DEV: enter as customer",
     "devEnterAsDriver": "DEV: enter as driver",
     "devQuickLogin": "DEV: sign in as the test customer",
-    "devCodeHint": "Dev mode: code {code}",
+    "devCodeHint": "Code: {code}",
     "codeResent": "Code sent again"
   },
   "setup": {

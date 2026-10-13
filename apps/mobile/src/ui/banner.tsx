@@ -59,9 +59,9 @@ export function Banner({
       accessibilityRole={tone === 'danger' ? 'alert' : 'text'}
       className={cn('flex-row gap-3 rounded-xl p-3', style.box, className)}
     >
-      {/* Centre the 24 px glyph on the first 20 px text line so icon and text sit level. */}
-      <View className="h-5 justify-center">
-        <Icon name={style.icon} size="lg" color={style.color} />
+      {/* Same height as the first text line (20 px), so icon and text sit level and nothing clips. */}
+      <View className="h-5 w-5 items-center justify-center">
+        <Icon name={style.icon} size="md" color={style.color} />
       </View>
       <View className="flex-1 gap-1">
         {title ? (
@@ -86,7 +86,7 @@ export function Banner({
           accessibilityLabel={t('common.close')}
           hitSlop={8}
           onPress={onClose}
-          className="-mr-1 -mt-1 h-8 w-8 items-center justify-center rounded-full active:opacity-70"
+          className="-mr-1 h-8 w-8 items-center justify-center self-center rounded-full active:opacity-70"
         >
           <Icon name="close" size="md" tone="muted" />
         </Pressable>

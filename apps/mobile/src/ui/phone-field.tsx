@@ -1,5 +1,5 @@
 import { TextInput, type TextInputProps, View } from 'react-native';
-import { AZ_PREFIX, formatAzLocal, stripAzPrefix } from '@/lib/phone';
+import { AZ_PREFIX, formatAzLocal, isCompleteAzLocal, stripAzPrefix } from '@/lib/phone';
 import { cn } from './cn';
 import { Icon } from './icon';
 import { Text } from './text';
@@ -21,7 +21,9 @@ export interface PhoneFieldProps extends Omit<
 /**
  * Phone input with a fixed "+994" (owner, 2026-10-12). The customer types the 9 local digits,
  * shown grouped as "50 326 03 43"; pasted or autofilled full numbers are reduced to the local part.
- * No `maxLength`: iOS rejects an autofill insert that exceeds it, so the slice happens in JS.
+ * `maxLength` is applied only once the number is complete: before that an autofill insert of a
+ * full "+994 50 …" must get through (it is reduced in JS); afterwards the native input refuses
+ * extra digits outright, so nothing appears and disappears a moment later.
  */
 export function PhoneField({
   label,
@@ -35,6 +37,8 @@ export function PhoneField({
 }: PhoneFieldProps) {
   const theme = useThemeColors();
   const invalid = Boolean(error);
+  const formatted = formatAzLocal(value);
+  const maxLength = isCompleteAzLocal(value) ? formatted.length : undefined;
   return (
     <View className={cn('gap-1.5', className)}>
       <Text variant="bodySm" weight="medium">
@@ -55,7 +59,8 @@ export function PhoneField({
           accessibilityLabel={label}
           accessibilityState={{ disabled: !editable }}
           editable={editable}
-          value={formatAzLocal(value)}
+          value={formatted}
+          maxLength={maxLength}
           onChangeText={(text) => onChangeText(stripAzPrefix(text))}
           keyboardType="number-pad"
           textContentType="telephoneNumber"
