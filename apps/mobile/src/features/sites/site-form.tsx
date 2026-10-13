@@ -33,6 +33,7 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
   const [pickerOpen, setPickerOpen] = useState(false);
   // Last address written by reverse geocoding; only that text may be replaced by the next lookup.
   const [autoAddress, setAutoAddress] = useState<string | null>(null);
+  const [autoStreetKnown, setAutoStreetKnown] = useState(true);
   const geocode = useReverseGeocode();
 
   const submit = () => {
@@ -70,9 +71,10 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
     const found = await geocode.lookup(point);
     if (!found) return;
     setAddressLine((current) =>
-      current.trim() === '' || current === autoAddress ? found : current,
+      current.trim() === '' || current === autoAddress ? found.text : current,
     );
-    setAutoAddress(found);
+    setAutoAddress(found.text);
+    setAutoStreetKnown(found.streetKnown);
   };
 
   return (
@@ -94,7 +96,7 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
         error={errors.addressLine}
         hint={
           addressLine !== '' && addressLine === autoAddress
-            ? t('sites.addressAutoFilled')
+            ? t(autoStreetKnown ? 'sites.addressAutoFilled' : 'sites.addressNoStreet')
             : undefined
         }
         icon="map-outline"

@@ -189,6 +189,7 @@
     "address": "Address",
     "addressPlaceholder": "District, street, building",
     "addressAutoFilled": "Address found automatically, please check it",
+    "addressNoStreet": "Street not found precisely; complete the address",
     "pin": "Pin the exact spot on the map",
     "pinHint": "Move the map until the pin sits on the pour spot",
     "pinMissing": "The pour spot is not chosen yet",

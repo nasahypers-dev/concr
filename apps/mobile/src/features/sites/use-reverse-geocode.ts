@@ -3,7 +3,7 @@ import * as Location from 'expo-location';
 import { useCallback, useState } from 'react';
 import { useSettingsStore } from '@/store/settings.store';
 import { placemarkToAddress } from './placemark';
-import { reverseGeocodeLocalized } from './reverse-geocode';
+import { type GeocodedAddress, reverseGeocodeLocalized } from './reverse-geocode';
 
 export type GeocodeStatus = 'idle' | 'loading' | 'done' | 'failed';
 
@@ -14,13 +14,13 @@ export type GeocodeStatus = 'idle' | 'loading' | 'done' | 'failed';
  */
 export function useReverseGeocode(): {
   status: GeocodeStatus;
-  lookup: (point: GeoPoint) => Promise<string | null>;
+  lookup: (point: GeoPoint) => Promise<GeocodedAddress | null>;
 } {
   const [status, setStatus] = useState<GeocodeStatus>('idle');
   const locale = useSettingsStore((s) => s.locale);
 
   const lookup = useCallback(
-    async (point: GeoPoint): Promise<string | null> => {
+    async (point: GeoPoint): Promise<GeocodedAddress | null> => {
       setStatus('loading');
       let address = await reverseGeocodeLocalized(point, locale);
       if (!address) {
@@ -30,7 +30,8 @@ export function useReverseGeocode(): {
             longitude: point.lng,
           });
           const first = results[0];
-          address = first ? placemarkToAddress(first) : null;
+          const text = first ? placemarkToAddress(first) : null;
+          address = text ? { text, streetKnown: Boolean(first?.street) } : null;
         } catch {
           address = null;
         }

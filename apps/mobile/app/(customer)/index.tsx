@@ -60,13 +60,16 @@ export default function CustomerHomeScreen() {
         ) : orders.isError ? (
           <StateView status="error" compact onRetry={() => void orders.refetch()} />
         ) : items.length === 0 ? (
-          <StateView
-            status="empty"
-            compact
-            icon="cube-outline"
-            title={t('customer.ordersEmpty')}
-            description={t('home.firstOrderHint')}
-          />
+          // Centred in whatever space is left under the button (and the tour callout).
+          <View className="flex-1 justify-center">
+            <StateView
+              status="empty"
+              compact
+              icon="cube-outline"
+              title={t('customer.ordersEmpty')}
+              description={t('home.firstOrderHint')}
+            />
+          </View>
         ) : (
           <>
             {active ? (

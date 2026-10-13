@@ -189,6 +189,7 @@
     "address": "Ünvan",
     "addressPlaceholder": "Rayon, küçə, bina",
     "addressAutoFilled": "Ünvan avtomatik tapıldı, yoxlayın",
+    "addressNoStreet": "Küçə dəqiq tapılmadı; ünvanı tamamlayın",
     "pin": "Xəritədə yeri dəqiqləşdirin",
     "pinHint": "Xəritəni çəkib pin-i tökmə yerinə gətirin",
     "pinMissing": "Tökmə yeri hələ seçilməyib",
