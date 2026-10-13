@@ -28,6 +28,7 @@ describe('address-parts', () => {
     expect(normalizeStreetName('Əhməd Rəcəbli küçəsi')).toBe('Əhməd Rəcəbli küçəsi');
     expect(normalizeStreetName('Bağlar küç.')).toBe('Bağlar küçəsi');
     expect(normalizeStreetName('Sülh.')).toBe('Sülh');
+    expect(normalizeStreetName('Novxanı şos.')).toBe('Novxanı şossesi');
   });
 
   it('dedupes parts case-insensitively', () => {

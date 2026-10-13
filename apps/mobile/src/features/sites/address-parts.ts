@@ -19,15 +19,18 @@ export function pickLocality(candidates: (string | null | undefined)[]): string 
   return '';
 }
 
-/** Map data abbreviates street types ("Hüseyn Cavid küç."); customers read the full word. */
-const STREET_ABBREVIATIONS: ReadonlyArray<[RegExp, string]> = [
-  [/\bküç\.?$/iu, 'küçəsi'],
-  [/\bpr(?:osp)?\.?$/iu, 'prospekti'],
-  [/\bdöng\.?$/iu, 'döngəsi'],
-  [/\bkeç\.?$/iu, 'keçidi'],
-  [/\bmeyd\.?$/iu, 'meydanı'],
-  [/\bşos\.?$/iu, 'şossesi'],
-  [/\bxiyab\.?$/iu, 'xiyabanı'],
+/**
+ * Map data abbreviates street types ("Hüseyn Cavid küç."); customers read the full word.
+ * `(^|\s)` instead of `\b`: the ASCII-only word boundary never fires before "ş".
+ */
+const STREET_ABBREVIATIONS: readonly (readonly [RegExp, string])[] = [
+  [/(^|\s)küç\.?$/iu, 'küçəsi'],
+  [/(^|\s)pr(?:osp)?\.?$/iu, 'prospekti'],
+  [/(^|\s)döng\.?$/iu, 'döngəsi'],
+  [/(^|\s)keç\.?$/iu, 'keçidi'],
+  [/(^|\s)meyd\.?$/iu, 'meydanı'],
+  [/(^|\s)şos\.?$/iu, 'şossesi'],
+  [/(^|\s)xiyab\.?$/iu, 'xiyabanı'],
 ];
 
 /** "Hüseyn Cavid küç." → "Hüseyn Cavid küçəsi"; a trailing period is dropped in any case. */
@@ -35,7 +38,7 @@ export function normalizeStreetName(name: string): string {
   let out = name.trim();
   for (const [pattern, full] of STREET_ABBREVIATIONS) {
     if (pattern.test(out)) {
-      out = out.replace(pattern, full);
+      out = out.replace(pattern, `$1${full}`);
       break;
     }
   }
