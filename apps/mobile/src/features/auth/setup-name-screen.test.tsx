@@ -21,7 +21,9 @@ function makeClient() {
 }
 
 function wrapperFor(client: ReturnType<typeof makeClient>) {
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: 0 } },
+  });
   return function Wrapper({ children }: PropsWithChildren) {
     return (
       <ApiProvider client={client}>

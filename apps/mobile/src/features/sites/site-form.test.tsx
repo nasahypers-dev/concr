@@ -8,6 +8,9 @@ import { initI18n } from '@/i18n';
 import { useSessionStore } from '@/store/session.store';
 import { SiteForm } from './site-form';
 
+// The form renders a modal picker, a map mock and a mock API: slow on cold CI runners.
+jest.setTimeout(20_000);
+
 beforeAll(() => {
   initI18n('az');
 });
@@ -18,7 +21,9 @@ function makeWrapper() {
     fixtures: createFixtures(new Date('2026-10-09T08:30:00.000Z')),
     latencyMs: 0,
   });
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: 0 } },
+  });
   return function Wrapper({ children }: PropsWithChildren) {
     return (
       <ApiProvider client={client}>

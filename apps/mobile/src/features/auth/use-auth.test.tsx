@@ -22,7 +22,9 @@ function makeWrapper() {
     fixtures: createFixtures(new Date('2026-10-09T08:30:00.000Z')),
     latencyMs: 0,
   });
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: 0 } },
+  });
   return function Wrapper({ children }: PropsWithChildren) {
     return (
       <ApiProvider client={client}>
