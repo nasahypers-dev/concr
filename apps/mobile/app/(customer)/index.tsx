@@ -25,12 +25,26 @@ export default function CustomerHomeScreen() {
   const active = items.find((o) => ACTIVE_ORDER_STATUSES.includes(o.status));
   const recent = items.filter((o) => o.id !== active?.id).slice(0, 3);
   const firstName = me.data?.fullName?.split(' ')[0];
+  const empty = !orders.isPending && !orders.isError && items.length === 0;
 
   const startOrder = () => {
     resetDraft();
     router.navigate('/order/new/product');
   };
   const openOrder = (id: string) => router.push({ pathname: '/orders/[id]', params: { id } });
+
+  const ctaCallout = (
+    <TourCallout
+      arrow="up"
+      title={tour.current.title}
+      body={tour.current.body}
+      step={tour.step + 1}
+      total={tour.total}
+      last={tour.last}
+      onSkip={tour.skip}
+      onNext={tour.next}
+    />
+  );
 
   return (
     <View className="flex-1">
@@ -43,62 +57,59 @@ export default function CustomerHomeScreen() {
         <View className={tourOnCta ? 'rounded-2xl border-2 border-accent p-1' : undefined}>
           <Button label={t('customer.orderCta')} icon="add-circle-outline" onPress={startOrder} />
         </View>
-        {tourOnCta ? (
-          <TourCallout
-            arrow="up"
-            title={tour.current.title}
-            body={tour.current.body}
-            step={tour.step + 1}
-            total={tour.total}
-            last={tour.last}
-            onSkip={tour.skip}
-            onNext={tour.next}
-          />
-        ) : null}
-        {orders.isPending ? (
-          <SkeletonList count={2} />
-        ) : orders.isError ? (
-          <StateView status="error" compact onRetry={() => void orders.refetch()} />
-        ) : items.length === 0 ? (
-          // Centred in whatever space is left under the button (and the tour callout).
-          <View className="flex-1 justify-center">
-            <StateView
-              status="empty"
-              compact
-              icon="cube-outline"
-              title={t('customer.ordersEmpty')}
-              description={t('home.firstOrderHint')}
-            />
-          </View>
-        ) : (
-          <>
-            {active ? (
-              <Section title={t('home.activeOrder')}>
-                <OrderCard
-                  order={active}
-                  emphasis
-                  customerPhone={me.data?.phone}
-                  onPress={() => openOrder(active.id)}
-                />
-              </Section>
-            ) : null}
-            {recent.length > 0 ? (
-              <Section
-                title={t('home.recentOrders')}
-                action={{ label: t('home.seeAll'), onPress: () => router.navigate('/orders') }}
-              >
-                {recent.map((order) => (
+        {/* With orders the hint flows above the list; otherwise it floats so the empty state
+            keeps exactly the same centred position on every tour step and without the tour. */}
+        {tourOnCta && !empty ? ctaCallout : null}
+        <View className="flex-1">
+          {orders.isPending ? (
+            <SkeletonList count={2} />
+          ) : orders.isError ? (
+            <StateView status="error" compact onRetry={() => void orders.refetch()} />
+          ) : empty ? (
+            <View className="flex-1 justify-center">
+              <StateView
+                status="empty"
+                compact
+                icon="cube-outline"
+                title={t('customer.ordersEmpty')}
+                description={t('home.firstOrderHint')}
+              />
+            </View>
+          ) : (
+            <>
+              {active ? (
+                <Section title={t('home.activeOrder')}>
                   <OrderCard
-                    key={order.id}
-                    order={order}
+                    order={active}
+                    emphasis
                     customerPhone={me.data?.phone}
-                    onPress={() => openOrder(order.id)}
+                    onPress={() => openOrder(active.id)}
                   />
-                ))}
-              </Section>
-            ) : null}
-          </>
-        )}
+                </Section>
+              ) : null}
+              {recent.length > 0 ? (
+                <Section
+                  title={t('home.recentOrders')}
+                  action={{ label: t('home.seeAll'), onPress: () => router.navigate('/orders') }}
+                >
+                  {recent.map((order) => (
+                    <OrderCard
+                      key={order.id}
+                      order={order}
+                      customerPhone={me.data?.phone}
+                      onPress={() => openOrder(order.id)}
+                    />
+                  ))}
+                </Section>
+              ) : null}
+            </>
+          )}
+          {tourOnCta && empty ? (
+            <View className="absolute left-0 right-0 top-0" pointerEvents="box-none">
+              {ctaCallout}
+            </View>
+          ) : null}
+        </View>
       </Screen>
       {tourOnTabs ? (
         // Pinned just above the tab bar; the arrow points down at the Orders / Sites tab.
