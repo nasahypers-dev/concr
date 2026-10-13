@@ -51,8 +51,7 @@
     "devEnterAsDriver": "DEV: enter as driver",
     "devQuickLogin": "DEV: sign in as the test customer",
     "devCodeHint": "Code: {code}",
-    "codeResent": "Code sent again",
-    "codeValidFor": "Code valid for {time}; a new one is sent when it runs out"
+    "codeResent": "Code sent again"
   },
   "setup": {
     "title": "What should we call you?",

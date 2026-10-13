@@ -51,8 +51,7 @@
     "devEnterAsDriver": "DEV: войти как водитель",
     "devQuickLogin": "DEV: войти как тестовый клиент",
     "devCodeHint": "Код: {code}",
-    "codeResent": "Код отправлен повторно",
-    "codeValidFor": "Код действителен ещё {time}; по истечении будет отправлен новый"
+    "codeResent": "Код отправлен повторно"
   },
   "setup": {
     "title": "Как к вам обращаться?",

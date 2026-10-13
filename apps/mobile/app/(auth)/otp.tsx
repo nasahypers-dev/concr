@@ -70,8 +70,14 @@ export default function OtpScreen() {
         autoFocus
         hint={__DEV__ && devCode ? t('auth.devCodeHint', { code: devCode }) : undefined}
       />
-      <Text variant="bodySm" tone="muted">
-        {t('auth.codeValidFor', { time: formatCountdown(countdown.remaining) })}
+      {/* Just the time, like other OTP screens; tabular digits keep the width stable. */}
+      <Text
+        variant="bodySm"
+        tone="muted"
+        className="text-center"
+        style={{ fontVariant: ['tabular-nums'] }}
+      >
+        {formatCountdown(countdown.remaining)}
       </Text>
       {verifyOtp.isError ? (
         <Banner

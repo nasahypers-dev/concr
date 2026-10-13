@@ -51,8 +51,7 @@
     "devEnterAsDriver": "DEV: sürücü kimi daxil ol",
     "devQuickLogin": "DEV: test müştərisi kimi daxil ol",
     "devCodeHint": "Kod: {code}",
-    "codeResent": "Kod yenidən göndərildi",
-    "codeValidFor": "Kod {time} ərzində keçərlidir; vaxt bitəndə yeni kod göndərilir"
+    "codeResent": "Kod yenidən göndərildi"
   },
   "setup": {
     "title": "Sizi necə çağıraq?",
