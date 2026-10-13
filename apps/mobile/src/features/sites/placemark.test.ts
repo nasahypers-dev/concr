@@ -27,6 +27,29 @@ describe('placemarkToAddress', () => {
     ).toBe('Bağlar küç., Xəzər, Bakı');
   });
 
+  it('skips an administrative subregion', () => {
+    expect(
+      placemarkToAddress({
+        street: 'Rauf Kazımovski küçəsi',
+        streetNumber: null,
+        name: null,
+        district: 'Bilgəh',
+        subregion: 'Sabunçu rayonu',
+        city: 'Bakı',
+      }),
+    ).toBe('Rauf Kazımovski küçəsi, Bilgəh, Bakı');
+    expect(
+      placemarkToAddress({
+        street: 'Rauf Kazımovski küçəsi',
+        streetNumber: null,
+        name: null,
+        district: null,
+        subregion: 'Sabunçu rayonu',
+        city: 'Bakı',
+      }),
+    ).toBe('Rauf Kazımovski küçəsi, Bakı');
+  });
+
   it('drops repeated parts and returns null for an empty placemark', () => {
     expect(
       placemarkToAddress({

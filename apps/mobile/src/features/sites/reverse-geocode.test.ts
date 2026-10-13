@@ -31,6 +31,24 @@ describe('nominatimToAddress', () => {
     ).toEqual({ text: 'Rauf Kazımovski küçəsi, Bilgəh, Bakı', streetKnown: true });
   });
 
+  it('skips a rayon filed as suburb and never shows it alone', () => {
+    expect(
+      nominatimToAddress({
+        road: 'Rauf Kazımovski küçəsi',
+        suburb: 'Sabunçu rayonu',
+        village: 'Bilgəh',
+        city: 'Bakı',
+      }),
+    ).toEqual({ text: 'Rauf Kazımovski küçəsi, Bilgəh, Bakı', streetKnown: true });
+    expect(
+      nominatimToAddress({
+        road: 'Rauf Kazımovski küçəsi',
+        suburb: 'Sabunçu rayonu',
+        city: 'Bakı',
+      }),
+    ).toEqual({ text: 'Rauf Kazımovski küçəsi, Bakı', streetKnown: true });
+  });
+
   it('keeps the locality when the street is dropped and drops repeats', () => {
     expect(
       nominatimToAddress(

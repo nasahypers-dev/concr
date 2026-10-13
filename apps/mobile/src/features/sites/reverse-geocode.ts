@@ -1,4 +1,5 @@
 import type { GeoPoint, Locale } from '@concr/shared';
+import { dedupeParts, pickLocality } from './address-parts';
 
 /**
  * Reverse geocoding in the app's language (owner item 3, 2026-10-13). Apple's geocoder answers in
@@ -65,22 +66,18 @@ export function isNearResult(
   );
 }
 
-function dedupe(parts: string[]): string[] {
-  const seen = new Set<string>();
-  const out: string[] = [];
-  for (const raw of parts) {
-    const part = raw.trim();
-    const key = part.toLowerCase();
-    if (part === '' || seen.has(key)) continue;
-    seen.add(key);
-    out.push(part);
-  }
-  return out;
-}
-
-/** The most specific place name: a quarter or settlement (Bilgəh), never the administrative rayon. */
+/**
+ * The most specific place name (a quarter or settlement such as Bilgəh). OSM sometimes files the
+ * rayon under `suburb`, so administrative names are skipped wherever they appear.
+ */
 export function localityOf(a: NominatimAddress): string {
-  return a.neighbourhood ?? a.quarter ?? a.suburb ?? a.village ?? (a.city ? (a.town ?? '') : '');
+  return pickLocality([
+    a.neighbourhood,
+    a.quarter,
+    a.village,
+    a.suburb,
+    a.city ? a.town : undefined,
+  ]);
 }
 
 /**
@@ -97,7 +94,7 @@ export function nominatimToAddress(
         .filter((s) => s !== '')
         .join(' ')
     : '';
-  const parts = dedupe([street, localityOf(a), a.city ?? a.town ?? '']);
+  const parts = dedupeParts([street, localityOf(a), a.city ?? a.town ?? '']);
   if (parts.length === 0) return null;
   return { text: parts.join(', '), streetKnown: street !== '' };
 }
