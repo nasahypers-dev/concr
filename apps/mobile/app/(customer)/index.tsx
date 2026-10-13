@@ -54,7 +54,10 @@ export default function CustomerHomeScreen() {
             {firstName ? t('home.greeting', { name: firstName }) : t('home.greetingAnonymous')}
           </Text>
         </View>
-        <View className={tourOnCta ? 'rounded-2xl border-2 border-accent p-1' : undefined}>
+        {/* The ring's border and padding are always reserved so the content below never shifts. */}
+        <View
+          className={`rounded-2xl border-2 p-1 ${tourOnCta ? 'border-accent' : 'border-transparent'}`}
+        >
           <Button label={t('customer.orderCta')} icon="add-circle-outline" onPress={startOrder} />
         </View>
         {/* With orders the hint flows above the list; otherwise it floats so the empty state
