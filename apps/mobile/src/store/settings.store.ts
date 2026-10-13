@@ -16,9 +16,16 @@ export interface SettingsState {
   locale: Locale;
   /** The first-run guided tour was finished or skipped (per install). */
   tourDone: boolean;
+  /**
+   * Names entered on the setup screen, by E.164 phone. The in-memory mock API forgets accounts
+   * created at runtime on every reload; remembering the name on the device lets a repeat sign-in
+   * skip the name screen. Harmless once the real backend stores the profile.
+   */
+  rememberedNames: Record<string, string>;
   setTheme: (theme: ThemePreference) => void;
   setLocale: (locale: Locale) => void;
   setTourDone: (done: boolean) => void;
+  rememberName: (phone: string, fullName: string) => void;
   markHydrated: () => void;
 }
 
@@ -44,6 +51,7 @@ export const useSettingsStore = create<SettingsState>()(
       theme: 'system',
       locale: defaultLocale,
       tourDone: false,
+      rememberedNames: {},
       setTheme: (theme) => {
         applyTheme(theme);
         set({ theme });
@@ -53,12 +61,19 @@ export const useSettingsStore = create<SettingsState>()(
         set({ locale });
       },
       setTourDone: (tourDone) => set({ tourDone }),
+      rememberName: (phone, fullName) =>
+        set((state) => ({ rememberedNames: { ...state.rememberedNames, [phone]: fullName } })),
       markHydrated: () => set({ hydrated: true }),
     }),
     {
       name: SETTINGS_STORAGE_KEY,
       storage: createJSONStorage(() => secureStorage),
-      partialize: ({ theme, locale, tourDone }) => ({ theme, locale, tourDone }),
+      partialize: ({ theme, locale, tourDone, rememberedNames }) => ({
+        theme,
+        locale,
+        tourDone,
+        rememberedNames,
+      }),
       // Apply before the first paint: the root layout waits for `hydrated`.
       onRehydrateStorage: () => (state) => {
         applyTheme(state?.theme ?? 'system');

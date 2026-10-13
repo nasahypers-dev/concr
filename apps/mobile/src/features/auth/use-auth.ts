@@ -27,19 +27,30 @@ export function useVerifyOtp() {
   const queryClient = useQueryClient();
   const setSession = useSessionStore((s) => s.setSession);
   return useMutation({
-    mutationFn: (input: OtpVerifyInput) => api.auth.verifyOtp(input),
-    onSuccess: (session: AuthSession) => {
-      queryClient.clear();
-      // Every sign-in replays the home tour (owner, 2026-10-13); the profile can replay it too.
-      useSettingsStore.getState().setTourDone(false);
+    mutationFn: async (input: OtpVerifyInput): Promise<AuthSession> => {
+      const session = await api.auth.verifyOtp(input);
+      let fullName = session.user.fullName;
       setSession({
         role: session.user.role,
         accessToken: session.accessToken,
         refreshToken: session.refreshToken,
         userId: session.user.id,
         // New accounts have no name yet; the (setup) group collects it (D21).
-        profileComplete: session.user.fullName !== null,
+        profileComplete: fullName !== null,
       });
+      // The in-memory mock forgets runtime accounts on reload: reuse the name this device saved.
+      const remembered = useSettingsStore.getState().rememberedNames[input.phone];
+      if (fullName === null && remembered) {
+        const user = await api.auth.updateProfile({ fullName: remembered });
+        fullName = user.fullName;
+        if (fullName !== null) useSessionStore.getState().markProfileComplete();
+      }
+      return { ...session, user: { ...session.user, fullName } };
+    },
+    onSuccess: () => {
+      queryClient.clear();
+      // Every sign-in replays the home tour (owner, 2026-10-13); the profile can replay it too.
+      useSettingsStore.getState().setTourDone(false);
     },
   });
 }
@@ -78,7 +89,10 @@ export function useUpdateProfile() {
     mutationFn: (input: UpdateProfileInput) => api.auth.updateProfile(input),
     onSuccess: (user) => {
       queryClient.setQueryData(queryKeys.me, user);
-      if (user.fullName !== null) useSessionStore.getState().markProfileComplete();
+      if (user.fullName !== null) {
+        useSessionStore.getState().markProfileComplete();
+        useSettingsStore.getState().rememberName(user.phone, user.fullName);
+      }
     },
   });
 }

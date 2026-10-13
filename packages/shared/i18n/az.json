@@ -54,8 +54,8 @@
     "codeResent": "Kod yenidən göndərildi"
   },
   "setup": {
-    "title": "Sizi necə çağıraq?",
-    "subtitle": "Sifarişləriniz və sənədlər bu adla hazırlanacaq.",
+    "title": "Ad və soyadınızı daxil edin",
+    "subtitle": "Sifarişlər və sənədlər bu adla rəsmiləşdiriləcək.",
     "firstName": "Ad",
     "lastName": "Soyad",
     "continue": "Davam et"
@@ -95,7 +95,7 @@
     "next": "Növbəti",
     "done": "Başla",
     "orderTitle": "Beton sifarişi buradan başlayır",
-    "orderBody": "Marka, həcm, obyekt və vaxtı seçin; qiyməti dərhal görəcəksiniz.",
+    "orderBody": "Marka, həcm, obyekt və vaxtı seçin, qiyməti dərhal görəcəksiniz.",
     "ordersTitle": "Sifarişləriniz",
     "ordersBody": "Bütün sifarişlər və mikserin canlı xəritəsi bu bölmədədir.",
     "sitesTitle": "Obyektlər",
@@ -189,11 +189,11 @@
     "address": "Ünvan",
     "addressPlaceholder": "Rayon, küçə, bina",
     "addressAutoFilled": "Ünvan avtomatik tapıldı, yoxlayın",
-    "addressNoStreet": "Küçə dəqiq tapılmadı; ünvanı tamamlayın",
+    "addressNoStreet": "Küçə dəqiq tapılmadı, ünvanı tamamlayın",
     "pin": "Xəritədə yeri dəqiqləşdirin",
     "pinHint": "Xəritəni çəkib pin-i tökmə yerinə gətirin",
     "pinMissing": "Tökmə yeri hələ seçilməyib",
-    "pinChosen": "Tökmə yeri seçildi; dəyişmək üçün xəritəyə toxunun",
+    "pinChosen": "Tökmə yeri seçildi, dəyişmək üçün xəritəyə toxunun",
     "pickOnMap": "Xəritədə seç",
     "pickerTitle": "Tökmə yerini seçin",
     "useMyLocation": "Cari yerimi istifadə et",

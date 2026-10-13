@@ -77,6 +77,23 @@ describe('auth hooks on the mock client', () => {
       await result.current.update.mutateAsync({ fullName: 'Nurlan Əsədli' });
     });
     await waitFor(() => expect(useSessionStore.getState().profileComplete).toBe(true));
+    expect(useSettingsStore.getState().rememberedNames[phone]).toBe('Nurlan Əsədli');
+  });
+
+  it('reuses the remembered name when the same phone signs in on a fresh mock store', async () => {
+    const phone = '+994500000098';
+    useSettingsStore.getState().rememberName(phone, 'Leyla Quliyeva');
+    const wrapper = makeWrapper();
+    const { result } = await renderHook(
+      () => ({ request: useRequestOtp(), verify: useVerifyOtp() }),
+      { wrapper },
+    );
+    await act(async () => {
+      await result.current.request.mutateAsync({ phone });
+      const session = await result.current.verify.mutateAsync({ phone, code: DEV_OTP_CODE });
+      expect(session.user.fullName).toBe('Leyla Quliyeva');
+    });
+    await waitFor(() => expect(useSessionStore.getState().profileComplete).toBe(true));
   });
 
   it('surfaces a wrong code as an API error and clears the session on logout', async () => {
