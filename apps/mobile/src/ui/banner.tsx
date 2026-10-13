@@ -59,7 +59,10 @@ export function Banner({
       accessibilityRole={tone === 'danger' ? 'alert' : 'text'}
       className={cn('flex-row gap-3 rounded-xl p-3', style.box, className)}
     >
-      <Icon name={style.icon} size="lg" color={style.color} />
+      {/* Centre the 24 px glyph on the first 20 px text line so icon and text sit level. */}
+      <View className="h-5 justify-center">
+        <Icon name={style.icon} size="lg" color={style.color} />
+      </View>
       <View className="flex-1 gap-1">
         {title ? (
           <Text variant="bodySm" weight="semibold">
