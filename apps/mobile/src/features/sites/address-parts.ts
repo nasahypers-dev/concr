@@ -19,6 +19,29 @@ export function pickLocality(candidates: (string | null | undefined)[]): string 
   return '';
 }
 
+/** Map data abbreviates street types ("Hüseyn Cavid küç."); customers read the full word. */
+const STREET_ABBREVIATIONS: ReadonlyArray<[RegExp, string]> = [
+  [/\bküç\.?$/iu, 'küçəsi'],
+  [/\bpr(?:osp)?\.?$/iu, 'prospekti'],
+  [/\bdöng\.?$/iu, 'döngəsi'],
+  [/\bkeç\.?$/iu, 'keçidi'],
+  [/\bmeyd\.?$/iu, 'meydanı'],
+  [/\bşos\.?$/iu, 'şossesi'],
+  [/\bxiyab\.?$/iu, 'xiyabanı'],
+];
+
+/** "Hüseyn Cavid küç." → "Hüseyn Cavid küçəsi"; a trailing period is dropped in any case. */
+export function normalizeStreetName(name: string): string {
+  let out = name.trim();
+  for (const [pattern, full] of STREET_ABBREVIATIONS) {
+    if (pattern.test(out)) {
+      out = out.replace(pattern, full);
+      break;
+    }
+  }
+  return out.replace(/\.+$/u, '');
+}
+
 /** Trimmed, non-empty, case-insensitively unique parts in order. */
 export function dedupeParts(parts: string[]): string[] {
   const seen = new Set<string>();

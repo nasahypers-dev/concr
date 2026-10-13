@@ -34,7 +34,7 @@ describe('nominatimToAddress', () => {
   it('drops a rayon that OSM files as the city (Bilgəh, real response)', () => {
     expect(
       nominatimToAddress({ road: 'Hüseyn Cavid küç.', village: 'Bilgəh', city: 'Sabunçu rayonu' }),
-    ).toEqual({ text: 'Hüseyn Cavid küç., Bilgəh', streetKnown: true });
+    ).toEqual({ text: 'Hüseyn Cavid küçəsi, Bilgəh', streetKnown: true });
     expect(nominatimToAddress({ village: 'Bilgəh', city: 'Sabunçu rayonu' })).toEqual({
       text: 'Bilgəh',
       streetKnown: false,

@@ -1,4 +1,9 @@
-import { dedupeParts, isAdministrativeArea, pickLocality } from './address-parts';
+import {
+  dedupeParts,
+  isAdministrativeArea,
+  normalizeStreetName,
+  pickLocality,
+} from './address-parts';
 
 describe('address-parts', () => {
   it('recognises administrative units in az, ru and en', () => {
@@ -14,6 +19,15 @@ describe('address-parts', () => {
     expect(pickLocality(['Sabunçu rayonu', 'Bilgəh'])).toBe('Bilgəh');
     expect(pickLocality([null, '', 'Mərdəkan'])).toBe('Mərdəkan');
     expect(pickLocality(['Sabunçu rayonu'])).toBe('');
+  });
+
+  it('expands street abbreviations and drops trailing periods', () => {
+    expect(normalizeStreetName('Hüseyn Cavid küç.')).toBe('Hüseyn Cavid küçəsi');
+    expect(normalizeStreetName('Hüseyn Cavid küç')).toBe('Hüseyn Cavid küçəsi');
+    expect(normalizeStreetName('Heydər Əliyev pr.')).toBe('Heydər Əliyev prospekti');
+    expect(normalizeStreetName('Əhməd Rəcəbli küçəsi')).toBe('Əhməd Rəcəbli küçəsi');
+    expect(normalizeStreetName('Bağlar küç.')).toBe('Bağlar küçəsi');
+    expect(normalizeStreetName('Sülh.')).toBe('Sülh');
   });
 
   it('dedupes parts case-insensitively', () => {

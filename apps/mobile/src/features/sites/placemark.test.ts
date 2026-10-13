@@ -24,7 +24,7 @@ describe('placemarkToAddress', () => {
         subregion: 'Xəzər',
         city: 'Bakı',
       }),
-    ).toBe('Bağlar küç., Xəzər, Bakı');
+    ).toBe('Bağlar küç., Xəzər, Bakı'); // a placemark *name* is not a street, left as is
   });
 
   it('skips an administrative city as well', () => {

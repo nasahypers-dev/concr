@@ -1,5 +1,5 @@
 import type { GeoPoint, Locale } from '@concr/shared';
-import { dedupeParts, pickLocality } from './address-parts';
+import { dedupeParts, normalizeStreetName, pickLocality } from './address-parts';
 
 /**
  * Reverse geocoding in the app's language (owner item 3, 2026-10-13). Apple's geocoder answers in
@@ -91,8 +91,8 @@ export function nominatimToAddress(
   includeStreet = true,
 ): GeocodedAddress | null {
   const street = includeStreet
-    ? [a.road, a.house_number]
-        .map((s) => (s ?? '').trim())
+    ? [a.road ? normalizeStreetName(a.road) : '', a.house_number ?? '']
+        .map((s) => s.trim())
         .filter((s) => s !== '')
         .join(' ')
     : '';

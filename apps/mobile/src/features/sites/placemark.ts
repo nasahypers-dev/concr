@@ -1,5 +1,5 @@
 import type { LocationGeocodedAddress } from 'expo-location';
-import { dedupeParts, pickLocality } from './address-parts';
+import { dedupeParts, normalizeStreetName, pickLocality } from './address-parts';
 
 export type Placemark = Pick<
   LocationGeocodedAddress,
@@ -12,8 +12,8 @@ export type Placemark = Pick<
  * too). Returns null when the placemark carries nothing usable, so the caller leaves the field alone.
  */
 export function placemarkToAddress(p: Placemark): string | null {
-  const street = [p.street, p.streetNumber]
-    .map((s) => (s ?? '').trim())
+  const street = [p.street ? normalizeStreetName(p.street) : '', p.streetNumber ?? '']
+    .map((s) => s.trim())
     .filter((s) => s !== '')
     .join(' ');
   const parts = dedupeParts([
