@@ -3,8 +3,8 @@ import type { GeoPoint, Locale } from '@concr/shared';
 /**
  * Reverse geocoding in the app's language (owner item 3, 2026-10-13). Apple's geocoder answers in
  * the phone's language ("Street"), so the primary source is OpenStreetMap Nominatim with
- * `accept-language`, which carries Azerbaijani names for Baku ("küçəsi", "rayonu"). No key, one
- * request per confirmed point (Nominatim's policy: identify the app, stay well under 1 req/s).
+ * `accept-language`, which carries Azerbaijani names for Baku ("küçəsi"). No key, at most two
+ * requests per confirmed point (Nominatim's policy: identify the app, stay well under 1 req/s).
  * Google Geocoding with `language=az` replaces this once the owner has a Maps key (ADR 0008).
  */
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/reverse';
@@ -15,6 +15,8 @@ const TIMEOUT_MS = 5000;
  * metres away; a street whose extent is further than this from the point is dropped (~150 m).
  */
 const STREET_MARGIN_DEG = 0.0015;
+/** First the address point (buildings), then the street itself when no building carried one. */
+const ZOOM_LEVELS = ['18', '17'] as const;
 
 export interface NominatimAddress {
   house_number?: string;
@@ -40,7 +42,7 @@ export interface NominatimResult {
 
 export interface GeocodedAddress {
   text: string;
-  /** false when only the settlement/district/city could be trusted; the customer adds the street. */
+  /** false when only the locality and city could be trusted; the customer adds the street. */
   streetKnown: boolean;
 }
 
@@ -76,9 +78,14 @@ function dedupe(parts: string[]): string[] {
   return out;
 }
 
+/** The most specific place name: a quarter or settlement (Bilgəh), never the administrative rayon. */
+export function localityOf(a: NominatimAddress): string {
+  return a.neighbourhood ?? a.quarter ?? a.suburb ?? a.village ?? (a.city ? (a.town ?? '') : '');
+}
+
 /**
- * "{road} {number}, {settlement}, {district}, {city}" without repeats. Settlement and district are
- * both kept (Bilgəh is in Sabunçu rayonu), the street only when `includeStreet`.
+ * "{road} {number}, {locality}, {city}" the way ride-hailing apps show it (owner, 2026-10-13):
+ * the specific place instead of the rayon, the street only when `includeStreet`.
  */
 export function nominatimToAddress(
   a: NominatimAddress,
@@ -90,25 +97,22 @@ export function nominatimToAddress(
         .filter((s) => s !== '')
         .join(' ')
     : '';
-  const city = a.city ?? a.town ?? '';
-  const settlement =
-    a.suburb ?? a.neighbourhood ?? a.quarter ?? a.village ?? (a.city ? a.town : '') ?? '';
-  const district = a.city_district ?? a.district ?? a.county ?? '';
-  const parts = dedupe([street, settlement ?? '', district, city]);
+  const parts = dedupe([street, localityOf(a), a.city ?? a.town ?? '']);
   if (parts.length === 0) return null;
   return { text: parts.join(', '), streetKnown: street !== '' };
 }
 
-export async function reverseGeocodeLocalized(
+async function query(
   point: GeoPoint,
   locale: Locale,
-  fetchImpl: FetchLike = fetch,
-): Promise<GeocodedAddress | null> {
+  zoom: string,
+  fetchImpl: FetchLike,
+): Promise<NominatimResult | null> {
   const params = new URLSearchParams({
     format: 'jsonv2',
     lat: point.lat.toFixed(6),
     lon: point.lng.toFixed(6),
-    zoom: '18',
+    zoom,
     addressdetails: '1',
   });
   const controller = new AbortController();
@@ -123,12 +127,27 @@ export async function reverseGeocodeLocalized(
       signal: controller.signal,
     });
     if (!response.ok) return null;
-    const body = (await response.json()) as NominatimResult;
-    if (!body.address) return null;
-    return nominatimToAddress(body.address, isNearResult(point, body));
+    return (await response.json()) as NominatimResult;
   } catch {
     return null;
   } finally {
     clearTimeout(timer);
   }
+}
+
+export async function reverseGeocodeLocalized(
+  point: GeoPoint,
+  locale: Locale,
+  fetchImpl: FetchLike = fetch,
+): Promise<GeocodedAddress | null> {
+  let best: GeocodedAddress | null = null;
+  for (const zoom of ZOOM_LEVELS) {
+    const result = await query(point, locale, zoom, fetchImpl);
+    if (!result?.address) continue;
+    const candidate = nominatimToAddress(result.address, isNearResult(point, result));
+    if (!candidate) continue;
+    if (candidate.streetKnown) return candidate;
+    best ??= candidate;
+  }
+  return best;
 }
