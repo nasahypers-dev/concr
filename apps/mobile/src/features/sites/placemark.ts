@@ -19,7 +19,7 @@ export function placemarkToAddress(p: Placemark): string | null {
   const parts = dedupeParts([
     street || (p.name ?? ''),
     pickLocality([p.district, p.subregion]),
-    p.city ?? '',
+    pickLocality([p.city]),
   ]);
   return parts.length > 0 ? parts.join(', ') : null;
 }

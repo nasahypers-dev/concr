@@ -31,6 +31,8 @@ export interface NominatimAddress {
   district?: string;
   county?: string;
   city?: string;
+  municipality?: string;
+  state?: string;
 }
 
 export interface NominatimResult {
@@ -94,7 +96,9 @@ export function nominatimToAddress(
         .filter((s) => s !== '')
         .join(' ')
     : '';
-  const parts = dedupeParts([street, localityOf(a), a.city ?? a.town ?? '']);
+  // For Bilgəh and other Absheron settlements OSM files the rayon as the *city*; skip it too.
+  const city = pickLocality([a.city, a.town, a.municipality, a.state]);
+  const parts = dedupeParts([street, localityOf(a), city]);
   if (parts.length === 0) return null;
   return { text: parts.join(', '), streetKnown: street !== '' };
 }

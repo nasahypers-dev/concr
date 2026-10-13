@@ -31,6 +31,16 @@ describe('nominatimToAddress', () => {
     ).toEqual({ text: 'Rauf Kazımovski küçəsi, Bilgəh, Bakı', streetKnown: true });
   });
 
+  it('drops a rayon that OSM files as the city (Bilgəh, real response)', () => {
+    expect(
+      nominatimToAddress({ road: 'Hüseyn Cavid küç.', village: 'Bilgəh', city: 'Sabunçu rayonu' }),
+    ).toEqual({ text: 'Hüseyn Cavid küç., Bilgəh', streetKnown: true });
+    expect(nominatimToAddress({ village: 'Bilgəh', city: 'Sabunçu rayonu' })).toEqual({
+      text: 'Bilgəh',
+      streetKnown: false,
+    });
+  });
+
   it('skips a rayon filed as suburb and never shows it alone', () => {
     expect(
       nominatimToAddress({

@@ -27,6 +27,19 @@ describe('placemarkToAddress', () => {
     ).toBe('Bağlar küç., Xəzər, Bakı');
   });
 
+  it('skips an administrative city as well', () => {
+    expect(
+      placemarkToAddress({
+        street: 'Hüseyn Cavid küçəsi',
+        streetNumber: null,
+        name: null,
+        district: 'Bilgəh',
+        subregion: null,
+        city: 'Sabunçu rayonu',
+      }),
+    ).toBe('Hüseyn Cavid küçəsi, Bilgəh');
+  });
+
   it('skips an administrative subregion', () => {
     expect(
       placemarkToAddress({
