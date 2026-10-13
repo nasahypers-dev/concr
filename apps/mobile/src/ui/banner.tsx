@@ -57,10 +57,9 @@ export function Banner({
   return (
     <View
       accessibilityRole={tone === 'danger' ? 'alert' : 'text'}
-      className={cn('flex-row gap-3 rounded-xl p-3', style.box, className)}
+      className={cn('flex-row items-center gap-3 rounded-xl p-3', style.box, className)}
     >
-      {/* Same height as the first text line (20 px), so icon and text sit level and nothing clips. */}
-      <View className="h-5 w-5 items-center justify-center">
+      <View className="h-6 w-6 items-center justify-center">
         <Icon name={style.icon} size="md" color={style.color} />
       </View>
       <View className="flex-1 gap-1">
@@ -86,7 +85,7 @@ export function Banner({
           accessibilityLabel={t('common.close')}
           hitSlop={8}
           onPress={onClose}
-          className="-mr-1 h-8 w-8 items-center justify-center self-center rounded-full active:opacity-70"
+          className="-mr-1 h-8 w-8 items-center justify-center rounded-full active:opacity-70"
         >
           <Icon name="close" size="md" tone="muted" />
         </Pressable>

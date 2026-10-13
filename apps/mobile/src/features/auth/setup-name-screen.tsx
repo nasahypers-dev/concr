@@ -38,6 +38,8 @@ export function SetupNameScreen() {
         <Text variant="title">{t('setup.title')}</Text>
         <Text tone="muted">{t('setup.subtitle')}</Text>
       </View>
+      {/* No autocorrect or contact suggestions: the iOS suggestion bar would resize the keyboard
+          while typing and nudge the pinned button. */}
       <TextField
         label={t('setup.firstName')}
         value={firstName}
@@ -45,8 +47,8 @@ export function SetupNameScreen() {
         error={touched && first === '' ? t('sites.required') : undefined}
         icon="person-outline"
         autoCapitalize="words"
-        textContentType="givenName"
-        autoComplete="given-name"
+        autoCorrect={false}
+        spellCheck={false}
         autoFocus
       />
       <TextField
@@ -56,8 +58,8 @@ export function SetupNameScreen() {
         error={touched && last === '' ? t('sites.required') : undefined}
         icon="people-outline"
         autoCapitalize="words"
-        textContentType="familyName"
-        autoComplete="family-name"
+        autoCorrect={false}
+        spellCheck={false}
         onSubmitEditing={submit}
       />
       {updateProfile.isError ? (

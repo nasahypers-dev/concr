@@ -4,9 +4,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useRequestOtp, useVerifyOtp } from '@/features/auth/use-auth';
+import { formatCountdown, useCountdown } from '@/features/common/use-countdown';
 import { useErrorMessage } from '@/features/common/use-error-message';
 import { formatPhoneAz } from '@/lib/format';
 import { AppHeader, Banner, Button, Screen, Text, TextField } from '@/ui';
+
+/** A code is good for one minute; when it runs out a fresh one is sent automatically. */
+const OTP_VALID_SEC = 60;
 
 export default function OtpScreen() {
   const { t } = useTranslation();
@@ -20,17 +24,6 @@ export default function OtpScreen() {
 
   const canSubmit = new RegExp(`^\\d{${OTP_CODE_LENGTH}}$`).test(code);
 
-  const submit = async () => {
-    if (!canSubmit) return;
-    setResent(false);
-    try {
-      await verifyOtp.mutateAsync({ phone, code });
-      // Session is set in the mutation; the root layout switches to the next group.
-    } catch {
-      // Shown by the banner below; an unhandled rejection would raise the dev LogBox toast.
-    }
-  };
-
   const resend = async () => {
     setResent(false);
     verifyOtp.reset();
@@ -39,6 +32,22 @@ export default function OtpScreen() {
       setResent(true);
     } catch {
       // Shown by the banner below.
+    } finally {
+      countdown.restart();
+    }
+  };
+
+  // Declared after `resend` is defined: the hook keeps the latest callback in a ref.
+  const countdown = useCountdown(OTP_VALID_SEC, () => void resend());
+
+  const submit = async () => {
+    if (!canSubmit) return;
+    setResent(false);
+    try {
+      await verifyOtp.mutateAsync({ phone, code });
+      // Session is set in the mutation; the root layout switches to the next group.
+    } catch {
+      // Shown by the banner below; an unhandled rejection would raise the dev LogBox toast.
     }
   };
 
@@ -61,6 +70,9 @@ export default function OtpScreen() {
         autoFocus
         hint={__DEV__ && devCode ? t('auth.devCodeHint', { code: devCode }) : undefined}
       />
+      <Text variant="bodySm" tone="muted">
+        {t('auth.codeValidFor', { time: formatCountdown(countdown.remaining) })}
+      </Text>
       {verifyOtp.isError ? (
         <Banner
           tone="danger"
