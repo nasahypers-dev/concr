@@ -9,8 +9,8 @@ backend afterwards** (`docs/DECISIONS.md` P1–P4, ADR 0006–0008). Update this
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
 | Phase 0 | Monorepo skeleton: shared, API, mobile, web, infra, CI, docs                                                                                                                    | done 2026-10-08                                     |
 | **U1**  | Shared domain + fixtures + pricing + state machines, mock API client + live-tracking simulator, mobile design system, mock OTP sign-in, **all customer screens** incl. live map | done 2026-10-09, device-checked on iPhone (Expo Go) |
-| U2      | Driver app: today list, delivery screen with big buttons, 90-min timer, photo completion (mock)                                                                                 | in progress: steps 1–2 done 2026-10-14, step 3 next |
-| U3      | Dispatcher web: app shell, inbox + order detail, orders table, planning board, live map (MapLibre), settings, reports (mock)                                                    | done 2026-10-14 on mock data (U2 step 3 still open) |
+| U2      | Driver app: today list, delivery screen with big buttons, 90-min timer, photo completion (mock)                                                                                 | done 2026-10-14 on mock data (foreground GPS only)  |
+| U3      | Dispatcher web: app shell, inbox + order detail, orders table, planning board, live map (MapLibre), settings, reports (mock)                                                    | done 2026-10-14 on mock data                        |
 | U4      | Polish: dark mode, motion, accessibility, Azerbaijani typography, empty/error audit, screenshots                                                                                | planned                                             |
 | B1      | Prisma models + seed from the fixtures, auth, `SupplierScopeGuard`                                                                                                              | planned                                             |
 | B2      | catalog/quote/orders/sites endpoints, `HttpApiClient`, switch `API_MODE=http`                                                                                                   | planned                                             |
@@ -52,8 +52,12 @@ Three steps, one commit each; the owner approves each step before the next start
    appearance (`PreferenceSections`, shared with the customer profile), "call the dispatcher", logout;
    "DEV: enter as driver" on the welcome screen (Rauf, `+994500000012`). The trip route exists as a
    placeholder (header + facts) so taps already navigate. 8 tests.
-3. **Trip screen** (next): 56 px status buttons, 75/90-minute concrete timer, call / navigate, completion with
-   photos and the receiver's name, foreground GPS batches in Expo Go.
+3. **Trip screen** (done 2026-10-14): 56 px status buttons with haptics (loading → departed → arrived →
+   unloading → complete), concrete timer from departure (shared `concreteTimer`, warning at 75, expired at 90),
+   site contact + call, navigation sheet (Apple Maps / Google Maps / Waze universal links), "problem" → FAILED
+   with a reason, handover act sheet (receiver name + up to 3 photos via expo-image-picker), foreground GPS
+   batches while EN_ROUTE / ARRIVED (ADR 0012), times list and the act after completion. 5 tests.
+   Fixture plates are now random placeholders (owner, 2026-10-14).
 
 ## U1 — what was built (2026-10-09)
 

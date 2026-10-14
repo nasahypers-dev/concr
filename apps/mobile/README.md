@@ -38,11 +38,14 @@ starts in Azerbaijani regardless of the phone's language; the language picked in
 ## Driver mode
 
 Drivers sign in with the same OTP flow (code `123456`). Seeded drivers: Rauf `+994500000012` (mixer
-90-AA-005, one completed and one upcoming trip today), Elşən `+994500000011` (the trip the customer app tracks
+90-TR-631, one completed and one upcoming trip today), Elşən `+994500000011` (the trip the customer app tracks
 live, plus one tomorrow), Kamran `+994500000013` (off shift, nothing today). In dev builds the welcome screen
 has "DEV: enter as driver" (Rauf) next to the customer shortcut.
 
 "Today" shows the shift switch with the assigned mixer, today's trips and a preview of tomorrow; the profile has
-the mixer, the shift switch, language, appearance and "call the dispatcher". The trip screen itself (big status
-buttons, concrete timer, completion with photos, GPS) is the next step and is a placeholder for now. Driver
-screens live in `src/features/driver/`.
+the mixer, the shift switch, language, appearance and "call the dispatcher". The trip screen walks the trip with
+one big button per status (loading → departed → arrived → unloading → complete), shows the concrete timer from
+departure (warning at 75 min, expired at 90), offers the site contact, navigation links (Apple Maps / Google Maps /
+Waze), a "problem" path (FAILED with a reason) and the handover act at the end (receiver name + up to 3 photos from
+the camera or the library). While a trip is en route the screen sends GPS batches in the foreground (ADR 0012);
+background tracking needs the development build. Driver screens live in `src/features/driver/`.

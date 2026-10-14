@@ -68,7 +68,7 @@ describe('driver hooks on the mock client', () => {
     );
     await waitFor(() => expect(result.current.today.isSuccess).toBe(true));
     expect(result.current.today.data?.map((trip) => trip.id)).toEqual(['del_104_1', 'del_104_3']);
-    await waitFor(() => expect(result.current.me.data?.truck?.plateNumber).toBe('90-AA-005'));
+    await waitFor(() => expect(result.current.me.data?.truck?.plateNumber).toBe('90-TR-631'));
     await waitFor(() => expect(result.current.tomorrow.data).toEqual([]));
   });
 

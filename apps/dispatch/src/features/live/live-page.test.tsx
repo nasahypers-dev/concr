@@ -26,7 +26,7 @@ describe('LivePage', () => {
 
     renderWithProviders(<LivePage />, client);
     expect(await screen.findAllByTestId('live-truck')).toHaveLength(6);
-    expect(screen.getByText('90-AA-003 · Elşən Məmmədov')).toBeInTheDocument();
+    expect(screen.getByText('10-VE-908 · Elşən Məmmədov')).toBeInTheDocument();
     expect(screen.getByText('Gecikir')).toBeInTheDocument();
     expect(screen.getByText('Siqnal yoxdur')).toBeInTheDocument();
     const map = await screen.findByTestId('live-map');

@@ -401,7 +401,7 @@ describe('mock api client — driver', () => {
     expect(trip.site.name).toBe('Yasamal, ev tikintisi');
     expect(trip.site.contactPhone).toBe('+994500000001');
     expect(trip.order.customerPhone).toBe('+994500000001');
-    expect(trip.truck?.plateNumber).toBe('90-AA-005');
+    expect(trip.truck?.plateNumber).toBe('90-TR-631');
 
     await loginAsDriver(api, setToken, ELSHAN);
     expect((await api.driver.listDeliveries()).map((d) => d.id)).toEqual(['del_104_2']);
@@ -683,7 +683,7 @@ describe('mock api client — dispatch', () => {
     const scheduled = await api.dispatch.schedule(ORDER_IDS.confirmed, { trips: plan });
     expect(scheduled.status).toBe('SCHEDULED');
     expect(scheduled.deliveries.map((d) => [d.id, d.status, d.truck?.plateNumber])).toEqual([
-      ['del_102_1', 'PLANNED', '90-AA-001'],
+      ['del_102_1', 'PLANNED', '10-RX-347'],
     ]);
     await expectApiError(api.dispatch.suggestPlan(ORDER_IDS.confirmed), 'INVALID_STATE_TRANSITION');
 
@@ -712,7 +712,7 @@ describe('mock api client — dispatch', () => {
       driverId: DRIVER_IDS.kamran,
     });
     expect(moved.status).toBe('ASSIGNED');
-    expect(moved.truck?.plateNumber).toBe('90-AA-001');
+    expect(moved.truck?.plateNumber).toBe('10-RX-347');
     expect(moved.driver?.fullName).toBe('Kamran Hüseynov');
     expect(moved.orderNumber).toBe('CN-2026-000103');
     await expectApiError(
@@ -832,7 +832,7 @@ describe('mock api client — admin', () => {
     });
     expect(created.id).toBe('drv_4');
     expect(created.isActive).toBe(true);
-    expect(created.truck?.plateNumber).toBe('90-AA-001');
+    expect(created.truck?.plateNumber).toBe('10-RX-347');
     await expectApiError(api.admin.createDriver({ fullName: 'Dublikat', phone }), 'CONFLICT');
     expect((await api.admin.listDrivers()).map((d) => d.id)).toEqual([
       'drv_1',
@@ -845,7 +845,7 @@ describe('mock api client — admin', () => {
     const driverSession = await api.auth.verifyOtp({ phone, code: '123456' });
     expect(driverSession.user.role).toBe('DRIVER');
     setToken(driverSession.accessToken);
-    expect((await api.driver.me()).truck?.plateNumber).toBe('90-AA-001');
+    expect((await api.driver.me()).truck?.plateNumber).toBe('10-RX-347');
 
     setToken(adminToken);
     const off = await api.admin.updateDriver('drv_4', { isActive: false });
@@ -860,7 +860,7 @@ describe('mock api client — admin', () => {
 
     setToken(adminToken);
     const truck = await api.admin.createTruck({
-      plateNumber: '90-AA-010',
+      plateNumber: '10-ZZ-999',
       type: 'MIXER',
       capacityM3: 10,
       boomLengthM: null,
@@ -868,7 +868,7 @@ describe('mock api client — admin', () => {
     expect(truck.id).toBe('truck_8');
     await expectApiError(
       api.admin.createTruck({
-        plateNumber: '90-aa-010',
+        plateNumber: '10-zz-999',
         type: 'MIXER',
         capacityM3: 10,
         boomLengthM: null,
@@ -877,7 +877,7 @@ describe('mock api client — admin', () => {
     );
     await expectApiError(
       api.admin.createTruck({
-        plateNumber: '90-AA-011',
+        plateNumber: '10-ZZ-998',
         type: 'MIXER',
         capacityM3: null,
         boomLengthM: null,
@@ -886,7 +886,7 @@ describe('mock api client — admin', () => {
     );
     expect((await api.admin.updateTruck(truck.id, { isActive: false })).isActive).toBe(false);
     const moved = await api.admin.updateDriver('drv_1', { truckId: TRUCK_IDS.mixer12b });
-    expect(moved.truck?.plateNumber).toBe('90-AA-006');
+    expect(moved.truck?.plateNumber).toBe('10-MC-485');
     expect(
       (await api.admin.listTrucks()).find((t) => t.id === TRUCK_IDS.mixer10a)?.currentDriverId,
     ).toBeNull();

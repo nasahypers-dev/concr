@@ -63,7 +63,7 @@ describe('DriverTodayScreen', () => {
       wrapper: wrapperFor(client),
     });
     expect(await screen.findByText('Növbədəyəm')).toBeTruthy();
-    expect(screen.getByText(/90-AA-005/)).toBeTruthy();
+    expect(screen.getByText(/90-TR-631/)).toBeTruthy();
     expect(await screen.findByText('Reys 1/3 · CN-2026-000104')).toBeTruthy();
     expect(screen.getByText('Reys 3/3 · CN-2026-000104')).toBeTruthy();
     expect(screen.getByText('Yola çıxışa 40 dəq')).toBeTruthy();

@@ -18,6 +18,7 @@ import type { Truck } from '../../domain/truck';
 import type { Driver, User } from '../../domain/user';
 import { CustomerType, DeliveryStatus, OrderStatus, STAFF_ROLES, TruckType } from '../../enums';
 import { ErrorCode } from '../../error-codes';
+import { CONCRETE_WARNING_BEFORE_MIN } from '../../concrete/concrete-timer';
 import { bakuDate } from '../../fixtures/time';
 import { addMoney, isZeroMoney } from '../../money/money';
 import { planDeliveries } from '../../planning/plan-deliveries';
@@ -68,8 +69,6 @@ export interface DispatchApiContext {
 
 /** Spec §9.4: a tracked trip without a GPS sample for this long shows "no signal". */
 export const NO_SIGNAL_AFTER_SEC = 120;
-/** Concrete risk is flagged this many minutes before `settings.concreteLifetimeMin` (D7: 75 of 90). */
-export const CONCRETE_WARNING_BEFORE_MIN = 15;
 /** A mixer departing within this window is not proposed for another order. TODO(nurlan): real turnaround time. */
 const MIXER_BUSY_WINDOW_MIN = 90;
 

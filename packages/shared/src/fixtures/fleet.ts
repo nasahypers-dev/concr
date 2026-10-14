@@ -19,7 +19,7 @@ export const DRIVER_IDS = {
   kamran: 'drv_3',
 } as const;
 
-/** Fleet per spec §18: 2×8, 2×10, 2×12 m³ mixers + one 24 m pump. TODO(nurlan): real plates and counts. */
+/** Fleet per spec §18: 2×8, 2×10, 2×12 m³ mixers + one 24 m pump. Plates are random placeholders (owner, 2026-10-14). TODO(nurlan): real plates and counts. */
 export function createTrucks(): Truck[] {
   const mixer = (id: string, plate: string, capacity: number, driverId: string | null): Truck => ({
     id,
@@ -32,16 +32,16 @@ export function createTrucks(): Truck[] {
     currentDriverId: driverId,
   });
   return [
-    mixer(TRUCK_IDS.mixer8a, '90-AA-001', 8, null),
-    mixer(TRUCK_IDS.mixer8b, '90-AA-002', 8, null),
-    mixer(TRUCK_IDS.mixer10a, '90-AA-003', 10, DRIVER_IDS.elshan),
-    mixer(TRUCK_IDS.mixer10b, '90-AA-004', 10, null),
-    mixer(TRUCK_IDS.mixer12a, '90-AA-005', 12, DRIVER_IDS.rauf),
-    mixer(TRUCK_IDS.mixer12b, '90-AA-006', 12, null),
+    mixer(TRUCK_IDS.mixer8a, '10-RX-347', 8, null),
+    mixer(TRUCK_IDS.mixer8b, '90-KL-512', 8, null),
+    mixer(TRUCK_IDS.mixer10a, '10-VE-908', 10, DRIVER_IDS.elshan),
+    mixer(TRUCK_IDS.mixer10b, '77-BN-264', 10, null),
+    mixer(TRUCK_IDS.mixer12a, '90-TR-631', 12, DRIVER_IDS.rauf),
+    mixer(TRUCK_IDS.mixer12b, '10-MC-485', 12, null),
     {
       id: TRUCK_IDS.pump24,
       supplierId: SUPPLIER_ID,
-      plateNumber: '90-AA-007',
+      plateNumber: '90-GH-172',
       type: TruckType.PUMP,
       capacityM3: null,
       boomLengthM: 24,

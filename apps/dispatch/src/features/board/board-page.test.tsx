@@ -13,7 +13,7 @@ describe('BoardPage', () => {
     const client = makeClient();
     await signInAs(client, 'dispatcher');
     renderWithProviders(<BoardPage initialDate="2026-10-09" />, client);
-    expect(await screen.findByText('90-AA-005 · 12 m³')).toBeInTheDocument();
+    expect(await screen.findByText('90-TR-631 · 12 m³')).toBeInTheDocument();
     expect(screen.getByText('Reys 1 · CN-2026-000104')).toBeInTheDocument();
     expect(screen.getByText('Reys 3 · CN-2026-000104')).toBeInTheDocument();
 

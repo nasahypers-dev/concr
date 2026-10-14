@@ -31,17 +31,31 @@ jest.mock('react-native-safe-area-context', () => {
 
 // expo-location: permission granted and a fixed position by default; tests override per case.
 jest.mock('expo-location', () => ({
-  requestForegroundPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+  requestForegroundPermissionsAsync: jest.fn(() =>
+    Promise.resolve({ status: 'granted', granted: true }),
+  ),
   getCurrentPositionAsync: jest.fn(() =>
     Promise.resolve({ coords: { latitude: 40.4, longitude: 49.8 } }),
   ),
   reverseGeocodeAsync: jest.fn(() => Promise.resolve([])),
+  watchPositionAsync: jest.fn(() => Promise.resolve({ remove: jest.fn() })),
   Accuracy: { Lowest: 1, Low: 2, Balanced: 3, High: 4, Highest: 5, BestForNavigation: 6 },
   PermissionStatus: { GRANTED: 'granted', DENIED: 'denied', UNDETERMINED: 'undetermined' },
 }));
 
 // Nominatim reverse geocoding goes through fetch; tests stay offline unless they stub it.
 global.fetch = jest.fn(() => Promise.reject(new Error('offline in tests')));
+
+// expo-image-picker: the camera "takes" one photo, the library picker is cancelled by default.
+jest.mock('expo-image-picker', () => ({
+  requestCameraPermissionsAsync: jest.fn(() =>
+    Promise.resolve({ status: 'granted', granted: true }),
+  ),
+  launchCameraAsync: jest.fn(() =>
+    Promise.resolve({ canceled: false, assets: [{ uri: 'file:///tmp/photo.jpg' }] }),
+  ),
+  launchImageLibraryAsync: jest.fn(() => Promise.resolve({ canceled: true, assets: null })),
+}));
 
 jest.mock('expo-haptics', () => ({
   selectionAsync: jest.fn(() => Promise.resolve()),
