@@ -1,3 +1,4 @@
+import type { Id } from '../../domain/common';
 import type { Delivery, LiveLocation } from '../../domain/delivery';
 import { OrderEventType } from '../../domain/order';
 import { DeliveryStatus, OrderStatus, UserRole } from '../../enums';
@@ -26,10 +27,19 @@ export interface TrackerEvents extends Record<string, unknown> {
   orderStatus: OrderStatusEvent;
 }
 
+/** Who changed a delivery status; null = the system (geofence auto-arrival). */
+export interface StatusActor {
+  id: Id | null;
+  role: UserRole | null;
+}
+
 /**
  * Stands in for the driver phone + Socket.IO pipeline (spec §9): moves every EN_ROUTE delivery that
- * has a route along it, arrives at the end, unloads, completes, and promotes the order status.
- * `tick(dtMs)` is deterministic for tests; `start()` drives it with a timer for the apps.
+ * has a seeded route along it, arrives at the end, unloads, completes, and promotes the order
+ * status. Trips a real driver operates through the driver API are left alone
+ * (`store.driverControlled`). `tick(dtMs)` is deterministic for tests; `start()` drives it with a
+ * timer for the apps. `applyStatus` / `syncOrder` are shared with the driver API so there is one
+ * place that writes timestamps, events and live notifications.
  */
 export class MockTracker {
   readonly events = new Emitter<TrackerEvents>();
@@ -78,6 +88,9 @@ export class MockTracker {
   tick(dtMs: number): void {
     const at = this.now();
     for (const delivery of this.store.data.deliveries) {
+      // Only simulated trips: those with a seeded route and no real driver behind them.
+      if (this.store.driverControlled.has(delivery.id) || !this.store.routeOf(delivery.id))
+        continue;
       switch (delivery.status) {
         case DeliveryStatus.EN_ROUTE:
           this.advance(delivery, dtMs, at);
@@ -87,7 +100,7 @@ export class MockTracker {
             delivery.arrivedAt &&
             at.getTime() - Date.parse(delivery.arrivedAt) >= this.unloadingAfterMs
           ) {
-            this.setStatus(delivery, DeliveryStatus.UNLOADING, at);
+            this.applyStatus(delivery, DeliveryStatus.UNLOADING, at, this.driverOf(delivery));
           }
           break;
         case DeliveryStatus.UNLOADING:
@@ -102,6 +115,52 @@ export class MockTracker {
           break;
       }
     }
+  }
+
+  /**
+   * Write the status with its timestamp, record the audit event and notify live subscribers.
+   * Used by the simulation and by the driver API (one implementation, spec §8.2 + §9.3).
+   */
+  applyStatus(delivery: Delivery, status: DeliveryStatus, at: Date, actor: StatusActor): void {
+    this.store.setDeliveryStatus(delivery, status, at.toISOString());
+    this.store.addEvent({
+      orderId: delivery.orderId,
+      type: OrderEventType.DELIVERY_STATUS_CHANGED,
+      at: at.toISOString(),
+      actorRole: actor.role,
+      actorId: actor.id,
+      payload: { deliveryId: delivery.id, sequence: delivery.sequence, status },
+    });
+    this.events.emit('deliveryStatus', {
+      orderId: delivery.orderId,
+      deliveryId: delivery.id,
+      status,
+      etaMinutes: delivery.etaMinutes,
+      at: at.toISOString(),
+    });
+  }
+
+  /** Promote the order when its trips say so (spec §8.1: first EN_ROUTE → IN_PROGRESS, all done → COMPLETED). */
+  syncOrder(orderId: Id, at: Date): void {
+    const order = this.store.findOrder(orderId);
+    if (!order) return;
+    const next = deriveOrderStatus(order.status, this.store.deliveriesOf(order.id));
+    if (!next || next === order.status) return;
+    const from = order.status;
+    order.status = next;
+    if (next === OrderStatus.COMPLETED) order.completedAt = at.toISOString();
+    this.store.addEvent({
+      orderId: order.id,
+      type: OrderEventType.STATUS_CHANGED,
+      at: at.toISOString(),
+      fromStatus: from,
+      toStatus: next,
+    });
+    this.events.emit('orderStatus', { orderId: order.id, status: next, at: at.toISOString() });
+  }
+
+  private driverOf(delivery: Delivery): StatusActor {
+    return { id: delivery.driverId, role: delivery.driverId ? UserRole.DRIVER : null };
   }
 
   private advance(delivery: Delivery, dtMs: number, at: Date): void {
@@ -143,56 +202,24 @@ export class MockTracker {
       at: delivery.lastLocationAt,
     });
 
-    if (fraction >= 1) this.setStatus(delivery, DeliveryStatus.ARRIVED, at);
-  }
-
-  private setStatus(delivery: Delivery, status: DeliveryStatus, at: Date): void {
-    this.store.setDeliveryStatus(delivery, status, at.toISOString());
-    this.store.addEvent({
-      orderId: delivery.orderId,
-      type: OrderEventType.DELIVERY_STATUS_CHANGED,
-      at: at.toISOString(),
-      actorRole: status === DeliveryStatus.ARRIVED ? null : UserRole.DRIVER,
-      actorId: status === DeliveryStatus.ARRIVED ? null : delivery.driverId,
-      payload: { deliveryId: delivery.id, sequence: delivery.sequence, status },
-    });
-    this.events.emit('deliveryStatus', {
-      orderId: delivery.orderId,
-      deliveryId: delivery.id,
-      status,
-      etaMinutes: delivery.etaMinutes,
-      at: at.toISOString(),
-    });
+    // Geofence auto-arrival is the system's doing (spec §9.2).
+    if (fraction >= 1)
+      this.applyStatus(delivery, DeliveryStatus.ARRIVED, at, { id: null, role: null });
   }
 
   private complete(delivery: Delivery, at: Date): void {
-    this.setStatus(delivery, DeliveryStatus.COMPLETED, at);
+    this.applyStatus(delivery, DeliveryStatus.COMPLETED, at, this.driverOf(delivery));
     const receiver = this.store.findSite(this.store.findOrder(delivery.orderId)?.siteId ?? '');
     this.store.data.documents.push({
       id: this.store.nextDocumentId(delivery.id),
       deliveryId: delivery.id,
-      number: `TA-${delivery.orderId.replace(/^ord_/, '').padStart(6, '0')}-${delivery.sequence}`,
+      number: this.store.documentNumberFor(delivery),
       pdfUrl: null,
       photoUrls: [],
       signatureUrl: null,
       receivedByName: receiver?.contactName ?? '—',
       receivedAt: at.toISOString(),
     });
-    const order = this.store.findOrder(delivery.orderId);
-    if (!order) return;
-    const next = deriveOrderStatus(order.status, this.store.deliveriesOf(order.id));
-    if (next && next !== order.status) {
-      const from = order.status;
-      order.status = next;
-      if (next === OrderStatus.COMPLETED) order.completedAt = at.toISOString();
-      this.store.addEvent({
-        orderId: order.id,
-        type: OrderEventType.STATUS_CHANGED,
-        at: at.toISOString(),
-        fromStatus: from,
-        toStatus: next,
-      });
-      this.events.emit('orderStatus', { orderId: order.id, status: next, at: at.toISOString() });
-    }
+    this.syncOrder(delivery.orderId, at);
   }
 }

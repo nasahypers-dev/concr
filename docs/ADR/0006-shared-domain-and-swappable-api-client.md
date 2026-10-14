@@ -33,3 +33,11 @@ apps still need a stable contract so that the backend can be plugged in without 
   for the real API.
 - The mock lives in `@concr/shared`, so it ships in the bundle; it is tree-shaken out once the
   apps stop importing it (B2).
+
+## Addendum (2026-10-14): driver namespace
+
+`ApiClient.driver` mirrors the spec §11 driver endpoints (`listDeliveries`, `getDelivery`,
+`setStatus`, `pushLocations`, `complete`, `me`, `setShift`). The mock (`mock-driver-api.ts`)
+validates with the shared zod schemas in `schemas/driver.ts`, drives transitions through
+`delivery-state.machine.ts` and reuses the tracker's `applyStatus` / `syncOrder`, so a trip a
+driver operates is seen live by the customer in the same mock store; the simulation skips such trips.

@@ -80,6 +80,23 @@ describe('MockTracker', () => {
     expect(orderStatuses).toEqual(['COMPLETED']);
   });
 
+  it('leaves trips a real driver operates alone and numbers documents like the fixtures', () => {
+    const { store, advance } = setup();
+    const delivery = store.findDelivery(TRACKED_DELIVERY_ID)!;
+    const before = { ...delivery.lastLocation! };
+    store.driverControlled.add(TRACKED_DELIVERY_ID);
+    advance(60_000);
+    expect(delivery.lastLocation).toEqual(before);
+    expect(delivery.status).toBe('EN_ROUTE');
+    store.driverControlled.delete(TRACKED_DELIVERY_ID);
+    for (let i = 0; i < 30; i += 1) advance(60_000);
+    advance(60_000);
+    advance(120_000);
+    expect(store.data.documents.find((d) => d.deliveryId === TRACKED_DELIVERY_ID)?.number).toBe(
+      'TA-2026-000104-2',
+    );
+  });
+
   it('starts and stops a real timer', () => {
     jest.useFakeTimers();
     const { tracker, store } = setup();

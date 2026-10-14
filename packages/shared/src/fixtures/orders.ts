@@ -444,7 +444,7 @@ export function createOrderFixtures(ctx: OrderFixtureContext): OrderFixtureSet {
       sequence: 3,
       volumeM3: 5,
       status: DeliveryStatus.ASSIGNED,
-      truckId: TRUCK_IDS.mixer8a,
+      truckId: TRUCK_IDS.mixer12a,
       driverId: DRIVER_IDS.rauf,
       plannedDepartureAt: minutesFromNow(now, 40),
     });

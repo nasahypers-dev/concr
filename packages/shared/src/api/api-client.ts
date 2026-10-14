@@ -1,5 +1,5 @@
 import type { IsoDate, IsoDateTime, TimeOfDay } from '../domain/common';
-import type { DeliveryDocument, LiveLocation } from '../domain/delivery';
+import type { DeliveryDocument, DriverDelivery, LiveLocation } from '../domain/delivery';
 import type {
   CreateOrderInput,
   OrderDetail,
@@ -9,10 +9,16 @@ import type {
 import type { Product, PumpOption } from '../domain/product';
 import type { Site, SiteInput } from '../domain/site';
 import type { Plant, Supplier } from '../domain/supplier';
-import type { CustomerProfile, User } from '../domain/user';
+import type { CustomerProfile, Driver, User } from '../domain/user';
 import type { DeliveryStatus, OrderStatus } from '../enums';
 import type { OtpRequestInput, OtpVerifyInput, StaffLoginInput } from '../schemas/auth';
 import type { Paginated } from '../schemas/common';
+import type {
+  CompleteDeliveryInput,
+  DriverStatusInput,
+  LocationBatchInput,
+  ShiftInput,
+} from '../schemas/driver';
 import type {
   CancelOrderInput,
   ListOrdersQuery,
@@ -121,12 +127,28 @@ export interface TrackingApi {
   subscribeOrder(orderId: string, handlers: OrderLiveHandlers): Unsubscribe;
 }
 
+/** Spec §11 driver endpoints: the mixer phone's view of its trips and the GPS inlet (§9.1). */
+export interface DriverApi {
+  me(): Promise<Driver>;
+  /** Shift on/off and the truck taken today (spec §13 "növbə toggle + mikser seçimi"). */
+  setShift(input: ShiftInput): Promise<Driver>;
+  /** Trips assigned to the signed-in driver on a Baku calendar day (today when omitted). */
+  listDeliveries(date?: IsoDate): Promise<DriverDelivery[]>;
+  getDelivery(id: string): Promise<DriverDelivery>;
+  /** Big-button transitions; COMPLETED goes through `complete` (needs the handover act). */
+  setStatus(id: string, input: DriverStatusInput): Promise<DriverDelivery>;
+  /** Batched GPS samples while EN_ROUTE/ARRIVED; returns how many passed validation. */
+  pushLocations(id: string, batch: LocationBatchInput): Promise<{ accepted: number }>;
+  complete(id: string, input: CompleteDeliveryInput): Promise<DriverDelivery>;
+}
+
 export interface ApiClient {
   auth: AuthApi;
   catalog: CatalogApi;
   sites: SitesApi;
   orders: OrdersApi;
   tracking: TrackingApi;
+  driver: DriverApi;
 }
 
 /** How a client learns the current access token (session store in the apps). */

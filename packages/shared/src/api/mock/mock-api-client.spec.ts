@@ -1,5 +1,13 @@
 import { OrderStatus } from '../../enums';
-import { createFixtures, CUSTOMER_IDS, ORDER_IDS, SITE_IDS, STAFF } from '../../fixtures';
+import {
+  createFixtures,
+  CUSTOMER_IDS,
+  DRIVER_IDS,
+  ORDER_IDS,
+  SITE_IDS,
+  STAFF,
+  TRUCK_IDS,
+} from '../../fixtures';
 import { formatAzn } from '../../money/money';
 import { ApiClientError } from '../errors';
 import { createMockApiClient, type MockApiClient } from './mock-api-client';
@@ -25,6 +33,19 @@ async function loginAsOrxan(
   const session = await api.auth.verifyOtp({ phone: '+994500000001', code: '123456' });
   setToken(session.accessToken);
 }
+
+async function loginAsDriver(
+  api: MockApiClient,
+  setToken: (t: string | null) => void,
+  phone: string,
+): Promise<void> {
+  await api.auth.requestOtp({ phone });
+  const session = await api.auth.verifyOtp({ phone, code: '123456' });
+  setToken(session.accessToken);
+}
+
+const RAUF = '+994500000012';
+const ELSHAN = '+994500000011';
 
 async function expectApiError(promise: Promise<unknown>, code: string): Promise<ApiClientError> {
   try {
@@ -362,5 +383,186 @@ describe('mock api client — tracking', () => {
     api.tracker.tick(60_000);
     expect(locations).toHaveLength(1); // no listener any more
     await expectApiError(api.tracking.getOrderLive('ord_999'), 'NOT_FOUND');
+  });
+});
+describe('mock api client — driver', () => {
+  it("lists the signed-in driver's trips for the day with order and site facts", async () => {
+    const { api, setToken } = setup();
+    await loginAsDriver(api, setToken, RAUF);
+    const today = await api.driver.listDeliveries();
+    expect(today.map((d) => d.id)).toEqual(['del_104_1', 'del_104_3']);
+    const trip = today[1]!;
+    expect(trip.order.number).toBe('CN-2026-000104');
+    expect(trip.order.productGrade).toBe('M300');
+    expect(trip.order.totalVolumeM3).toBe(25);
+    expect(trip.volumeM3).toBe(5);
+    expect(trip.site.name).toBe('Yasamal, ev tikintisi');
+    expect(trip.site.contactPhone).toBe('+994500000001');
+    expect(trip.order.customerPhone).toBe('+994500000001');
+    expect(trip.truck?.plateNumber).toBe('90-AA-005');
+
+    await loginAsDriver(api, setToken, ELSHAN);
+    expect((await api.driver.listDeliveries()).map((d) => d.id)).toEqual(['del_104_2']);
+    expect((await api.driver.listDeliveries('2026-10-10')).map((d) => d.id)).toEqual(['del_103_1']);
+    await expectApiError(api.driver.getDelivery('del_104_3'), 'NOT_FOUND'); // Rauf's trip
+
+    await loginAsOrxan(api, setToken);
+    await expectApiError(api.driver.listDeliveries(), 'FORBIDDEN');
+  });
+
+  it('walks the happy path through the state machine, records the act and completes the order', async () => {
+    const { api, setToken } = setup();
+    const statuses: string[] = [];
+    const orderStatuses: string[] = [];
+    api.tracker.events.on('deliveryStatus', (e) => statuses.push(`${e.deliveryId}:${e.status}`));
+    api.tracker.events.on('orderStatus', (e) => orderStatuses.push(e.status));
+
+    await loginAsDriver(api, setToken, RAUF);
+    let trip = await api.driver.setStatus('del_104_3', { to: 'LOADING' });
+    expect(trip.status).toBe('LOADING');
+    trip = await api.driver.setStatus('del_104_3', { to: 'EN_ROUTE' });
+    expect(trip.departedAt).toBe(NOW.toISOString());
+    expect(api.store.driverControlled.has('del_104_3')).toBe(true);
+
+    const pushed = await api.driver.pushLocations('del_104_3', [
+      {
+        lat: 40.47,
+        lng: 49.83,
+        speedKmh: 30,
+        heading: 150,
+        accuracyM: 150,
+        recordedAt: '2026-10-09T08:31:00.000Z',
+      },
+      {
+        lat: 40.46,
+        lng: 49.825,
+        speedKmh: 32,
+        heading: 160,
+        accuracyM: 12,
+        recordedAt: '2026-10-09T08:32:00.000Z',
+      },
+      {
+        lat: 40.46,
+        lng: 49.825,
+        speedKmh: 32,
+        heading: 160,
+        accuracyM: 12,
+        recordedAt: '2026-10-09T08:32:00.000Z',
+      },
+    ]);
+    expect(pushed.accepted).toBe(1); // inaccurate point dropped, duplicate ignored
+    trip = await api.driver.getDelivery('del_104_3');
+    expect(trip.lastLocation).toEqual({ lat: 40.46, lng: 49.825 });
+    expect(trip.etaMinutes).toBeGreaterThan(0);
+    api.tracker.tick(60_000); // the simulation must not touch a driver-controlled trip
+    expect((await api.driver.getDelivery('del_104_3')).status).toBe('EN_ROUTE');
+
+    trip = await api.driver.setStatus('del_104_3', { to: 'ARRIVED' });
+    expect(trip.etaMinutes).toBe(0);
+    await api.driver.setStatus('del_104_3', { to: 'UNLOADING' });
+    await expectApiError(
+      api.driver.setStatus('del_104_3', { to: 'COMPLETED' }),
+      'VALIDATION_ERROR',
+    );
+    trip = await api.driver.complete('del_104_3', {
+      receivedByName: 'Usta Vüqar',
+      photoUris: ['file:///tmp/act.jpg'],
+    });
+    expect(trip.status).toBe('COMPLETED');
+    expect(trip.document).toMatchObject({
+      number: 'TA-2026-000104-3',
+      receivedByName: 'Usta Vüqar',
+      photoUrls: ['file:///tmp/act.jpg'],
+    });
+    expect(statuses).toEqual([
+      'del_104_3:LOADING',
+      'del_104_3:EN_ROUTE',
+      'del_104_3:ARRIVED',
+      'del_104_3:UNLOADING',
+      'del_104_3:COMPLETED',
+    ]);
+    // trip 2 is still en route, so the order stays IN_PROGRESS
+    expect(orderStatuses).toEqual([]);
+
+    await loginAsDriver(api, setToken, ELSHAN);
+    await api.driver.setStatus('del_104_2', { to: 'ARRIVED' });
+    await api.driver.setStatus('del_104_2', { to: 'UNLOADING' });
+    await api.driver.complete('del_104_2', { receivedByName: 'Orxan Məmmədli' });
+    expect(orderStatuses).toEqual(['COMPLETED']);
+
+    await loginAsOrxan(api, setToken);
+    const order = await api.orders.get(ORDER_IDS.inProgress);
+    expect(order.status).toBe('COMPLETED');
+    expect(order.deliveries.map((d) => d.document?.number)).toEqual([
+      'TA-2026-000104-1',
+      'TA-2026-000104-2',
+      'TA-2026-000104-3',
+    ]);
+  });
+
+  it('rejects transitions and batches the driver may not make', async () => {
+    const { api, setToken } = setup();
+    await loginAsDriver(api, setToken, RAUF);
+    const skipped = await expectApiError(
+      api.driver.setStatus('del_104_3', { to: 'ARRIVED' }),
+      'INVALID_STATE_TRANSITION',
+    );
+    expect((skipped.details as { denial: string }).denial).toBe('INVALID_TRANSITION');
+    await expectApiError(
+      api.driver.pushLocations('del_104_3', [
+        {
+          lat: 40.4,
+          lng: 49.8,
+          speedKmh: null,
+          heading: null,
+          accuracyM: null,
+          recordedAt: '2026-10-09T08:31:00.000Z',
+        },
+      ]),
+      'INVALID_STATE_TRANSITION',
+    );
+    await api.driver.setStatus('del_104_3', { to: 'LOADING' });
+    await api.driver.setStatus('del_104_3', { to: 'EN_ROUTE' });
+    await api.driver.setStatus('del_104_3', { to: 'ARRIVED' });
+    const noReason = await expectApiError(
+      api.driver.setStatus('del_104_3', { to: 'FAILED' }),
+      'INVALID_STATE_TRANSITION',
+    );
+    expect((noReason.details as { denial: string }).denial).toBe('REASON_REQUIRED');
+    const failed = await api.driver.setStatus('del_104_3', {
+      to: 'FAILED',
+      reason: 'Obyektə giriş yoxdur',
+    });
+    expect(failed.failReason).toBe('Obyektə giriş yoxdur');
+    const tooMany = Array.from({ length: 501 }, (_, i) => ({
+      lat: 40.4,
+      lng: 49.8,
+      speedKmh: null,
+      heading: null,
+      accuracyM: null,
+      recordedAt: new Date(NOW.getTime() + i * 1000).toISOString(),
+    }));
+    await expectApiError(api.driver.pushLocations('del_104_3', tooMany), 'VALIDATION_ERROR');
+  });
+
+  it('toggles the shift and the truck', async () => {
+    const { api, setToken } = setup();
+    await loginAsDriver(api, setToken, RAUF);
+    const me = await api.driver.me();
+    expect(me).toMatchObject({
+      id: DRIVER_IDS.rauf,
+      isOnShift: true,
+      currentTruckId: TRUCK_IDS.mixer12a,
+    });
+    expect((await api.driver.setShift({ onShift: false })).isOnShift).toBe(false);
+    const moved = await api.driver.setShift({ onShift: true, truckId: TRUCK_IDS.mixer10b });
+    expect(moved.currentTruckId).toBe(TRUCK_IDS.mixer10b);
+    expect(api.store.data.trucks.find((t) => t.id === TRUCK_IDS.mixer10b)?.currentDriverId).toBe(
+      DRIVER_IDS.rauf,
+    );
+    expect(
+      api.store.data.trucks.find((t) => t.id === TRUCK_IDS.mixer12a)?.currentDriverId,
+    ).toBeNull();
+    await expectApiError(api.driver.setShift({ onShift: true, truckId: 'truck_99' }), 'NOT_FOUND');
   });
 });

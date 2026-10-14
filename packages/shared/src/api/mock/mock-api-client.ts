@@ -43,6 +43,7 @@ import type {
   Unsubscribe,
 } from '../api-client';
 import { ApiClientError } from '../errors';
+import { createDriverApi } from './mock-driver-api';
 import { MockStore } from './mock-store';
 import { MockTracker, type MockTrackerOptions } from './mock-tracker';
 
@@ -586,6 +587,8 @@ export function createMockApiClient(options: MockApiClientOptions): MockApiClien
         return documents;
       },
     },
+
+    driver: createDriverApi({ store, tracker, now, delay, parse, currentUser, deliveryDetail }),
 
     tracking: {
       async getOrderLive(orderId) {

@@ -2,7 +2,7 @@ import type { GeoPoint, Id, IsoDateTime } from '../../domain/common';
 import type { Delivery, DeliveryDocument, DeliveryLocation } from '../../domain/delivery';
 import type { Order, OrderEvent, OrderEventType } from '../../domain/order';
 import type { Site } from '../../domain/site';
-import type { CustomerAccount, User } from '../../domain/user';
+import type { CustomerAccount, Driver, User } from '../../domain/user';
 import type { DeliveryStatus, OrderStatus, UserRole } from '../../enums';
 import { createFixtures, type FixtureSet, orderNumber, TRACKED_DELIVERY_ID } from '../../fixtures';
 
@@ -14,6 +14,8 @@ export class MockStore {
   readonly data: FixtureSet;
   /** Fraction (0..1) of the route already driven, per tracked delivery. */
   readonly routeProgress = new Map<Id, number>();
+  /** Deliveries a real driver is operating; the simulated tracker leaves them alone. */
+  readonly driverControlled = new Set<Id>();
   /** Pending OTP codes by phone. */
   readonly otpCodes = new Map<string, string>();
   /** Issued refresh tokens → user id (logout invalidates). */
@@ -49,6 +51,10 @@ export class MockStore {
     return this.data.customers.find((c) => c.id === userId);
   }
 
+  findDriver(userId: Id): Driver | undefined {
+    return this.data.drivers.find((d) => d.id === userId);
+  }
+
   ordersOf(customerId: Id): Order[] {
     return this.data.orders.filter((o) => o.customerId === customerId);
   }
@@ -61,6 +67,17 @@ export class MockStore {
     return this.data.deliveries
       .filter((d) => d.orderId === orderId)
       .sort((a, b) => a.sequence - b.sequence);
+  }
+
+  /** A driver's trips, earliest planned departure first. */
+  deliveriesOfDriver(driverId: Id): Delivery[] {
+    return this.data.deliveries
+      .filter((d) => d.driverId === driverId)
+      .sort(
+        (a, b) =>
+          (a.plannedDepartureAt ?? '').localeCompare(b.plannedDepartureAt ?? '') ||
+          a.sequence - b.sequence,
+      );
   }
 
   findDelivery(id: Id): Delivery | undefined {
@@ -110,6 +127,15 @@ export class MockStore {
   nextDocumentId(deliveryId: Id): Id {
     this.counters.document += 1;
     return `doc_${deliveryId.replace(/^del_/, '')}`;
+  }
+
+  /** "TA-2026-000104-3": the order number without its prefix plus the trip sequence (spec §18). */
+  documentNumberFor(delivery: Delivery): string {
+    const order = this.findOrder(delivery.orderId);
+    const stem = order
+      ? order.number.replace(/^CN-/, '')
+      : delivery.orderId.replace(/^ord_/, '').padStart(6, '0');
+    return `TA-${stem}-${delivery.sequence}`;
   }
 
   nextUserId(): Id {

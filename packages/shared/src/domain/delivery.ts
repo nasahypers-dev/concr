@@ -1,5 +1,5 @@
-import type { DeliveryStatus } from '../enums';
-import type { GeoPoint, Id, IsoDateTime } from './common';
+import type { DeliveryStatus, SlumpClass } from '../enums';
+import type { GeoPoint, Id, IsoDate, IsoDateTime, TimeOfDay } from './common';
 import type { Truck } from './truck';
 import type { DriverSummary } from './user';
 
@@ -38,6 +38,16 @@ export interface DeliveryLocation {
   recordedAt: IsoDateTime;
 }
 
+/** One GPS sample as sent by the driver phone (spec §9.1 batch item). */
+export interface DeliveryLocationInput {
+  lat: number;
+  lng: number;
+  speedKmh: number | null;
+  heading: number | null;
+  accuracyM: number | null;
+  recordedAt: IsoDateTime;
+}
+
 /** Signed delivery note for a completed trip (spec §3 "Təhvil aktı"). */
 export interface DeliveryDocument {
   id: Id;
@@ -55,6 +65,38 @@ export interface DeliveryDetail extends Delivery {
   truck: Truck | null;
   driver: DriverSummary | null;
   document: DeliveryDocument | null;
+}
+
+/** Order facts a driver needs on the trip screen (spec §13 driver). */
+export interface DriverDeliveryOrder {
+  id: Id;
+  number: string;
+  productGrade: string;
+  slump: SlumpClass | null;
+  /** Whole order volume; the trip's own share is `Delivery.volumeM3`. */
+  totalVolumeM3: number;
+  pumpRequired: boolean;
+  requestedDate: IsoDate;
+  timeWindowStart: TimeOfDay;
+  timeWindowEnd: TimeOfDay;
+  customerNote: string | null;
+  customerPhone: string;
+}
+
+/** Where to drive and whom to call (a snapshot of the site for the trip screen). */
+export interface DriverDeliverySite {
+  name: string;
+  addressLine: string;
+  location: GeoPoint;
+  accessNotes: string | null;
+  contactName: string | null;
+  contactPhone: string;
+}
+
+/** Trip as the assigned driver sees it (GET /driver/deliveries). */
+export interface DriverDelivery extends DeliveryDetail {
+  order: DriverDeliveryOrder;
+  site: DriverDeliverySite;
 }
 
 /** Real-time position event (spec §9.2 `delivery.location`). */
