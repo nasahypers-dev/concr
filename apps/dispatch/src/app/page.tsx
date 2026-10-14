@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-/** Phase 0: the panel has no home yet; staff land on the login page. */
+/** The inbox is the panel's home; the panel layout sends signed-out staff to the login page. */
 export default function HomePage() {
-  redirect('/login');
+  redirect('/inbox');
 }

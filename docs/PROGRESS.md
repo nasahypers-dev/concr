@@ -10,28 +10,33 @@ backend afterwards** (`docs/DECISIONS.md` P1–P4, ADR 0006–0008). Update this
 | Phase 0 | Monorepo skeleton: shared, API, mobile, web, infra, CI, docs                                                                                                                    | done 2026-10-08                                     |
 | **U1**  | Shared domain + fixtures + pricing + state machines, mock API client + live-tracking simulator, mobile design system, mock OTP sign-in, **all customer screens** incl. live map | done 2026-10-09, device-checked on iPhone (Expo Go) |
 | U2      | Driver app: today list, delivery screen with big buttons, 90-min timer, photo completion (mock)                                                                                 | in progress: steps 1–2 done 2026-10-14, step 3 next |
-| U3      | Dispatcher web: app shell, inbox + order detail, orders table, planning board, live map (MapLibre), settings, reports (mock)                                                    | in progress: step 1 done 2026-10-14, step 2 next    |
+| U3      | Dispatcher web: app shell, inbox + order detail, orders table, planning board, live map (MapLibre), settings, reports (mock)                                                    | done 2026-10-14 on mock data (U2 step 3 still open) |
 | U4      | Polish: dark mode, motion, accessibility, Azerbaijani typography, empty/error audit, screenshots                                                                                | planned                                             |
 | B1      | Prisma models + seed from the fixtures, auth, `SupplierScopeGuard`                                                                                                              | planned                                             |
 | B2      | catalog/quote/orders/sites endpoints, `HttpApiClient`, switch `API_MODE=http`                                                                                                   | planned                                             |
 | B3      | tracking ingestion + Socket.IO replaces the mock tracker, EAS dev build, background location                                                                                    | planned                                             |
 | B4+     | push, documents, settings, reports, production (spec Phases 3–5)                                                                                                                | planned                                             |
 
-## U3 — dispatcher panel (in progress, 2026-10-14)
+## U3 — dispatcher panel (done 2026-10-14, mock data)
 
-Started before U2 step 3 (the owner wants to see the panel first). Five steps, one commit each, the owner
-approves each step before the next starts.
+Built in one go after the owner asked to use the panel at once (D22 was decided the same day).
 
-1. **Shared dispatch API** (done): `DispatchApi` (`listOrders`, `getOrder`, `confirm`, `reject`,
-   `suggestPlan`, `schedule`, `cancel`, `reassignDelivery`, `board`, `live`, `subscribeLive`) with zod
-   schemas, the pure `planDeliveries` split (largest mixer first, spec §8.1), a staff-only mock scoped by
-   `supplierId` that runs every decision through the order state machine, records audit events and announces
-   changes through the tracker, and `live()` alerts (late, concrete risk, no signal). 9 tests. ADR 0006 addendum.
-2. **Panel shell, mock login, inbox, order detail** (next): sidebar + top bar, staff session, inbox of PENDING
-   orders, order detail with confirm / reject / schedule / cancel dialogs.
-3. Orders table with filters and CSV, planning board (mixer × hour).
-4. Live map (MapLibre + OpenFreeMap) with the §9.4 alert panel.
-5. Admin settings (products, pumps, mixers, drivers per D22, service area, general) and reports; shared `admin` API.
+- **Shared:** `DispatchApi` (inbox/orders, confirm with pump fee / price override / window change,
+  reject, `suggestPlan` + `schedule`, cancel, `reassignDelivery`, `board`, `live` with the §9.4
+  alerts, `subscribeLive`), `AdminApi` (products, pumps, trucks, drivers per D22, supplier settings,
+  service area, report summary), pure `planDeliveries` (largest mixer first, spec §8.1),
+  `USER_INACTIVE` error code (deactivated accounts get no token and are signed out on mobile).
+  Mock scoped to the supplier, staff-only, writes on admin endpoints for supplier admins. 103 tests.
+- **Web (`apps/dispatch`):** mock login with one-click dev accounts, session in localStorage with a
+  client guard, sidebar + top bar (inbox badge, language cookie switcher, user menu), inbox, order
+  detail with all four decisions as dialogs, orders table with chips / date / search / paging / CSV,
+  planning board (mixer × hour, click-to-edit, plan confirmed orders), live map (MapLibre +
+  OpenFreeMap, trucks / sites / plant, late / concrete-risk / no-signal panel, tracker events + 10 s
+  polling), settings tabs (general, products, pumps, mixers, drivers, service area with map preview),
+  reports (summary, by day, by grade, CSV). Native selects in forms, dialogs mounted only while open.
+  20 tests. ADR 0011.
+- **Not done:** drag-and-drop on the board (click-to-edit instead), server-side route protection
+  (Phase B1), Google Maps (needs the key, ADR 0008), U2 step 3 (driver trip screen).
 
 ## U2 — driver mode (in progress, 2026-10-14)
 

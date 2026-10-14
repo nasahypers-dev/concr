@@ -2,8 +2,9 @@ import { defaultLocale, isLocale, messages } from '@concr/shared';
 import { cookies } from 'next/headers';
 import { getRequestConfig } from 'next-intl/server';
 
-/** Cookie that stores the staff user's UI language; no locale prefix in URLs (ADR 0005). */
-export const LOCALE_COOKIE = 'concr.locale';
+import { LOCALE_COOKIE } from './locale-cookie';
+
+export { LOCALE_COOKIE };
 
 export default getRequestConfig(async () => {
   const cookieStore = await cookies();

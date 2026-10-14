@@ -20,7 +20,16 @@ export class MockStore {
   readonly otpCodes = new Map<string, string>();
   /** Issued refresh tokens → user id (logout invalidates). */
   readonly refreshTokens = new Map<string, Id>();
-  private counters = { order: 0, site: 0, event: 0, delivery: 0, document: 0, user: 0 };
+  private counters = {
+    order: 0,
+    site: 0,
+    event: 0,
+    delivery: 0,
+    document: 0,
+    user: 0,
+    driver: 0,
+    truck: 0,
+  };
 
   constructor(fixtures?: FixtureSet) {
     this.data = fixtures ?? createFixtures();
@@ -31,6 +40,8 @@ export class MockStore {
     this.counters.delivery = this.data.deliveries.length;
     this.counters.document = this.data.documents.length;
     this.counters.user = this.data.users.length;
+    this.counters.driver = this.data.drivers.length;
+    this.counters.truck = this.data.trucks.length;
   }
 
   // ----- lookups -------------------------------------------------------------------------------
@@ -145,6 +156,16 @@ export class MockStore {
       ? order.number.replace(/^CN-/, '')
       : delivery.orderId.replace(/^ord_/, '').padStart(6, '0');
     return `TA-${stem}-${delivery.sequence}`;
+  }
+
+  nextDriverId(): Id {
+    this.counters.driver += 1;
+    return `drv_${this.counters.driver}`;
+  }
+
+  nextTruckId(): Id {
+    this.counters.truck += 1;
+    return `truck_${this.counters.truck}`;
   }
 
   nextUserId(): Id {

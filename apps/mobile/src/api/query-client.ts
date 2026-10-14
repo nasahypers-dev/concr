@@ -3,7 +3,10 @@ import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 import { useSessionStore } from '@/store/session.store';
 
 function isUnauthorized(error: unknown): boolean {
-  return isApiClientError(error) && error.code === ErrorCode.UNAUTHORIZED;
+  return (
+    isApiClientError(error) &&
+    (error.code === ErrorCode.UNAUTHORIZED || error.code === ErrorCode.USER_INACTIVE)
+  );
 }
 
 /**

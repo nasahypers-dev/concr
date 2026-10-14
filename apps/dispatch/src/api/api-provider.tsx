@@ -1,0 +1,47 @@
+'use client';
+
+import { type ApiClient, createMockApiClient } from '@concr/shared';
+import { createContext, type PropsWithChildren, useContext } from 'react';
+import { useSessionStore } from '@/store/session.store';
+
+export type ApiMode = 'mock' | 'http';
+
+/** `NEXT_PUBLIC_API_MODE`: `mock` (default until Phase B2) or `http`. */
+export function resolveApiMode(
+  raw: string | undefined = process.env.NEXT_PUBLIC_API_MODE,
+): ApiMode {
+  return raw === 'http' ? 'http' : 'mock';
+}
+
+const SIMULATED_LATENCY_MS = 150;
+
+let singleton: ApiClient | null = null;
+
+/**
+ * One client per browser tab: the mock keeps its state in memory, so it must not be recreated on
+ * re-render (ADR 0011). Reloading the tab rebuilds the fixtures; the seeded staff session survives.
+ */
+export function getApiClient(mode: ApiMode = resolveApiMode()): ApiClient {
+  if (singleton) return singleton;
+  if (mode === 'http') {
+    throw new Error('HttpApiClient is not available yet; set NEXT_PUBLIC_API_MODE=mock');
+  }
+  singleton = createMockApiClient({
+    tokenProvider: () => useSessionStore.getState().accessToken,
+    latencyMs: SIMULATED_LATENCY_MS,
+  });
+  return singleton;
+}
+
+const ApiContext = createContext<ApiClient | null>(null);
+
+export function ApiProvider({ client, children }: PropsWithChildren<{ client?: ApiClient }>) {
+  const value = client ?? getApiClient();
+  return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;
+}
+
+export function useApi(): ApiClient {
+  const api = useContext(ApiContext);
+  if (!api) throw new Error('useApi must be used inside <ApiProvider>');
+  return api;
+}

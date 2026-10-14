@@ -759,3 +759,157 @@ describe('mock api client — dispatch', () => {
     expect(api.tracker.running).toBe(false);
   });
 });
+
+describe('mock api client — admin', () => {
+  async function loginAsStaff(
+    api: MockApiClient,
+    setToken: (t: string | null) => void,
+    who: 'dispatcher' | 'admin',
+  ): Promise<string> {
+    const session = await api.auth.staffLogin({
+      email: STAFF[who].email,
+      password: STAFF[who].password,
+    });
+    setToken(session.accessToken);
+    return session.accessToken;
+  }
+
+  it('lets every staff role read and only admins write the catalogue and settings', async () => {
+    const { api, setToken } = setup();
+    await loginAsStaff(api, setToken, 'dispatcher');
+    expect(await api.admin.listProducts()).toHaveLength(11);
+    await expectApiError(
+      api.admin.updateProduct('prod_m300', { basePrice: '112.00' }),
+      'FORBIDDEN',
+    );
+
+    await loginAsStaff(api, setToken, 'admin');
+    const product = await api.admin.updateProduct('prod_m300', {
+      basePrice: '112.00',
+      isPopular: false,
+    });
+    expect([product.basePrice, product.isPopular]).toEqual(['112.00', false]);
+    await expectApiError(api.admin.updateProduct('prod_m999', { basePrice: '1.00' }), 'NOT_FOUND');
+    const pump = await api.admin.updatePumpOption('pump_24m', { pricePerOrder: '220.00' });
+    expect(pump.pricePerOrder).toBe('220.00');
+    const supplier = await api.admin.updateSettings({ minOrderM3: 6, workingHours: '08:00–20:00' });
+    expect(supplier.settings.minOrderM3).toBe(6);
+    await expectApiError(api.admin.updateSettings({ vatRate: 2 }), 'VALIDATION_ERROR');
+    await expectApiError(
+      api.admin.updateServiceArea({
+        points: [
+          { lat: 40, lng: 49 },
+          { lat: 40.1, lng: 49 },
+        ],
+      }),
+      'VALIDATION_ERROR',
+    );
+    const area = await api.admin.updateServiceArea({
+      points: [
+        { lat: 40.7, lng: 49.2 },
+        { lat: 40.7, lng: 50.5 },
+        { lat: 40.1, lng: 50.5 },
+        { lat: 40.1, lng: 49.2 },
+      ],
+    });
+    expect(area.polygon.points).toHaveLength(4);
+    expect((await api.admin.getSettings()).supplier.settings.workingHours).toBe('08:00–20:00');
+
+    // The public catalogue reflects the new price at once.
+    await loginAsOrxan(api, setToken);
+    const products = await api.catalog.listProducts();
+    expect(products.find((p) => p.id === 'prod_m300')?.basePrice).toBe('112.00');
+  });
+
+  it('creates drivers that sign in by phone and locks them out when deactivated (D22)', async () => {
+    const { api, setToken } = setup();
+    const adminToken = await loginAsStaff(api, setToken, 'admin');
+    const phone = '+994500000014';
+    const created = await api.admin.createDriver({
+      fullName: 'Nicat Quliyev',
+      phone,
+      truckId: TRUCK_IDS.mixer8a,
+    });
+    expect(created.id).toBe('drv_4');
+    expect(created.isActive).toBe(true);
+    expect(created.truck?.plateNumber).toBe('90-AA-001');
+    await expectApiError(api.admin.createDriver({ fullName: 'Dublikat', phone }), 'CONFLICT');
+    expect((await api.admin.listDrivers()).map((d) => d.id)).toEqual([
+      'drv_1',
+      'drv_2',
+      'drv_3',
+      'drv_4',
+    ]);
+
+    await api.auth.requestOtp({ phone });
+    const driverSession = await api.auth.verifyOtp({ phone, code: '123456' });
+    expect(driverSession.user.role).toBe('DRIVER');
+    setToken(driverSession.accessToken);
+    expect((await api.driver.me()).truck?.plateNumber).toBe('90-AA-001');
+
+    setToken(adminToken);
+    const off = await api.admin.updateDriver('drv_4', { isActive: false });
+    expect(off.isActive).toBe(false);
+    expect(off.truck).toBeNull();
+    setToken(driverSession.accessToken);
+    await expectApiError(api.driver.me(), 'USER_INACTIVE');
+    await api.auth.requestOtp({ phone });
+    await expectApiError(api.auth.verifyOtp({ phone, code: '123456' }), 'USER_INACTIVE');
+    setToken(null);
+    await expectApiError(api.auth.refresh(driverSession.refreshToken), 'UNAUTHORIZED');
+
+    setToken(adminToken);
+    const truck = await api.admin.createTruck({
+      plateNumber: '90-AA-010',
+      type: 'MIXER',
+      capacityM3: 10,
+      boomLengthM: null,
+    });
+    expect(truck.id).toBe('truck_8');
+    await expectApiError(
+      api.admin.createTruck({
+        plateNumber: '90-aa-010',
+        type: 'MIXER',
+        capacityM3: 10,
+        boomLengthM: null,
+      }),
+      'CONFLICT',
+    );
+    await expectApiError(
+      api.admin.createTruck({
+        plateNumber: '90-AA-011',
+        type: 'MIXER',
+        capacityM3: null,
+        boomLengthM: null,
+      }),
+      'VALIDATION_ERROR',
+    );
+    expect((await api.admin.updateTruck(truck.id, { isActive: false })).isActive).toBe(false);
+    const moved = await api.admin.updateDriver('drv_1', { truckId: TRUCK_IDS.mixer12b });
+    expect(moved.truck?.plateNumber).toBe('90-AA-006');
+    expect(
+      (await api.admin.listTrucks()).find((t) => t.id === TRUCK_IDS.mixer10a)?.currentDriverId,
+    ).toBeNull();
+  });
+
+  it('summarises orders, delivered volume and revenue for a date range', async () => {
+    const { api, setToken } = setup();
+    await loginAsStaff(api, setToken, 'admin');
+    const report = await api.admin.reportSummary({ from: bakuDate(NOW, -7), to: bakuDate(NOW, 2) });
+    expect(report.orders).toEqual({ total: 6, active: 4, completed: 1, cancelled: 1, rejected: 0 });
+    expect(report.volumeM3Delivered).toBe(22);
+    expect(report.revenue).toBe('1416.00');
+    expect(report.byDay).toHaveLength(5);
+    expect(report.byProduct.find((p) => p.grade === 'M200')).toEqual({
+      productId: 'prod_m200',
+      grade: 'M200',
+      orders: 1,
+      volumeM3: 12,
+      revenue: '1416.00',
+    });
+    await expectApiError(
+      api.admin.reportSummary({ from: '2026-10-10', to: '2026-10-01' }),
+      'VALIDATION_ERROR',
+    );
+  });
+});

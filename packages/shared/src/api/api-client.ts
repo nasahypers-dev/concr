@@ -1,3 +1,4 @@
+import type { AdminDriver, AdminSettings, ReportSummary } from '../domain/admin';
 import type { IsoDate, IsoDateTime, TimeOfDay } from '../domain/common';
 import type { DeliveryDocument, DriverDelivery, LiveLocation } from '../domain/delivery';
 import type {
@@ -16,9 +17,21 @@ import type {
 } from '../domain/order';
 import type { Product, PumpOption } from '../domain/product';
 import type { Site, SiteInput } from '../domain/site';
-import type { Plant, Supplier } from '../domain/supplier';
+import type { Plant, ServiceArea, Supplier } from '../domain/supplier';
+import type { Truck } from '../domain/truck';
 import type { CustomerProfile, DriverAccount, User } from '../domain/user';
 import type { DeliveryStatus, OrderStatus } from '../enums';
+import type {
+  DriverInput,
+  ReportRange,
+  ServiceAreaInput,
+  TruckInput,
+  UpdateDriverInput,
+  UpdateProductInput,
+  UpdatePumpOptionInput,
+  UpdateSupplierSettingsInput,
+  UpdateTruckInput,
+} from '../schemas/admin';
 import type { OtpRequestInput, OtpVerifyInput, StaffLoginInput } from '../schemas/auth';
 import type { Paginated } from '../schemas/common';
 import type {
@@ -180,6 +193,28 @@ export interface DispatchApi {
   subscribeLive(handlers: OrderLiveHandlers): Unsubscribe;
 }
 
+/**
+ * Spec §11 admin endpoints (§14 settings and reports). Reads are open to every staff role; writes
+ * need a supplier admin (spec §2). Drivers are created here and nowhere else (D22).
+ */
+export interface AdminApi {
+  listProducts(): Promise<Product[]>;
+  updateProduct(id: string, input: UpdateProductInput): Promise<Product>;
+  listPumpOptions(): Promise<PumpOption[]>;
+  updatePumpOption(id: string, input: UpdatePumpOptionInput): Promise<PumpOption>;
+  listTrucks(): Promise<Truck[]>;
+  createTruck(input: TruckInput): Promise<Truck>;
+  updateTruck(id: string, input: UpdateTruckInput): Promise<Truck>;
+  listDrivers(): Promise<AdminDriver[]>;
+  createDriver(input: DriverInput): Promise<AdminDriver>;
+  /** `isActive: false` locks the driver out of the app at once. */
+  updateDriver(id: string, input: UpdateDriverInput): Promise<AdminDriver>;
+  getSettings(): Promise<AdminSettings>;
+  updateSettings(input: UpdateSupplierSettingsInput): Promise<Supplier>;
+  updateServiceArea(input: ServiceAreaInput): Promise<ServiceArea>;
+  reportSummary(range: ReportRange): Promise<ReportSummary>;
+}
+
 export interface ApiClient {
   auth: AuthApi;
   catalog: CatalogApi;
@@ -188,6 +223,7 @@ export interface ApiClient {
   tracking: TrackingApi;
   driver: DriverApi;
   dispatch: DispatchApi;
+  admin: AdminApi;
 }
 
 /** How a client learns the current access token (session store in the apps). */

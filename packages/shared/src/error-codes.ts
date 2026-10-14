@@ -22,6 +22,8 @@ export const ErrorCode = {
   OTP_INVALID: 'OTP_INVALID',
   OTP_EXPIRED: 'OTP_EXPIRED',
   OTP_TOO_MANY_ATTEMPTS: 'OTP_TOO_MANY_ATTEMPTS',
+  /** The account was deactivated by the supplier (D22); no token is issued or accepted. */
+  USER_INACTIVE: 'USER_INACTIVE',
 } as const;
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 
@@ -44,6 +46,7 @@ export const ERROR_CODE_STATUS: Record<ErrorCode, number> = {
   OTP_INVALID: 400,
   OTP_EXPIRED: 400,
   OTP_TOO_MANY_ATTEMPTS: 429,
+  USER_INACTIVE: 403,
 };
 
 /** Reverse lookup used by the API filter for plain HttpExceptions without a code. */

@@ -43,6 +43,7 @@ import type {
   Unsubscribe,
 } from '../api-client';
 import { ApiClientError } from '../errors';
+import { createAdminApi } from './mock-admin-api';
 import { createDispatchApi } from './mock-dispatch-api';
 import { createDriverApi } from './mock-driver-api';
 import { MockStore } from './mock-store';
@@ -118,7 +119,8 @@ export function createMockApiClient(options: MockApiClientOptions): MockApiClien
       throw new ApiClientError(ErrorCode.UNAUTHORIZED);
     const userId = token.slice(ACCESS_PREFIX.length).split('.')[0] ?? '';
     const user = store.findUserById(userId);
-    if (!user || !user.isActive) throw new ApiClientError(ErrorCode.UNAUTHORIZED);
+    if (!user) throw new ApiClientError(ErrorCode.UNAUTHORIZED);
+    if (!user.isActive) throw new ApiClientError(ErrorCode.USER_INACTIVE);
     return user;
   };
 
@@ -283,6 +285,7 @@ export function createMockApiClient(options: MockApiClientOptions): MockApiClien
         store.otpCodes.delete(phone);
         let user = store.findUserByPhone(phone);
         if (user && isStaff(user)) throw new ApiClientError(ErrorCode.FORBIDDEN);
+        if (user && !user.isActive) throw new ApiClientError(ErrorCode.USER_INACTIVE);
         if (!user) {
           const id = store.nextUserId();
           const createdAt = now().toISOString();
@@ -318,6 +321,7 @@ export function createMockApiClient(options: MockApiClientOptions): MockApiClien
         const user = staff ? store.findUserById(staff.id) : undefined;
         if (!user)
           throw new ApiClientError(ErrorCode.UNAUTHORIZED, { message: 'Invalid credentials' });
+        if (!user.isActive) throw new ApiClientError(ErrorCode.USER_INACTIVE);
         return issueSession(user);
       },
       async refresh(refreshToken) {
@@ -602,6 +606,8 @@ export function createMockApiClient(options: MockApiClientOptions): MockApiClien
       toSummary,
       toDetail,
     }),
+
+    admin: createAdminApi({ store, now, delay, parse, currentUser }),
 
     tracking: {
       async getOrderLive(orderId) {
