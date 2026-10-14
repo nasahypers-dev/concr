@@ -28,7 +28,8 @@ describe('LivePage', () => {
     expect(await screen.findAllByTestId('live-truck')).toHaveLength(6);
     expect(screen.getByText('10-VE-908 · Elşən Məmmədov')).toBeInTheDocument();
     expect(screen.getByText('Gecikir')).toBeInTheDocument();
-    expect(screen.getByText('Siqnal yoxdur')).toBeInTheDocument();
+    // one in the legend, one as the alert
+    expect(screen.getAllByText('Siqnal yoxdur')).toHaveLength(2);
     const map = await screen.findByTestId('live-map');
     expect(map.dataset.markers).toContain('truck:truck_10_1');
     expect(map.dataset.markers).toContain('site:del_104_2');

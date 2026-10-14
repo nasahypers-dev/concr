@@ -576,7 +576,11 @@
       "lastSeen": "Last signal: {time}",
       "updated": "Updated: {time}",
       "plant": "Plant",
-      "mapUnavailable": "The map could not be loaded"
+      "mapUnavailable": "The map could not be loaded",
+      "legend": "Legend",
+      "legendSite": "Site (with the trip number)",
+      "legendIdle": "Idle mixer",
+      "legendMoving": "Mixer on a trip"
     },
     "settings": {
       "title": "Settings",

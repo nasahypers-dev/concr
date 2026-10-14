@@ -141,3 +141,18 @@
     @apply font-sans;
   }
 }
+
+/* Live map markers (src/components/map/live-map.tsx): MapLibre owns the element's transform. */
+.concr-marker {
+  position: absolute;
+}
+@keyframes concr-pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}

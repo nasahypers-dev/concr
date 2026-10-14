@@ -16,7 +16,8 @@ export function createSupplier(): Supplier {
     email: 'info@novxanibeton.az',
     website: 'https://novxanibeton.az',
     address: 'Novxanı şossesi, Bakı',
-    logoUrl: null,
+    // The supplier's site icon (public asset); shown on the plant marker in the app and the panel.
+    logoUrl: 'https://novxanibeton.az/branding/novxani-beton-favicon-v2-512.png',
     isActive: true,
     settings: {
       minOrderM3: 8, // owner decision 2026-10-09 (Q1)

@@ -576,7 +576,11 @@
       "lastSeen": "Son siqnal: {time}",
       "updated": "Yenilənib: {time}",
       "plant": "Zavod",
-      "mapUnavailable": "Xəritə yüklənmədi"
+      "mapUnavailable": "Xəritə yüklənmədi",
+      "legend": "İşarələr",
+      "legendSite": "Obyekt (reys nömrəsi ilə)",
+      "legendIdle": "Boş mikser",
+      "legendMoving": "Reysdə olan mikser"
     },
     "settings": {
       "title": "Ayarlar",

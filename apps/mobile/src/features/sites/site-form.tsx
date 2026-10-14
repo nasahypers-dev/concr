@@ -118,6 +118,7 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
               interactive={false}
               site={location}
               plant={location ? null : plantLocation}
+              plantLogoUrl={supplier.data?.supplier.logoUrl ?? null}
               testID="site-map"
             />
           </View>
@@ -133,6 +134,7 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
           visible={pickerOpen}
           initial={location}
           plant={plantLocation}
+          plantLogoUrl={supplier.data?.supplier.logoUrl ?? null}
           onClose={() => setPickerOpen(false)}
           onConfirm={(point) => {
             setLocation(point);

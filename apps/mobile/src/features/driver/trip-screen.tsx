@@ -212,6 +212,7 @@ export function TripScreen({ id, onBack, onDone, now = () => new Date() }: TripS
         <MapView
           className="h-56"
           plant={supplier.data?.plant.location ?? null}
+          plantLogoUrl={supplier.data?.supplier.logoUrl ?? null}
           site={data.site.location}
           trucks={
             data.lastLocation

@@ -155,6 +155,7 @@ export default function OrderDetailScreen() {
           <MapView
             className="h-64"
             plant={supplier.data?.plant.location ?? null}
+            plantLogoUrl={supplier.data?.supplier.logoUrl ?? null}
             site={detail.site.location}
             trucks={trucks}
             testID="order-live-map"

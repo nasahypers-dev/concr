@@ -60,9 +60,10 @@ export function LivePage() {
       id: 'plant',
       kind: 'plant',
       position: plant,
-      label: 'Z',
+      label: supplier.data?.supplier.name ?? t('plant'),
       title: t('plant'),
       color: PLANT_COLOR,
+      imageUrl: supplier.data?.supplier.logoUrl ?? null,
     });
     let idle = 0;
     for (const truck of live.data.trucks) {
@@ -71,7 +72,7 @@ export function LivePage() {
           id: `truck:${truck.truck.id}`,
           kind: 'truck',
           position: truck.location,
-          label: truck.truck.plateNumber.slice(-3),
+          label: truck.truck.plateNumber,
           title: `${truck.truck.plateNumber} · ${truck.delivery.orderNumber}`,
           color: deliveryStatusColor[truck.delivery.status],
           heading: truck.heading,
@@ -94,7 +95,7 @@ export function LivePage() {
             lat: plant.lat + IDLE_OFFSET_DEG * idle,
             lng: plant.lng + IDLE_OFFSET_DEG * idle,
           },
-          label: truck.truck.plateNumber.slice(-3),
+          label: truck.truck.plateNumber,
           title: `${truck.truck.plateNumber} · ${t('idle')}`,
           color: IDLE_COLOR,
         });
@@ -128,6 +129,7 @@ export function LivePage() {
             )}
           </Card>
           <div className="flex flex-col gap-4">
+            <MapLegend />
             <AlertsCard snapshot={live.data} />
             <TrucksCard trucks={live.data.trucks} />
           </div>
@@ -236,6 +238,48 @@ function TrucksCard({ trucks }: { trucks: LiveTruck[] }) {
                 ) : null}
               </div>
             ) : null}
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+function MapLegend() {
+  const t = useTranslations('panel.live');
+  const tStatus = useTranslations('status.delivery');
+  const rows: { color: string; label: string; shape?: 'pin' | 'ring' }[] = [
+    { color: PLANT_COLOR, label: t('plant') },
+    { color: SITE_COLOR, label: t('legendSite'), shape: 'pin' },
+    { color: IDLE_COLOR, label: t('legendIdle') },
+    { color: deliveryStatusColor.LOADING, label: `${t('legendMoving')} · ${tStatus('LOADING')}` },
+    { color: deliveryStatusColor.EN_ROUTE, label: `${t('legendMoving')} · ${tStatus('EN_ROUTE')}` },
+    { color: deliveryStatusColor.ARRIVED, label: `${t('legendMoving')} · ${tStatus('ARRIVED')}` },
+    {
+      color: deliveryStatusColor.UNLOADING,
+      label: `${t('legendMoving')} · ${tStatus('UNLOADING')}`,
+    },
+    { color: '#DC2626', label: t('noSignal'), shape: 'ring' },
+  ];
+  return (
+    <Card size="sm">
+      <CardHeader>
+        <CardTitle>{t('legend')}</CardTitle>
+      </CardHeader>
+      <CardContent className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
+        {rows.map((row) => (
+          <div key={row.label} className="flex items-center gap-2">
+            <span
+              className={cn(
+                'inline-block size-3 shrink-0',
+                row.shape === 'pin' ? 'rounded-b-full rounded-t-sm' : 'rounded-full',
+                row.shape === 'ring' ? 'border-2 bg-transparent' : '',
+              )}
+              style={
+                row.shape === 'ring' ? { borderColor: row.color } : { backgroundColor: row.color }
+              }
+            />
+            <span className="truncate">{row.label}</span>
           </div>
         ))}
       </CardContent>

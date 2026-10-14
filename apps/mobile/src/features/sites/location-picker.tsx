@@ -13,6 +13,7 @@ export interface LocationPickerProps {
   initial: GeoPoint | null;
   /** Shown as a reference marker and used as the starting view for new sites. */
   plant: GeoPoint | null;
+  plantLogoUrl?: string | null;
   onClose: () => void;
   onConfirm: (point: GeoPoint) => void;
 }
@@ -31,6 +32,7 @@ export function LocationPicker({
   visible,
   initial,
   plant,
+  plantLogoUrl = null,
   onClose,
   onConfirm,
 }: LocationPickerProps) {
@@ -74,6 +76,7 @@ export function LocationPicker({
             className="flex-1"
             centerPin
             plant={plant}
+            plantLogoUrl={plantLogoUrl}
             initialCenter={start}
             initialDelta={initial ? DELTA_CLOSE : DELTA_AREA}
             onCenterChange={(point) => {
