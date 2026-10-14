@@ -7,6 +7,7 @@ export * from './domain';
 export * from './money/money';
 export * from './geo/geo';
 export * from './pricing/calculate-quote';
+export * from './planning/plan-deliveries';
 export * from './state-machines/errors';
 export * from './state-machines/order-state.machine';
 export * from './state-machines/delivery-state.machine';

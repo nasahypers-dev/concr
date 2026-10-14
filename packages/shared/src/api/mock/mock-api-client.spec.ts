@@ -1,5 +1,6 @@
 import { OrderStatus } from '../../enums';
 import {
+  bakuDate,
   createFixtures,
   CUSTOMER_IDS,
   DRIVER_IDS,
@@ -9,6 +10,7 @@ import {
   TRUCK_IDS,
 } from '../../fixtures';
 import { formatAzn } from '../../money/money';
+import { windowStartToDate } from '../../state-machines/order-state.machine';
 import { ApiClientError } from '../errors';
 import { createMockApiClient, type MockApiClient } from './mock-api-client';
 
@@ -564,5 +566,196 @@ describe('mock api client — driver', () => {
       api.store.data.trucks.find((t) => t.id === TRUCK_IDS.mixer12a)?.currentDriverId,
     ).toBeNull();
     await expectApiError(api.driver.setShift({ onShift: true, truckId: 'truck_99' }), 'NOT_FOUND');
+  });
+});
+
+describe('mock api client — dispatch', () => {
+  async function loginAsDispatcher(
+    api: MockApiClient,
+    setToken: (t: string | null) => void,
+  ): Promise<void> {
+    const session = await api.auth.staffLogin({
+      email: STAFF.dispatcher.email,
+      password: STAFF.dispatcher.password,
+    });
+    setToken(session.accessToken);
+  }
+
+  it('lists, filters and searches the supplier orders for staff only', async () => {
+    const { api, setToken } = setup();
+    await loginAsOrxan(api, setToken);
+    await expectApiError(api.dispatch.listOrders(), 'FORBIDDEN');
+
+    await loginAsDispatcher(api, setToken);
+    const inbox = await api.dispatch.listOrders({ status: ['PENDING'] });
+    expect(inbox.items.map((o) => o.id)).toEqual([ORDER_IDS.pending]);
+    expect(inbox.items[0]!.customerName).toBe('Orxan Məmmədli');
+    expect(inbox.items[0]!.pumpPriceKnown).toBe(true);
+    expect((await api.dispatch.listOrders()).total).toBe(6);
+    const tomorrow = await api.dispatch.listOrders({ date: bakuDate(NOW, 1) });
+    expect(tomorrow.items.map((o) => o.id)).toEqual([ORDER_IDS.pending, ORDER_IDS.scheduled]);
+    const found = await api.dispatch.listOrders({ search: '000104' });
+    expect(found.items.map((o) => o.id)).toEqual([ORDER_IDS.inProgress]);
+    const detail = await api.dispatch.getOrder(ORDER_IDS.inProgress);
+    expect(detail.customer.phone).toBe('+994500000001');
+    expect(detail.deliveries).toHaveLength(3);
+    await expectApiError(api.dispatch.getOrder('ord_999'), 'NOT_FOUND');
+  });
+
+  it('confirms with a window change and a price override, and rejects with a reason', async () => {
+    const { api, setToken } = setup();
+    const statuses: string[] = [];
+    api.tracker.events.on('orderStatus', (e) => statuses.push(e.orderId + ':' + e.status));
+    await loginAsDispatcher(api, setToken);
+    const date = bakuDate(NOW, 1);
+    const confirmed = await api.dispatch.confirm(ORDER_IDS.pending, {
+      schedule: {
+        requestedDate: date,
+        timeWindowStart: '09:00',
+        timeWindowEnd: '11:00',
+        reason: 'Səhər növbəsi doludur',
+      },
+      priceOverride: { total: '1500.00', reason: 'Daimi müştəri endirimi' },
+      internalNote: 'Usta 8-də gəlir',
+    });
+    expect(confirmed.status).toBe('CONFIRMED');
+    expect(confirmed.confirmedAt).toBe(NOW.toISOString());
+    expect(confirmed.timeWindowStart).toBe('09:00');
+    expect(confirmed.pricing.total).toBe('1500.00');
+    expect(confirmed.totalAmount).toBe('1500.00');
+    expect(confirmed.pricing.overrideReason).toBe('Daimi müştəri endirimi');
+    expect(confirmed.internalNote).toBe('Usta 8-də gəlir');
+    expect(confirmed.events.map((e) => e.type)).toEqual([
+      'CREATED',
+      'SCHEDULE_CHANGED',
+      'PRICE_OVERRIDDEN',
+      'STATUS_CHANGED',
+    ]);
+    expect(statuses).toEqual([ORDER_IDS.pending + ':CONFIRMED']);
+    await expectApiError(api.dispatch.confirm(ORDER_IDS.pending), 'INVALID_STATE_TRANSITION');
+    await expectApiError(
+      api.dispatch.confirm(ORDER_IDS.scheduled, { pumpFee: '100.00' }),
+      'INVALID_STATE_TRANSITION',
+    );
+
+    const fresh = setup();
+    await loginAsDispatcher(fresh.api, fresh.setToken);
+    await expectApiError(
+      fresh.api.dispatch.confirm(ORDER_IDS.pending, { pumpFee: '100.00' }),
+      'VALIDATION_ERROR',
+    ); // no pump on that order
+    await expectApiError(
+      fresh.api.dispatch.reject(ORDER_IDS.pending, { reason: 'x' }),
+      'VALIDATION_ERROR',
+    );
+    const rejected = await fresh.api.dispatch.reject(ORDER_IDS.pending, {
+      reason: 'Həcm kifayət deyil',
+    });
+    expect(rejected.status).toBe('REJECTED');
+    expect(rejected.cancelReason).toBe('Həcm kifayət deyil');
+    expect(rejected.cancelledBy).toBe('DISPATCHER');
+    await expectApiError(
+      fresh.api.dispatch.reject(ORDER_IDS.confirmed, { reason: 'Gec oldu' }),
+      'INVALID_STATE_TRANSITION',
+    );
+  });
+
+  it('suggests a plan, schedules the trips and cancels an order with its planned trips', async () => {
+    const { api, setToken } = setup();
+    const tripEvents: string[] = [];
+    api.tracker.events.on('deliveryStatus', (e) => tripEvents.push(e.deliveryId + ':' + e.status));
+    await loginAsDispatcher(api, setToken);
+
+    const plan = await api.dispatch.suggestPlan(ORDER_IDS.confirmed); // 8 m³, day after tomorrow
+    expect(plan).toEqual([
+      {
+        sequence: 1,
+        volumeM3: 8,
+        truckId: TRUCK_IDS.mixer8a,
+        driverId: null,
+        plannedDepartureAt: windowStartToDate(bakuDate(NOW, 2), '10:00').toISOString(),
+      },
+    ]);
+    await expectApiError(
+      api.dispatch.schedule(ORDER_IDS.confirmed, { trips: [{ ...plan[0]!, volumeM3: 6 }] }),
+      'VALIDATION_ERROR',
+    );
+    const scheduled = await api.dispatch.schedule(ORDER_IDS.confirmed, { trips: plan });
+    expect(scheduled.status).toBe('SCHEDULED');
+    expect(scheduled.deliveries.map((d) => [d.id, d.status, d.truck?.plateNumber])).toEqual([
+      ['del_102_1', 'PLANNED', '90-AA-001'],
+    ]);
+    await expectApiError(api.dispatch.suggestPlan(ORDER_IDS.confirmed), 'INVALID_STATE_TRANSITION');
+
+    const cancelled = await api.dispatch.cancel(ORDER_IDS.scheduled, {
+      reason: 'Mikser xarab oldu',
+    });
+    expect(cancelled.status).toBe('CANCELLED');
+    expect(cancelled.cancelledBy).toBe('DISPATCHER');
+    expect(cancelled.deliveries.map((d) => d.status)).toEqual(['CANCELLED', 'CANCELLED']);
+    expect(tripEvents).toEqual(['del_103_1:CANCELLED', 'del_103_2:CANCELLED']);
+    await expectApiError(
+      api.dispatch.cancel(ORDER_IDS.completed, { reason: 'Gec oldu' }),
+      'INVALID_STATE_TRANSITION',
+    );
+
+    // The customer sees the dispatcher's decision in the same store.
+    await loginAsOrxan(api, setToken);
+    expect((await api.orders.get(ORDER_IDS.scheduled)).status).toBe('CANCELLED');
+  });
+
+  it('reassigns planned trips, builds the board and the live snapshot with alerts', async () => {
+    const { api, setToken } = setup();
+    await loginAsDispatcher(api, setToken);
+    const moved = await api.dispatch.reassignDelivery('del_103_2', {
+      truckId: TRUCK_IDS.mixer8a,
+      driverId: DRIVER_IDS.kamran,
+    });
+    expect(moved.status).toBe('ASSIGNED');
+    expect(moved.truck?.plateNumber).toBe('90-AA-001');
+    expect(moved.driver?.fullName).toBe('Kamran Hüseynov');
+    expect(moved.orderNumber).toBe('CN-2026-000103');
+    await expectApiError(
+      api.dispatch.reassignDelivery('del_104_2', { driverId: DRIVER_IDS.kamran }),
+      'INVALID_STATE_TRANSITION',
+    );
+    await expectApiError(
+      api.dispatch.reassignDelivery('del_103_1', { truckId: TRUCK_IDS.pump24 }),
+      'NOT_FOUND',
+    );
+
+    const today = await api.dispatch.board();
+    expect(today.trucks).toHaveLength(6);
+    expect(today.deliveries.map((d) => d.id)).toEqual(['del_104_1', 'del_104_2', 'del_104_3']);
+    const tomorrow = await api.dispatch.board(bakuDate(NOW, 1));
+    expect(tomorrow.deliveries.map((d) => d.id)).toEqual(['del_103_1', 'del_103_2']);
+
+    const live = await api.dispatch.live();
+    const elshan = live.trucks.find((t) => t.truck.id === TRUCK_IDS.mixer10a)!;
+    expect(elshan.onShift).toBe(true);
+    expect(elshan.delivery?.id).toBe('del_104_2');
+    expect(elshan.location).not.toBeNull();
+    expect(elshan.signalLost).toBe(false);
+    expect(live.alerts).toEqual({ late: [], concreteRisk: [], noSignal: [] });
+
+    const trip = api.store.findDelivery('del_104_2')!;
+    trip.etaMinutes = 120;
+    trip.departedAt = new Date(NOW.getTime() - 80 * 60_000).toISOString();
+    trip.lastLocationAt = new Date(NOW.getTime() - 5 * 60_000).toISOString();
+    expect((await api.dispatch.live()).alerts).toEqual({
+      late: ['del_104_2'],
+      concreteRisk: ['del_104_2'],
+      noSignal: ['del_104_2'],
+    });
+
+    const locations: string[] = [];
+    const unsubscribe = api.dispatch.subscribeLive({
+      onLocation: (e) => locations.push(e.deliveryId),
+    });
+    expect(api.tracker.running).toBe(true);
+    api.tracker.tick(60_000);
+    expect(locations).toEqual(['del_104_2']);
+    unsubscribe();
+    expect(api.tracker.running).toBe(false);
   });
 });

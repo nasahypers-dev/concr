@@ -1,6 +1,14 @@
 import type { IsoDate, IsoDateTime, TimeOfDay } from '../domain/common';
 import type { DeliveryDocument, DriverDelivery, LiveLocation } from '../domain/delivery';
 import type {
+  DispatchBoard,
+  DispatchDelivery,
+  DispatchOrderDetail,
+  DispatchOrderSummary,
+  LiveSnapshot,
+  TripPlan,
+} from '../domain/dispatch';
+import type {
   CreateOrderInput,
   OrderDetail,
   OrderSummary,
@@ -13,6 +21,14 @@ import type { CustomerProfile, DriverAccount, User } from '../domain/user';
 import type { DeliveryStatus, OrderStatus } from '../enums';
 import type { OtpRequestInput, OtpVerifyInput, StaffLoginInput } from '../schemas/auth';
 import type { Paginated } from '../schemas/common';
+import type {
+  ConfirmOrderInput,
+  DispatchCancelInput,
+  ListDispatchOrdersQuery,
+  ReassignDeliveryInput,
+  RejectOrderInput,
+  ScheduleOrderInput,
+} from '../schemas/dispatch';
 import type {
   CompleteDeliveryInput,
   DriverStatusInput,
@@ -142,6 +158,28 @@ export interface DriverApi {
   complete(id: string, input: CompleteDeliveryInput): Promise<DriverDelivery>;
 }
 
+/**
+ * Spec §11 dispatch endpoints (§14 panel): the supplier's view of every order and trip, the
+ * dispatcher decisions of §8.1 and the live feed of §9.4. Staff roles only.
+ */
+export interface DispatchApi {
+  listOrders(query?: ListDispatchOrdersQuery): Promise<Paginated<DispatchOrderSummary>>;
+  getOrder(id: string): Promise<DispatchOrderDetail>;
+  /** PENDING → CONFIRMED, optionally with a pump fee, a price override or a window change. */
+  confirm(id: string, input?: ConfirmOrderInput): Promise<DispatchOrderDetail>;
+  reject(id: string, input: RejectOrderInput): Promise<DispatchOrderDetail>;
+  /** Proposal for the schedule dialog: largest mixer first (spec §8.1 "avtomatik bölgü"). */
+  suggestPlan(id: string): Promise<TripPlan[]>;
+  /** CONFIRMED → SCHEDULED: the trips become deliveries. */
+  schedule(id: string, input: ScheduleOrderInput): Promise<DispatchOrderDetail>;
+  cancel(id: string, input: DispatchCancelInput): Promise<DispatchOrderDetail>;
+  /** Board edits of a trip that has not left the plant (mixer, driver, departure). */
+  reassignDelivery(deliveryId: string, input: ReassignDeliveryInput): Promise<DispatchDelivery>;
+  board(date?: IsoDate): Promise<DispatchBoard>;
+  live(): Promise<LiveSnapshot>;
+  subscribeLive(handlers: OrderLiveHandlers): Unsubscribe;
+}
+
 export interface ApiClient {
   auth: AuthApi;
   catalog: CatalogApi;
@@ -149,6 +187,7 @@ export interface ApiClient {
   orders: OrdersApi;
   tracking: TrackingApi;
   driver: DriverApi;
+  dispatch: DispatchApi;
 }
 
 /** How a client learns the current access token (session store in the apps). */

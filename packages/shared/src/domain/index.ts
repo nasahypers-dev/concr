@@ -5,4 +5,5 @@ export * from './user';
 export * from './site';
 export * from './truck';
 export * from './delivery';
+export * from './dispatch';
 export * from './order';

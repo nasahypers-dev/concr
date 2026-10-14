@@ -59,6 +59,11 @@ export class MockStore {
     return this.data.orders.filter((o) => o.customerId === customerId);
   }
 
+  /** Every order of a supplier (staff views); the mock has one supplier. */
+  ordersOfSupplier(supplierId: Id): Order[] {
+    return this.data.orders.filter((o) => o.supplierId === supplierId);
+  }
+
   findOrder(id: Id): Order | undefined {
     return this.data.orders.find((o) => o.id === id);
   }
@@ -78,6 +83,10 @@ export class MockStore {
           (a.plannedDepartureAt ?? '').localeCompare(b.plannedDepartureAt ?? '') ||
           a.sequence - b.sequence,
       );
+  }
+
+  deliveriesOfSupplier(supplierId: Id): Delivery[] {
+    return this.data.deliveries.filter((d) => d.supplierId === supplierId);
   }
 
   findDelivery(id: Id): Delivery | undefined {

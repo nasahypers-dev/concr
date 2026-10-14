@@ -41,3 +41,16 @@ apps still need a stable contract so that the backend can be plugged in without 
 validates with the shared zod schemas in `schemas/driver.ts`, drives transitions through
 `delivery-state.machine.ts` and reuses the tracker's `applyStatus` / `syncOrder`, so a trip a
 driver operates is seen live by the customer in the same mock store; the simulation skips such trips.
+
+## Addendum (2026-10-14): dispatch namespace
+
+`ApiClient.dispatch` mirrors the spec §11 `/dispatch/*` endpoints (`listOrders`, `getOrder`,
+`confirm`, `reject`, `schedule`, `cancel`, `board`, `live`) plus what the panel needs on top:
+`suggestPlan` (the §8.1 automatic split, pure `planDeliveries` in `src/planning`), `reassignDelivery`
+(board edits of planned trips) and `subscribeLive` (the supplier-wide feed of §9.4). The mock
+(`mock-dispatch-api.ts`) requires a staff role, scopes by `supplierId`, runs every order decision
+through `order-state.machine.ts` with the DISPATCHER actor, records audit events (status, price
+override, schedule change) and announces changes through the tracker's events, so the customer and
+driver apps in the same process see them live. `live()` computes the §9.4 alerts from the store:
+late (ETA after the window end), concrete risk (`concreteLifetimeMin − 15` minutes since departure),
+no signal (no GPS sample for 120 s while tracking).
