@@ -12,10 +12,10 @@ their own copy and never see what the browser changed.
 
 ## Decision
 
-- **Data is fetched in the browser.** Route files under `src/app` are thin server components (metadata
-  - a client feature component). Every feature page is a client component that reads through
-    TanStack Query hooks over the `ApiClient` from `src/api/api-provider.tsx` (one mock singleton per
-    tab; `NEXT_PUBLIC_API_MODE=http` will swap in the HTTP client in Phase B2 without touching pages).
+- **Data is fetched in the browser.** Route files under `src/app` are thin server components (metadata and
+  a client feature component). Every feature page is a client component that reads through
+  TanStack Query hooks over the `ApiClient` from `src/api/api-provider.tsx` (one mock singleton per
+  tab; `NEXT_PUBLIC_API_MODE=http` will swap in the HTTP client in Phase B2 without touching pages).
 - **Session in `localStorage`** (`src/store/session.store.ts`, zustand `persist`, key
   `concr.staff-session`): access/refresh tokens and the staff user. The `(panel)` layout is a client
   guard: no session → `/login`; while the store is still hydrating nothing flashes. Server-side
