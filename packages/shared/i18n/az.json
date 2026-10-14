@@ -241,7 +241,17 @@
     "todayEmpty": "Bu gün üçün reys yoxdur",
     "profileTitle": "Profil",
     "onShift": "Növbədəyəm",
-    "offShift": "Növbədə deyiləm"
+    "offShift": "Növbədə deyiləm",
+    "todayEmptyHint": "Dispetçer reys təyin edəndə burada görünəcək",
+    "tomorrowTitle": "Sabahkı reyslər",
+    "noTruck": "Mikser təyin edilməyib",
+    "shiftOffHint": "Növbədə olanda dispetçer sizə reys təyin edə bilər",
+    "departAt": "Yola çıxış: {time}",
+    "departIn": "Yola çıxışa {minutes} dəq",
+    "departNow": "Yola çıxış vaxtıdır",
+    "completedAt": "Tamamlandı: {time}",
+    "callDispatcher": "Dispetçerə zəng et",
+    "tripTitle": "Reys {sequence}/{total} · {number}"
   },
   "time": {
     "today": "Bu gün",

@@ -9,13 +9,30 @@ backend afterwards** (`docs/DECISIONS.md` P1–P4, ADR 0006–0008). Update this
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
 | Phase 0 | Monorepo skeleton: shared, API, mobile, web, infra, CI, docs                                                                                                                    | done 2026-10-08                                     |
 | **U1**  | Shared domain + fixtures + pricing + state machines, mock API client + live-tracking simulator, mobile design system, mock OTP sign-in, **all customer screens** incl. live map | done 2026-10-09, device-checked on iPhone (Expo Go) |
-| U2      | Driver app: today list, delivery screen with big buttons, 90-min timer, photo completion (mock)                                                                                 | next                                                |
+| U2      | Driver app: today list, delivery screen with big buttons, 90-min timer, photo completion (mock)                                                                                 | in progress: steps 1–2 done 2026-10-14, step 3 next |
 | U3      | Dispatcher web: app shell, inbox + order detail, orders table, planning board, live map (MapLibre), settings, reports (mock)                                                    | planned                                             |
 | U4      | Polish: dark mode, motion, accessibility, Azerbaijani typography, empty/error audit, screenshots                                                                                | planned                                             |
 | B1      | Prisma models + seed from the fixtures, auth, `SupplierScopeGuard`                                                                                                              | planned                                             |
 | B2      | catalog/quote/orders/sites endpoints, `HttpApiClient`, switch `API_MODE=http`                                                                                                   | planned                                             |
 | B3      | tracking ingestion + Socket.IO replaces the mock tracker, EAS dev build, background location                                                                                    | planned                                             |
 | B4+     | push, documents, settings, reports, production (spec Phases 3–5)                                                                                                                | planned                                             |
+
+## U2 — driver mode (in progress, 2026-10-14)
+
+Three steps, one commit each; the owner approves each step before the next starts.
+
+1. **Shared driver API** (done): `DriverApi` (`me`, `setShift`, `listDeliveries`, `getDelivery`,
+   `setStatus`, `pushLocations`, `complete`) with zod schemas, a mock scoped to the signed-in driver, status
+   changes through the delivery state machine, GPS batches validated per spec §9.2, handover documents numbered
+   like the fixtures, and a tracker that leaves driver-operated trips alone. ADR 0006 addendum.
+2. **Today screen, driver profile, dev login** (done): shift switch with the assigned mixer, today's trips as
+   cards (trip n/N, order number, site, grade and m³, window, departure countdown / ETA / completion time),
+   tomorrow's preview, pull-to-refresh, loading / empty / error states; profile with mixer, shift, language,
+   appearance (`PreferenceSections`, shared with the customer profile), "call the dispatcher", logout;
+   "DEV: enter as driver" on the welcome screen (Rauf, `+994500000012`). The trip route exists as a
+   placeholder (header + facts) so taps already navigate. 8 tests.
+3. **Trip screen** (next): 56 px status buttons, 75/90-minute concrete timer, call / navigate, completion with
+   photos and the receiver's name, foreground GPS batches in Expo Go.
 
 ## U1 — what was built (2026-10-09)
 

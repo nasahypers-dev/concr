@@ -1,8 +1,10 @@
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import {
   DEV_CUSTOMER_PHONE,
+  DEV_DRIVER_PHONE,
   DEV_OTP_CODE,
   useRequestOtp,
   useVerifyOtp,
@@ -14,14 +16,18 @@ export default function WelcomeScreen() {
   const router = useRouter();
   const requestOtp = useRequestOtp();
   const verifyOtp = useVerifyOtp();
+  const [devPhone, setDevPhone] = useState<string | null>(null);
 
-  // Dev only: runs the real (mock) OTP flow for the seeded customer in one tap.
-  const quickLogin = async () => {
+  // Dev only: runs the real (mock) OTP flow for a seeded account in one tap.
+  const quickLogin = async (phone: string) => {
+    setDevPhone(phone);
     try {
-      await requestOtp.mutateAsync({ phone: DEV_CUSTOMER_PHONE });
-      await verifyOtp.mutateAsync({ phone: DEV_CUSTOMER_PHONE, code: DEV_OTP_CODE });
+      await requestOtp.mutateAsync({ phone });
+      await verifyOtp.mutateAsync({ phone, code: DEV_OTP_CODE });
     } catch {
       // Dev shortcut only; the normal phone flow reports errors on its own screens.
+    } finally {
+      setDevPhone(null);
     }
   };
 
@@ -51,13 +57,22 @@ export default function WelcomeScreen() {
           onPress={() => router.push('/phone')}
         />
         {__DEV__ ? (
-          <Button
-            variant="ghost"
-            size="md"
-            label={t('auth.devQuickLogin')}
-            loading={requestOtp.isPending || verifyOtp.isPending}
-            onPress={() => void quickLogin()}
-          />
+          <>
+            <Button
+              variant="ghost"
+              size="md"
+              label={t('auth.devQuickLogin')}
+              loading={devPhone === DEV_CUSTOMER_PHONE}
+              onPress={() => void quickLogin(DEV_CUSTOMER_PHONE)}
+            />
+            <Button
+              variant="ghost"
+              size="md"
+              label={t('auth.devEnterAsDriver')}
+              loading={devPhone === DEV_DRIVER_PHONE}
+              onPress={() => void quickLogin(DEV_DRIVER_PHONE)}
+            />
+          </>
         ) : null}
       </View>
     </Screen>

@@ -1,4 +1,3 @@
-import { type Locale, locales } from '@concr/shared';
 import Constants from 'expo-constants';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
@@ -8,8 +7,9 @@ import { useLogout, useMe, useUpdateProfile } from '@/features/auth/use-auth';
 import { useSupplier } from '@/features/catalog/use-catalog';
 import { useAutoHide } from '@/features/common/use-auto-hide';
 import { useErrorMessage } from '@/features/common/use-error-message';
+import { PreferenceSections } from '@/features/settings/preference-sections';
 import { formatPhoneAz } from '@/lib/format';
-import { THEME_PREFERENCES, type ThemePreference, useSettingsStore } from '@/store/settings.store';
+import { useSettingsStore } from '@/store/settings.store';
 import {
   Banner,
   Button,
@@ -17,14 +17,11 @@ import {
   ListRow,
   Screen,
   Section,
-  SegmentedControl,
   Sheet,
   Skeleton,
   Text,
   TextField,
 } from '@/ui';
-
-const localeLabels: Record<Locale, string> = { az: 'Azərbaycan', ru: 'Русский', en: 'English' };
 
 export default function CustomerProfileScreen() {
   const { t } = useTranslation();
@@ -34,10 +31,6 @@ export default function CustomerProfileScreen() {
   const updateProfile = useUpdateProfile();
   const logout = useLogout();
   const errorMessage = useErrorMessage();
-  const theme = useSettingsStore((s) => s.theme);
-  const setTheme = useSettingsStore((s) => s.setTheme);
-  const locale = useSettingsStore((s) => s.locale);
-  const setLocale = useSettingsStore((s) => s.setLocale);
   const setTourDone = useSettingsStore((s) => s.setTourDone);
   const [name, setName] = useState<string | null>(null);
   const [saved, showSaved, hideSaved] = useAutoHide();
@@ -59,11 +52,6 @@ export default function CustomerProfileScreen() {
         },
       },
     );
-  };
-
-  const switchLocale = (next: Locale) => {
-    setLocale(next);
-    updateProfile.mutate({ locale: next });
   };
 
   const version = Constants.expoConfig?.version ?? '0.0.0';
@@ -110,22 +98,7 @@ export default function CustomerProfileScreen() {
         </Card>
       )}
 
-      <Section title={t('profile.language')}>
-        <SegmentedControl<Locale>
-          value={locale}
-          onChange={switchLocale}
-          options={locales.map((locale) => ({ value: locale, label: localeLabels[locale] }))}
-        />
-      </Section>
-
-      <Section title={t('profile.appearance')}>
-        <SegmentedControl<ThemePreference>
-          value={theme}
-          onChange={setTheme}
-          options={THEME_PREFERENCES.map((value) => ({ value, label: t(`theme.${value}`) }))}
-          accessibilityLabel={t('profile.appearance')}
-        />
-      </Section>
+      <PreferenceSections />
 
       <Section title={t('profile.support')}>
         <Card compact>

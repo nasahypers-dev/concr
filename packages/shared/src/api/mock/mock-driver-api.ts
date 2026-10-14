@@ -1,6 +1,6 @@
 import type { Id, IsoDate } from '../../domain/common';
 import type { Delivery, DeliveryDetail, DriverDelivery } from '../../domain/delivery';
-import type { Driver, User } from '../../domain/user';
+import type { Driver, DriverAccount, User } from '../../domain/user';
 import { DeliveryStatus, UserRole } from '../../enums';
 import { ErrorCode } from '../../error-codes';
 import { bakuDate, MOCK_AVERAGE_SPEED_KMH } from '../../fixtures';
@@ -67,6 +67,12 @@ export function createDriverApi(ctx: DriverApiContext): DriverApi {
     return delivery;
   };
 
+  /** The driver plus the mixer currently assigned (one call feeds the profile and the shift card). */
+  const account = (driver: Driver): DriverAccount => ({
+    ...driver,
+    truck: store.data.trucks.find((t) => t.id === driver.currentTruckId) ?? null,
+  });
+
   const toDriverDelivery = (delivery: Delivery): DriverDelivery => {
     const order = store.findOrder(delivery.orderId);
     const site = order ? store.findSite(order.siteId) : undefined;
@@ -83,6 +89,7 @@ export function createDriverApi(ctx: DriverApiContext): DriverApi {
         productGrade: product.grade,
         slump: order.slump,
         totalVolumeM3: order.volumeM3,
+        deliveriesTotal: store.deliveriesOf(order.id).length,
         pumpRequired: order.pumpRequired,
         requestedDate: order.requestedDate,
         timeWindowStart: order.timeWindowStart,
@@ -122,7 +129,7 @@ export function createDriverApi(ctx: DriverApiContext): DriverApi {
   return {
     async me() {
       await delay();
-      return currentDriver();
+      return account(currentDriver());
     },
 
     async setShift(input) {
@@ -145,7 +152,7 @@ export function createDriverApi(ctx: DriverApiContext): DriverApi {
       }
       driver.isOnShift = data.onShift;
       driver.lastSeenAt = now().toISOString();
-      return driver;
+      return account(driver);
     },
 
     async listDeliveries(date) {

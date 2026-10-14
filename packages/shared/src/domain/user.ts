@@ -1,6 +1,7 @@
 import type { CustomerType, UserRole } from '../enums';
 import type { Locale } from '../i18n';
 import type { Id, IsoDateTime } from './common';
+import type { Truck } from './truck';
 
 export interface User {
   id: Id;
@@ -39,4 +40,9 @@ export interface Driver extends DriverSummary {
   isOnShift: boolean;
   currentTruckId: Id | null;
   lastSeenAt: IsoDateTime | null;
+}
+
+/** What the signed-in driver sees about themselves (GET /driver/me): the mixer resolved. */
+export interface DriverAccount extends Driver {
+  truck: Truck | null;
 }

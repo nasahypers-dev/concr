@@ -12,7 +12,7 @@ function tabIcon(name: IconName) {
   };
 }
 
-/** Driver tabs (spec §13): Today | Profile. */
+/** Driver tabs (spec §13): Today | Profile. The trip screen is a hidden full-screen route. */
 export default function DriverLayout() {
   const { t } = useTranslation();
   return (
@@ -24,6 +24,10 @@ export default function DriverLayout() {
       <Tabs.Screen
         name="profile"
         options={{ title: t('nav.profile'), tabBarIcon: tabIcon('person-outline') }}
+      />
+      <Tabs.Screen
+        name="delivery"
+        options={{ href: null, headerShown: false, tabBarStyle: { display: 'none' } }}
       />
     </Tabs>
   );

@@ -11,4 +11,8 @@ export const queryKeys = {
   orderDocuments: (id: string) => ['orders', 'detail', id, 'documents'] as const,
   orderLive: (id: string) => ['orders', 'detail', id, 'live'] as const,
   quote: (input: Record<string, unknown>) => ['quote', input] as const,
+  driverMe: ['driver', 'me'] as const,
+  driverDeliveriesAll: ['driver', 'deliveries'] as const,
+  driverDeliveries: (date?: string) => ['driver', 'deliveries', date ?? 'today'] as const,
+  driverDelivery: (id: string) => ['driver', 'delivery', id] as const,
 };

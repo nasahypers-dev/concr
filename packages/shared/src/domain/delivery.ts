@@ -75,6 +75,8 @@ export interface DriverDeliveryOrder {
   slump: SlumpClass | null;
   /** Whole order volume; the trip's own share is `Delivery.volumeM3`. */
   totalVolumeM3: number;
+  /** How many trips the order is split into ("Reys 2/3"). */
+  deliveriesTotal: number;
   pumpRequired: boolean;
   requestedDate: IsoDate;
   timeWindowStart: TimeOfDay;

@@ -14,6 +14,8 @@ import { useSettingsStore } from '@/store/settings.store';
 export const DEV_OTP_CODE = '123456';
 /** Seeded customer used by the dev quick login on the welcome screen. */
 export const DEV_CUSTOMER_PHONE = '+994500000001';
+/** Seeded driver (Rauf, mixer 90-AA-005) used by the dev driver login on the welcome screen. */
+export const DEV_DRIVER_PHONE = '+994500000012';
 
 export function useRequestOtp() {
   const api = useApi();

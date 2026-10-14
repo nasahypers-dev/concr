@@ -34,3 +34,15 @@ src/features/   feature hooks (Phase 1+)
 The home screen shows a three-step guided tour once per install (order button, Orders tab, Sites tab) with a
 Skip button; the flag lives in the settings store. The profile has an "App walkthrough" row that replays it. The UI
 starts in Azerbaijani regardless of the phone's language; the language picked in the profile persists (D19).
+
+## Driver mode
+
+Drivers sign in with the same OTP flow (code `123456`). Seeded drivers: Rauf `+994500000012` (mixer
+90-AA-005, one completed and one upcoming trip today), Elşən `+994500000011` (the trip the customer app tracks
+live, plus one tomorrow), Kamran `+994500000013` (off shift, nothing today). In dev builds the welcome screen
+has "DEV: enter as driver" (Rauf) next to the customer shortcut.
+
+"Today" shows the shift switch with the assigned mixer, today's trips and a preview of tomorrow; the profile has
+the mixer, the shift switch, language, appearance and "call the dispatcher". The trip screen itself (big status
+buttons, concrete timer, completion with photos, GPS) is the next step and is a placeholder for now. Driver
+screens live in `src/features/driver/`.

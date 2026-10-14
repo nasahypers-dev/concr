@@ -9,7 +9,7 @@ import type {
 import type { Product, PumpOption } from '../domain/product';
 import type { Site, SiteInput } from '../domain/site';
 import type { Plant, Supplier } from '../domain/supplier';
-import type { CustomerProfile, Driver, User } from '../domain/user';
+import type { CustomerProfile, DriverAccount, User } from '../domain/user';
 import type { DeliveryStatus, OrderStatus } from '../enums';
 import type { OtpRequestInput, OtpVerifyInput, StaffLoginInput } from '../schemas/auth';
 import type { Paginated } from '../schemas/common';
@@ -129,9 +129,9 @@ export interface TrackingApi {
 
 /** Spec §11 driver endpoints: the mixer phone's view of its trips and the GPS inlet (§9.1). */
 export interface DriverApi {
-  me(): Promise<Driver>;
+  me(): Promise<DriverAccount>;
   /** Shift on/off and the truck taken today (spec §13 "növbə toggle + mikser seçimi"). */
-  setShift(input: ShiftInput): Promise<Driver>;
+  setShift(input: ShiftInput): Promise<DriverAccount>;
   /** Trips assigned to the signed-in driver on a Baku calendar day (today when omitted). */
   listDeliveries(date?: IsoDate): Promise<DriverDelivery[]>;
   getDelivery(id: string): Promise<DriverDelivery>;

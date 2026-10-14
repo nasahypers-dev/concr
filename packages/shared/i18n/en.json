@@ -241,7 +241,17 @@
     "todayEmpty": "No deliveries today",
     "profileTitle": "Profile",
     "onShift": "On shift",
-    "offShift": "Off shift"
+    "offShift": "Off shift",
+    "todayEmptyHint": "Trips appear here once the dispatcher assigns them",
+    "tomorrowTitle": "Tomorrow's deliveries",
+    "noTruck": "No mixer assigned",
+    "shiftOffHint": "While you are on shift the dispatcher can assign you trips",
+    "departAt": "Departure: {time}",
+    "departIn": "Departs in {minutes} min",
+    "departNow": "Time to depart",
+    "completedAt": "Completed: {time}",
+    "callDispatcher": "Call the dispatcher",
+    "tripTitle": "Trip {sequence}/{total} · {number}"
   },
   "time": {
     "today": "Today",

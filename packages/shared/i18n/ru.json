@@ -241,7 +241,17 @@
     "todayEmpty": "На сегодня рейсов нет",
     "profileTitle": "Профиль",
     "onShift": "На смене",
-    "offShift": "Не на смене"
+    "offShift": "Не на смене",
+    "todayEmptyHint": "Рейсы появятся здесь, когда диспетчер их назначит",
+    "tomorrowTitle": "Рейсы на завтра",
+    "noTruck": "Миксер не назначен",
+    "shiftOffHint": "Когда вы на смене, диспетчер может назначать вам рейсы",
+    "departAt": "Выезд: {time}",
+    "departIn": "До выезда {minutes} мин",
+    "departNow": "Пора выезжать",
+    "completedAt": "Завершён: {time}",
+    "callDispatcher": "Позвонить диспетчеру",
+    "tripTitle": "Рейс {sequence}/{total} · {number}"
   },
   "time": {
     "today": "Сегодня",
