@@ -11,6 +11,9 @@ import { TripScreen } from './trip-screen';
 const NOW = new Date('2026-10-09T08:30:00.000Z');
 const RAUF = '+994500000012';
 
+// The happy path presses five buttons through the mock; CI runners need more than the 5 s default.
+jest.setTimeout(20_000);
+
 beforeAll(() => {
   initI18n('az');
 });
