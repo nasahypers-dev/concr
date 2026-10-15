@@ -428,32 +428,34 @@ export function TripScreen({ id, onBack, onDone, now = () => new Date() }: TripS
 
 function ConcreteTimerCard({ state }: { state: ConcreteTimerState }) {
   const { t } = useTranslation();
-  const tone =
-    state.level === 'expired' ? 'danger' : state.level === 'warning' ? 'danger' : 'accent';
+  const tone = state.level === 'ok' ? 'accent' : 'danger';
   const box =
     state.level === 'ok'
       ? 'bg-accent-soft dark:bg-accent-soft-dark'
       : state.level === 'warning'
         ? 'bg-warning-soft dark:bg-warning-soft-dark'
         : 'bg-danger-soft dark:bg-danger-soft-dark';
-  const message =
-    state.level === 'ok'
-      ? t('driver.trip.concreteOk', { minutes: state.remainingMin })
-      : state.level === 'warning'
-        ? t('driver.trip.concreteWarning', { minutes: state.remainingMin })
-        : t('driver.trip.concreteExpired');
+  const hint =
+    state.level === 'warning'
+      ? t('driver.trip.concreteWarning')
+      : state.level === 'expired'
+        ? t('driver.trip.concreteExpired')
+        : null;
   return (
-    <View className={`flex-row items-center justify-between rounded-2xl px-4 py-3 ${box}`}>
+    <View className={`flex-row items-center justify-between gap-4 rounded-2xl px-4 py-3 ${box}`}>
       <View className="flex-1 gap-0.5">
-        <Text variant="caption" tone="muted">
+        <Text variant="bodySm" weight="medium">
           {t('driver.trip.concrete')}
         </Text>
-        <Text variant="bodySm" weight="medium" tone={tone}>
-          {message}
-        </Text>
+        {hint ? (
+          <Text variant="caption" tone={tone}>
+            {hint}
+          </Text>
+        ) : null}
       </View>
+      {/* One number only: the time left to unload, counting down from departure (D7). */}
       <Text variant="display" weight="bold" tone={tone} accessibilityLabel="concrete-timer">
-        {formatElapsed(state.elapsedSec)}
+        {formatElapsed(state.remainingSec)}
       </Text>
     </View>
   );

@@ -82,7 +82,6 @@ export function SiteForm({ initial, submitting, error, onSubmit, onDelete }: Sit
       <TextField
         label={t('sites.name')}
         placeholder={t('sites.namePlaceholder')}
-        hint={t('sites.nameHint')}
         value={name}
         onChangeText={setName}
         error={errors.name}

@@ -10,6 +10,8 @@ export interface ConcreteTimerState {
   elapsedSec: number;
   /** Whole minutes left before the concrete expires (0 once expired). */
   remainingMin: number;
+  /** Whole seconds left before the concrete expires (0 once expired); the driver sees this one. */
+  remainingSec: number;
   level: ConcreteLevel;
 }
 
@@ -23,16 +25,17 @@ export function concreteTimer(
   const elapsedSec = Math.max(0, Math.floor((now.getTime() - Date.parse(departedAt)) / 1000));
   const elapsedMin = elapsedSec / 60;
   const remainingMin = Math.max(0, Math.ceil(lifetimeMin - elapsedMin));
+  const remainingSec = Math.max(0, lifetimeMin * 60 - elapsedSec);
   const level: ConcreteLevel =
     elapsedMin >= lifetimeMin
       ? 'expired'
       : elapsedMin >= lifetimeMin - warningBeforeMin
         ? 'warning'
         : 'ok';
-  return { elapsedSec, remainingMin, level };
+  return { elapsedSec, remainingMin, remainingSec, level };
 }
 
-/** 4505 → "75:05" (minutes keep growing past 59 so the driver reads one number). */
+/** 4505 → "75:05" (minutes keep growing past 59 so the driver reads one number). Works for countdowns too. */
 export function formatElapsed(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;

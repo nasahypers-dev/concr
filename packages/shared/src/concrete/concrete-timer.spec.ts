@@ -9,6 +9,7 @@ describe('concreteTimer (D7: 90 minutes, warning at 75)', () => {
     expect(concreteTimer(departedAt, at(0), 90)).toEqual({
       elapsedSec: 0,
       remainingMin: 90,
+      remainingSec: 5400,
       level: 'ok',
     });
     expect(concreteTimer(departedAt, at(74, 59), 90)).toMatchObject({
@@ -31,6 +32,8 @@ describe('concreteTimer (D7: 90 minutes, warning at 75)', () => {
       level: 'expired',
     });
     expect(concreteTimer(departedAt, at(120), 90).elapsedSec).toBe(7200);
+    expect(concreteTimer(departedAt, at(120), 90).remainingSec).toBe(0);
+    expect(concreteTimer(departedAt, at(10, 30), 90).remainingSec).toBe(79 * 60 + 30);
   });
 
   it('never goes negative and formats minutes past the hour', () => {

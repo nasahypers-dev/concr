@@ -5,38 +5,7 @@ import { Pressable, View } from 'react-native';
 import { usePumpOptions } from '@/features/catalog/use-catalog';
 import { useOrderDraftStore } from '@/features/orders/order-draft.store';
 import { WizardFrame } from '@/features/orders/wizard-frame';
-import { Banner, Icon, type IconName, Scroll, SkeletonList, Text } from '@/ui';
-
-function PumpChoice({
-  active,
-  label,
-  icon,
-  onPress,
-}: {
-  active: boolean;
-  label: string;
-  icon: IconName;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      accessibilityRole="radio"
-      accessibilityState={{ selected: active }}
-      accessibilityLabel={label}
-      onPress={onPress}
-      className={`flex-1 items-center gap-2 rounded-2xl border p-4 ${
-        active
-          ? 'border-accent bg-accent-soft dark:bg-accent-soft-dark'
-          : 'border-border bg-surface dark:border-border-dark dark:bg-surface-dark'
-      }`}
-    >
-      <Icon name={icon} size="xl" tone={active ? 'accentStrong' : 'muted'} />
-      <Text weight="semibold" className="text-center">
-        {label}
-      </Text>
-    </Pressable>
-  );
-}
+import { Icon, Scroll, SkeletonList, Text } from '@/ui';
 
 export default function WizardPumpScreen() {
   const { t } = useTranslation();
@@ -44,7 +13,9 @@ export default function WizardPumpScreen() {
   const pumps = usePumpOptions();
   const draft = useOrderDraftStore();
 
-  const choose = (pumpRequired: boolean) => {
+  // One checkbox, off by default (owner, 2026-10-15): a customer without a pump just continues.
+  const toggle = () => {
+    const pumpRequired = !draft.pumpRequired;
     const first = pumps.data?.[0]?.id ?? null;
     draft.patch({
       pumpRequired,
@@ -61,20 +32,27 @@ export default function WizardPumpScreen() {
       onNext={() => router.push('/order/new/schedule')}
     >
       <Scroll contentContainerClassName="gap-4 p-4">
-        <View className="flex-row gap-3">
-          <PumpChoice
-            active={!draft.pumpRequired}
-            label={t('wizard.pumpNo')}
-            icon="cube"
-            onPress={() => choose(false)}
+        <Pressable
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: draft.pumpRequired }}
+          accessibilityLabel={t('wizard.pumpService')}
+          onPress={toggle}
+          className={`flex-row items-center gap-3 rounded-2xl border p-4 ${
+            draft.pumpRequired
+              ? 'border-accent bg-accent-soft dark:bg-accent-soft-dark'
+              : 'border-border bg-surface dark:border-border-dark dark:bg-surface-dark'
+          }`}
+        >
+          <Icon
+            name={draft.pumpRequired ? 'checkbox' : 'square-outline'}
+            size="lg"
+            tone={draft.pumpRequired ? 'accentStrong' : 'subtle'}
           />
-          <PumpChoice
-            active={draft.pumpRequired}
-            label={t('wizard.pumpYes')}
-            icon="water"
-            onPress={() => choose(true)}
-          />
-        </View>
+          <Text weight="semibold" className="flex-1">
+            {t('wizard.pumpService')}
+          </Text>
+          <Icon name="water" size="md" tone={draft.pumpRequired ? 'accentStrong' : 'muted'} />
+        </Pressable>
         {draft.pumpRequired ? (
           pumps.isPending ? (
             <SkeletonList count={1} />
@@ -120,7 +98,6 @@ export default function WizardPumpScreen() {
                   </Pressable>
                 );
               })}
-              <Banner tone="info" message={t('wizard.pumpPriceNote')} />
             </View>
           )
         ) : null}
