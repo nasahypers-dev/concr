@@ -144,7 +144,7 @@ function TopBar() {
           {current ? t(current.key) : ''}
         </h2>
         {supplier.data ? (
-          <span className="hidden truncate text-sm text-muted-foreground md:block">
+          <span className="hidden truncate text-base text-muted-foreground md:block">
             · {supplier.data.supplier.name}
           </span>
         ) : null}

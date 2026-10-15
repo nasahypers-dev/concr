@@ -18,64 +18,181 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useReport } from '@/features/admin/use-admin';
-import { downloadCsv, toCsv } from '@/lib/csv';
-import { formatDate, formatMoney, formatVolume, todayIsoDate } from '@/lib/format';
+import { downloadPdf, tablePdfDefinition } from '@/lib/pdf';
+import {
+  formatDate,
+  formatMoney,
+  formatVolume,
+  previousMonthRange,
+  startOfMonthIso,
+  startOfWeekIso,
+  todayIsoDate,
+} from '@/lib/format';
 
 const DEFAULT_RANGE_DAYS = 30;
 
-/** Spec §14 item 7: orders, delivered volume and revenue for a date range, with CSV. */
+type PresetKey = 'today' | 'week' | 'month' | 'lastMonth' | 'last30';
+const PRESETS: readonly PresetKey[] = ['today', 'week', 'month', 'lastMonth', 'last30'];
+
+/** Baku calendar ranges behind the quick buttons. */
+function presetRange(key: PresetKey, now = new Date()): { from: string; to: string } {
+  const today = todayIsoDate(now);
+  switch (key) {
+    case 'today':
+      return { from: today, to: today };
+    case 'week':
+      return { from: startOfWeekIso(now), to: today };
+    case 'month':
+      return { from: startOfMonthIso(now), to: today };
+    case 'lastMonth':
+      return previousMonthRange(now);
+    default:
+      return { from: todayIsoDate(now, -DEFAULT_RANGE_DAYS), to: today };
+  }
+}
+
+/** Spec §14 item 7: orders, delivered volume and revenue for a date range, with a PDF export. */
 export function ReportsPage() {
   const t = useTranslations('panel.reports');
   const [from, setFrom] = useState(() => todayIsoDate(new Date(), -DEFAULT_RANGE_DAYS));
   const [to, setTo] = useState(() => todayIsoDate());
   const [range, setRange] = useState({ from, to });
   const report = useReport(range);
+  const invalid = !from || !to || from > to;
 
   const apply = (event: FormEvent) => {
     event.preventDefault();
-    if (from && to && from <= to) setRange({ from, to });
+    if (!invalid) setRange({ from, to });
   };
 
-  const exportCsv = (data: ReportSummary) => {
-    const rows = [
-      [t('byDay'), t('orders'), t('volume'), t('revenue')],
-      ...data.byDay.map((d) => [formatDate(d.date), d.orders, d.volumeM3, d.revenue]),
-      [],
-      [t('byProduct'), t('orders'), t('volume'), t('revenue')],
-      ...data.byProduct.map((p) => [p.grade, p.orders, p.volumeM3, p.revenue]),
-    ];
-    downloadCsv(`concr-report-${data.from}-${data.to}.csv`, toCsv(rows));
+  // The start can never pass the end: picking one side drags the other along (owner, 2026-10-15).
+  const changeFrom = (value: string) => {
+    setFrom(value);
+    if (value && to && value > to) setTo(value);
+  };
+  const changeTo = (value: string) => {
+    setTo(value);
+    if (value && from && value < from) setFrom(value);
+  };
+  const applyPreset = (key: PresetKey) => {
+    const next = presetRange(key);
+    setFrom(next.from);
+    setTo(next.to);
+    setRange(next);
+  };
+
+  const exportPdf = async (data: ReportSummary) => {
+    const period = `${formatDate(data.from)} – ${formatDate(data.to)}`;
+    await downloadPdf(
+      `concr-report-${data.from}-${data.to}.pdf`,
+      tablePdfDefinition({
+        title: t('title'),
+        subtitle: `${t('subtitle')} · ${period}`,
+        footer: 'CONCR',
+        tables: [
+          {
+            columns: [
+              t('orders'),
+              t('completed'),
+              t('active'),
+              t('cancelled'),
+              t('volume'),
+              t('revenue'),
+            ],
+            rows: [
+              [
+                data.orders.total,
+                data.orders.completed,
+                data.orders.active,
+                data.orders.cancelled + data.orders.rejected,
+                formatVolume(data.volumeM3Delivered),
+                formatMoney(data.revenue),
+              ],
+            ],
+          },
+          {
+            title: t('byDay'),
+            columns: [t('from'), t('orders'), t('volume'), t('revenue')],
+            rows: data.byDay.map((d) => [
+              formatDate(d.date),
+              d.orders,
+              formatVolume(d.volumeM3),
+              formatMoney(d.revenue),
+            ]),
+            widths: ['auto', 'auto', '*', '*'],
+          },
+          {
+            title: t('byProduct'),
+            columns: [t('byProduct'), t('orders'), t('volume'), t('revenue')],
+            rows: data.byProduct.map((p) => [
+              p.grade,
+              p.orders,
+              formatVolume(p.volumeM3),
+              formatMoney(p.revenue),
+            ]),
+            widths: ['auto', 'auto', '*', '*'],
+          },
+        ],
+      }),
+    );
   };
 
   return (
     <>
       <PageHeader
         title={t('title')}
-        subtitle={t('subtitle')}
+        subtitle={`${t('subtitle')} · ${formatDate(range.from)} – ${formatDate(range.to)}`}
         actions={
           report.data ? (
-            <Button variant="outline" onClick={() => exportCsv(report.data)}>
+            <Button variant="outline" onClick={() => void exportPdf(report.data)}>
               <Download className="size-4" />
-              {t('exportCsv')}
+              {t('exportPdf')}
             </Button>
           ) : null
         }
       />
-      <form onSubmit={apply} className="mb-4 flex flex-wrap items-end gap-2">
-        <label className="flex flex-col gap-1 text-sm">
-          {t('from')}
-          <Input
-            type="date"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            className="w-44"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          {t('to')}
-          <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-44" />
-        </label>
-        <Button type="submit">{t('apply')}</Button>
+      <form onSubmit={apply} className="mb-4 flex flex-col gap-3">
+        <div className="flex flex-wrap items-end gap-2">
+          <label className="flex flex-col gap-1 text-sm">
+            {t('from')}
+            <Input
+              type="date"
+              value={from}
+              max={to || undefined}
+              onChange={(e) => changeFrom(e.target.value)}
+              className="w-44"
+              aria-invalid={invalid ? true : undefined}
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            {t('to')}
+            <Input
+              type="date"
+              value={to}
+              min={from || undefined}
+              onChange={(e) => changeTo(e.target.value)}
+              className="w-44"
+              aria-invalid={invalid ? true : undefined}
+            />
+          </label>
+          <Button type="submit" disabled={invalid}>
+            {t('apply')}
+          </Button>
+          {invalid ? <span className="text-sm text-destructive">{t('invalidRange')}</span> : null}
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {PRESETS.map((key) => (
+            <Button
+              key={key}
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => applyPreset(key)}
+            >
+              {t(`presets.${key}`)}
+            </Button>
+          ))}
+        </div>
       </form>
 
       {report.isPending ? (

@@ -22,7 +22,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useOrders } from '@/features/dispatch/use-dispatch';
-import { downloadCsv, toCsv } from '@/lib/csv';
+import { downloadPdf, tablePdfDefinition } from '@/lib/pdf';
 import { formatDate, formatDateTime, formatMoney, formatWindow, todayIsoDate } from '@/lib/format';
 import { orderSummary } from './order-summary';
 
@@ -31,7 +31,7 @@ const PAGE_SIZE = 20;
 /** The mock and the API cap a page at 100 rows; the export takes the first page of that size. */
 const EXPORT_LIMIT = 100;
 
-/** Spec §14 item 5: order history with filters, search, paging and CSV. */
+/** Spec §14 item 5: order history with filters, search, paging and a PDF export. */
 export function OrdersTablePage() {
   const t = useTranslations('panel.orders');
   const tStatus = useTranslations('status');
@@ -69,9 +69,9 @@ export function OrdersTablePage() {
     setPage(1);
   };
 
-  const exportCsv = async () => {
+  const exportPdf = async () => {
     const result = await api.dispatch.listOrders({ ...query, page: 1, limit: EXPORT_LIMIT });
-    const header = [
+    const columns = [
       t('columns.number'),
       t('columns.created'),
       t('columns.customer'),
@@ -89,9 +89,20 @@ export function OrdersTablePage() {
       orderSummary(o.productGrade, o.volumeM3, o.slump),
       `${formatDate(o.requestedDate)} ${formatWindow(o.timeWindowStart, o.timeWindowEnd)}`,
       tStatus(`order.${o.status}`),
-      o.totalAmount,
+      formatMoney(o.totalAmount),
     ]);
-    downloadCsv(`concr-orders-${todayIsoDate()}.csv`, toCsv([header, ...rows]));
+    await downloadPdf(
+      `concr-orders-${todayIsoDate()}.pdf`,
+      tablePdfDefinition({
+        title: t('title'),
+        subtitle: `${t('pagination', { from: 1, to: rows.length, total: result.total })} · ${formatDateTime(new Date().toISOString())}`,
+        landscape: true,
+        footer: 'CONCR',
+        tables: [
+          { columns, rows, widths: ['auto', 'auto', '*', '*', 'auto', 'auto', 'auto', 'auto'] },
+        ],
+      }),
+    );
   };
 
   const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
@@ -102,9 +113,9 @@ export function OrdersTablePage() {
       <PageHeader
         title={t('title')}
         actions={
-          <Button variant="outline" onClick={() => void exportCsv()}>
+          <Button variant="outline" onClick={() => void exportPdf()}>
             <Download className="size-4" />
-            {t('exportCsv')}
+            {t('exportPdf')}
           </Button>
         }
       />

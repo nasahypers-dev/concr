@@ -39,11 +39,11 @@ export const toneClass: Record<BadgeTone, string> = {
 /** Solid colours for map markers and board blocks. */
 export const deliveryStatusColor: Record<DeliveryStatus, string> = {
   PLANNED: '#9CA3AF',
-  ASSIGNED: '#2563EB',
-  LOADING: '#B45309',
-  EN_ROUTE: '#F5A623',
-  ARRIVED: '#0E7490',
-  UNLOADING: '#92400E',
+  ASSIGNED: '#60A5FA',
+  LOADING: '#D97706',
+  EN_ROUTE: '#F97316', // on the road: orange (owner, 2026-10-15)
+  ARRIVED: '#2563EB', // at the site: blue
+  UNLOADING: '#92400E', // unloading: brown
   COMPLETED: '#15803D',
   CANCELLED: '#6B7280',
   FAILED: '#DC2626',

@@ -118,3 +118,29 @@ export function toMoneyString(value: string): MoneyString | null {
   if (!/^\d+(\.\d{1,2})?$/.test(normalised)) return null;
   return Number(normalised).toFixed(2);
 }
+
+/** Monday of the current Baku week as "YYYY-MM-DD". */
+export function startOfWeekIso(now: Date = new Date()): IsoDate {
+  const { y, m, d } = bakuParts(now);
+  const local = new Date(Date.UTC(y, m - 1, d));
+  const offset = (local.getUTCDay() + 6) % 7; // Monday = 0
+  local.setUTCDate(local.getUTCDate() - offset);
+  return `${local.getUTCFullYear()}-${two(local.getUTCMonth() + 1)}-${two(local.getUTCDate())}`;
+}
+
+/** First day of the current Baku month as "YYYY-MM-DD". */
+export function startOfMonthIso(now: Date = new Date()): IsoDate {
+  const { y, m } = bakuParts(now);
+  return `${y}-${two(m)}-01`;
+}
+
+/** First and last day of the previous Baku month. */
+export function previousMonthRange(now: Date = new Date()): { from: IsoDate; to: IsoDate } {
+  const { y, m } = bakuParts(now);
+  const first = new Date(Date.UTC(y, m - 2, 1));
+  const last = new Date(Date.UTC(y, m - 1, 0));
+  return {
+    from: `${first.getUTCFullYear()}-${two(first.getUTCMonth() + 1)}-01`,
+    to: `${last.getUTCFullYear()}-${two(last.getUTCMonth() + 1)}-${two(last.getUTCDate())}`,
+  };
+}

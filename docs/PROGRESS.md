@@ -33,7 +33,7 @@ Built in one go after the owner asked to use the panel at once (D22 was decided 
   planning board (mixer × hour, click-to-edit, plan confirmed orders), live map (MapLibre +
   OpenFreeMap, trucks / sites / plant, late / concrete-risk / no-signal panel, tracker events + 10 s
   polling), settings tabs (general, products, pumps, mixers, drivers, service area with map preview),
-  reports (summary, by day, by grade, CSV). Native selects in forms, dialogs mounted only while open.
+  reports (summary, by day, by grade, PDF export via pdfmake, date presets). Native selects in forms, dialogs mounted only while open.
   20 tests. ADR 0011.
 - **Not done:** drag-and-drop on the board (click-to-edit instead), server-side route protection
   (Phase B1), Google Maps (needs the key, ADR 0008), U2 step 3 (driver trip screen).

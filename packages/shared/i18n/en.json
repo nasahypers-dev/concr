@@ -429,7 +429,6 @@
       "date": "Delivery date",
       "anyDate": "All dates",
       "clearFilters": "Clear filters",
-      "exportCsv": "Download CSV",
       "empty": "No matching orders",
       "pagination": "{from}–{to} of {total}",
       "prev": "Previous",
@@ -444,7 +443,8 @@
         "status": "Status",
         "total": "Total",
         "trips": "Trips"
-      }
+      },
+      "exportPdf": "Download PDF"
     },
     "order": {
       "title": "Order {number}",
@@ -679,8 +679,16 @@
       "revenue": "Revenue (completed)",
       "byDay": "By day",
       "byProduct": "By grade",
-      "exportCsv": "Download CSV",
-      "empty": "No orders in this range"
+      "empty": "No orders in this range",
+      "exportPdf": "Download PDF",
+      "invalidRange": "The start date cannot be after the end date",
+      "presets": {
+        "today": "Today",
+        "week": "This week",
+        "month": "This month",
+        "lastMonth": "Last month",
+        "last30": "Last 30 days"
+      }
     }
   }
 }

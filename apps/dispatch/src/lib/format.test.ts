@@ -5,6 +5,9 @@ import {
   formatVolume,
   fromBakuLocalInput,
   minutesSince,
+  previousMonthRange,
+  startOfMonthIso,
+  startOfWeekIso,
   toBakuLocalInput,
   toMoneyString,
   todayIsoDate,
@@ -32,5 +35,16 @@ describe('format helpers (Baku time)', () => {
     expect(toMoneyString('12,5')).toBe('12.50');
     expect(toMoneyString('200')).toBe('200.00');
     expect(toMoneyString('abc')).toBeNull();
+  });
+  it('derives the report presets from the Baku calendar', () => {
+    // 2026-10-09 is a Friday; 20:30 UTC on the 9th is already the 10th in Baku.
+    expect(startOfWeekIso(now)).toBe('2026-10-05');
+    expect(startOfWeekIso(new Date('2026-10-11T20:30:00.000Z'))).toBe('2026-10-12');
+    expect(startOfMonthIso(now)).toBe('2026-10-01');
+    expect(previousMonthRange(now)).toEqual({ from: '2026-09-01', to: '2026-09-30' });
+    expect(previousMonthRange(new Date('2026-03-15T08:00:00.000Z'))).toEqual({
+      from: '2026-02-01',
+      to: '2026-02-28',
+    });
   });
 });

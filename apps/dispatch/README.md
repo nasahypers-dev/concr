@@ -29,7 +29,7 @@ Outside production the login page offers both as one-click fills. Passwords are 
 - `/orders/[id]` — customer, site, product, schedule, price, trips, timeline; actions by status:
   confirm (pump fee, price override, window change, each with a reason), reject, schedule (proposal
   starts with the largest mixer, editable), cancel (planned trips are cancelled too).
-- `/orders` — history table with status chips, date, search, paging and CSV export (UTF-8 BOM, `;`).
+- `/orders` — history table with status chips, date, search, paging and a PDF export.
 - `/board?date=` — mixer × hour board, click a trip to change mixer / driver / departure, "plan"
   for confirmed orders of the day.
 - `/live` — MapLibre map (OpenFreeMap tiles, no key) with trucks, sites and the plant; alerts: late,
@@ -37,7 +37,7 @@ Outside production the login page offers both as one-click fills. Passwords are 
 - `/settings` — general parameters, products and prices, pumps, mixers, drivers (D22: drivers are
   created here with a password and sign in to the app with phone or e-mail + that password), service
   area polygon with a map preview.
-- `/reports` — orders, delivered m³ and revenue for a date range, by day and by grade, CSV.
+- `/reports` — orders, delivered m³ and revenue for a date range (presets: today, this week, this month, last month, last 30 days; the start can never pass the end), by day and by grade, PDF export.
 
 ## Layout
 
@@ -49,6 +49,6 @@ src/components/ui/  shadcn primitives (generated, keep edits minimal)
 src/api/            ApiProvider (mock singleton), QueryClient, query keys
 src/store/          zustand staff session persisted in localStorage
 src/i18n/           next-intl request config over @concr/shared bundles, locale cookie
-src/lib/            format (Baku time, money, volumes), csv
+src/lib/            format (Baku time, money, volumes, report presets), pdf (pdfmake documents)
 src/test/           render helpers and the next/navigation router mock for Jest
 ```

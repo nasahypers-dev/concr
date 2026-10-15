@@ -429,7 +429,6 @@
       "date": "Çatdırılma tarixi",
       "anyDate": "Bütün tarixlər",
       "clearFilters": "Filtrləri təmizlə",
-      "exportCsv": "CSV yüklə",
       "empty": "Uyğun sifariş yoxdur",
       "pagination": "{from}–{to} / {total}",
       "prev": "Əvvəlki",
@@ -444,7 +443,8 @@
         "status": "Status",
         "total": "Məbləğ",
         "trips": "Reyslər"
-      }
+      },
+      "exportPdf": "PDF yüklə"
     },
     "order": {
       "title": "Sifariş {number}",
@@ -679,8 +679,16 @@
       "revenue": "Gəlir (tamamlanan)",
       "byDay": "Günlər üzrə",
       "byProduct": "Markalar üzrə",
-      "exportCsv": "CSV yüklə",
-      "empty": "Bu aralıqda sifariş yoxdur"
+      "empty": "Bu aralıqda sifariş yoxdur",
+      "exportPdf": "PDF yüklə",
+      "invalidRange": "Başlanğıc tarixi son tarixdən sonra ola bilməz",
+      "presets": {
+        "today": "Bu gün",
+        "week": "Bu həftə",
+        "month": "Bu ay",
+        "lastMonth": "Keçən ay",
+        "last30": "Son 30 gün"
+      }
     }
   }
 }
