@@ -14,7 +14,9 @@
     "delete": "Sil",
     "close": "Bağla",
     "confirm": "Təsdiq et",
-    "currency": "₼"
+    "currency": "₼",
+    "showPassword": "Şifrəni göstər",
+    "hidePassword": "Şifrəni gizlət"
   },
   "nav": {
     "home": "Ana səhifə",

@@ -13,6 +13,7 @@ import { type FormEvent, useState } from 'react';
 import { toast } from 'sonner';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { NativeSelect } from '@/components/native-select';
+import { PasswordInput } from '@/components/password-input';
 import { ErrorState, LoadingRows } from '@/components/state-view';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -419,9 +420,8 @@ function DriverSheet({ driver, onClose }: { driver: AdminDriver | null; onClose:
             <FieldLabel htmlFor="driver-password">
               {driver ? t('newPassword') : t('password')}
             </FieldLabel>
-            <Input
+            <PasswordInput
               id="driver-password"
-              type="password"
               autoComplete="new-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}

@@ -14,7 +14,9 @@
     "delete": "Delete",
     "close": "Close",
     "confirm": "Confirm",
-    "currency": "₼"
+    "currency": "₼",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "nav": {
     "home": "Home",
