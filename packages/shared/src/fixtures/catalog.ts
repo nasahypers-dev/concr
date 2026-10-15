@@ -45,6 +45,9 @@ export function createProducts(): Product[] {
 
 export const PUMP_24M_ID = 'pump_24m';
 
+/** Boom preselected when a customer ticks the pump checkbox (D23, owner 2026-10-15). */
+export const DEFAULT_PUMP_BOOM_M = 36;
+
 /** One 24 m pump exists (spec §3). TODO(nurlan): price model and other boom lengths. */
 export function createPumpOptions(): PumpOption[] {
   // Owner's price list (2026-10-09): per order, Baku + Absheron; +50 ₼ per step above 32 m.

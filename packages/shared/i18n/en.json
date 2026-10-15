@@ -140,7 +140,7 @@
     "next": "Continue",
     "successTitle": "Order received",
     "successBody": "Order {number} has been sent to the dispatcher. You will be notified once it is confirmed.",
-    "pumpService": "Concrete pump service"
+    "pumpService": "Is pouring with a pump required?"
   },
   "payment": {
     "CASH": "Cash",

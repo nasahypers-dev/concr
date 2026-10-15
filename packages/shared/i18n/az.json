@@ -140,7 +140,7 @@
     "next": "Davam et",
     "successTitle": "Sifariş qəbul edildi",
     "successBody": "{number} nömrəli sifarişiniz dispetçerə göndərildi. Təsdiqdən sonra bildiriş alacaqsınız",
-    "pumpService": "Beton nasosu xidməti"
+    "pumpService": "Pompa ilə beton tökülməsi tələb olunur?"
   },
   "payment": {
     "CASH": "Nağd",

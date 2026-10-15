@@ -1,4 +1,4 @@
-import { formatAzn } from '@concr/shared';
+import { DEFAULT_PUMP_BOOM_M, formatAzn } from '@concr/shared';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
@@ -14,12 +14,14 @@ export default function WizardPumpScreen() {
   const draft = useOrderDraftStore();
 
   // One checkbox, off by default (owner, 2026-10-15): a customer without a pump just continues.
+  // Ticking it preselects the default boom (D23: 36 m) so one tap is enough for the usual case.
   const toggle = () => {
     const pumpRequired = !draft.pumpRequired;
-    const first = pumps.data?.[0]?.id ?? null;
+    const preferred =
+      pumps.data?.find((pump) => pump.boomLengthM === DEFAULT_PUMP_BOOM_M) ?? pumps.data?.[0];
     draft.patch({
       pumpRequired,
-      pumpOptionId: pumpRequired ? (draft.pumpOptionId ?? first) : null,
+      pumpOptionId: pumpRequired ? (draft.pumpOptionId ?? preferred?.id ?? null) : null,
     });
   };
   const canContinue = !draft.pumpRequired || draft.pumpOptionId !== null;

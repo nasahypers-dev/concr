@@ -60,9 +60,7 @@ export default function CustomerHomeScreen() {
         >
           <Button label={t('customer.orderCta')} icon="add-circle-outline" onPress={startOrder} />
         </View>
-        {/* With orders the hint flows above the list; otherwise it floats so the empty state
-            keeps exactly the same centred position on every tour step and without the tour. */}
-        {tourOnCta && !empty ? ctaCallout : null}
+        {/* The hint floats over the list (owner, 2026-10-15): nothing below it ever shifts. */}
         <View className="flex-1">
           {orders.isPending ? (
             <SkeletonList count={2} />
@@ -107,8 +105,8 @@ export default function CustomerHomeScreen() {
               ) : null}
             </>
           )}
-          {tourOnCta && empty ? (
-            <View className="absolute left-0 right-0 top-0" pointerEvents="box-none">
+          {tourOnCta ? (
+            <View className="absolute left-0 right-0 top-0 z-10" pointerEvents="box-none">
               {ctaCallout}
             </View>
           ) : null}
