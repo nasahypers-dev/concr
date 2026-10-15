@@ -48,6 +48,14 @@ docker compose -f infra/docker-compose.yml up -d
 15. **Unsure about a business decision → ask** (one concise question with options). **Unsure about a technical choice → decide, implement, write `docs/ADR/NNNN-title.md`.**
 16. **Don't touch** real `.env` secrets, generated `ios/`/`android/` folders by hand, or existing `prisma/migrations` (always add a new migration).
 
+## Dispatcher panel design (apps/dispatch only)
+Project skills in `.claude/skills/` (git-tracked, scoped to `apps/dispatch/**`); they do not apply to the mobile app or to `@concr/shared` logic.
+- **Before styling, theming or restyling anything in the panel, load `concr-design-system`.** Brand tokens are decision D24 in `docs/DECISIONS.md` (Novxanı Beton site values: graphite `#12161F`, amber `#F0B252`); verified source and the Phase 1 mapping in `.claude/skills/concr-design-system/reference/tokens.md`. Never invent a colour; undecided tokens stay `TODO(nurlan)`.
+- **Building or restyling a panel page or feature component → follow `concr-dashboard-ui`** (page anatomy, recipes, states, i18n, formatting, tests).
+- **After any UI change under `apps/dispatch` → run `concr-ui-review`** (also `/concr-ui-review`) and fix blockers before the gates.
+- No raw colours or Tailwind palette classes in panel TSX; the only files allowed to hold hex are `status-badge.tsx` (`deliveryStatusColor`), `map/live-map.tsx` and `lib/pdf.ts`. `deliveryStatusColor`, tone maps and marker colours change only with the owner.
+- Redesign runs in phases (ADR 0013, status in `docs/PROGRESS.md`): Phase 0 docs done 2026-10-15; Phase 1 tokens + fonts next. Each phase is one PR with green gates and no logic changes.
+
 ## Conventions
 - TypeScript strict; no `any`. Named exports. `kebab-case` files, `PascalCase` components, `camelCase` otherwise.
 - API: thin controllers, logic in services, Prisma in repositories. DTOs in `dto/`; schemas shared via `@concr/shared` when the client needs them.

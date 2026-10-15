@@ -4,16 +4,21 @@ One file per technical decision: `NNNN-kebab-title.md`. Business decisions go to
 
 ## Index
 
-| #    | Title                                                                      | Status   |
-| ---- | -------------------------------------------------------------------------- | -------- |
-| 0001 | Monorepo: npm workspaces, shared package built to dist                     | accepted |
-| 0002 | Dependency version pins for Phase 0                                        | accepted |
-| 0003 | API conventions: error envelope, zod validation, request id, health probes | accepted |
-| 0004 | Mobile local storage: expo-secure-store until the EAS dev build            | accepted |
-| 0005 | i18n libraries: i18next (mobile), next-intl (web), shared JSON             | accepted |
-| 0006 | Shared domain layer and swappable API client (mock-first UI)               | accepted |
-| 0007 | Pricing and state machines live in `@concr/shared`                         | accepted |
-| 0008 | Maps without a Google key for now                                          | accepted |
+| #    | Title                                                                           | Status   |
+| ---- | ------------------------------------------------------------------------------- | -------- |
+| 0001 | Monorepo: npm workspaces, shared package built to dist                          | accepted |
+| 0002 | Dependency version pins for Phase 0                                             | accepted |
+| 0003 | API conventions: error envelope, zod validation, request id, health probes      | accepted |
+| 0004 | Mobile local storage: expo-secure-store until the EAS dev build                 | accepted |
+| 0005 | i18n libraries: i18next (mobile), next-intl (web), shared JSON                  | accepted |
+| 0006 | Shared domain layer and swappable API client (mock-first UI)                    | accepted |
+| 0007 | Pricing and state machines live in `@concr/shared`                              | accepted |
+| 0008 | Maps without a Google key for now                                               | accepted |
+| 0009 | Theme preference (system / light / dark) on mobile                              | accepted |
+| 0010 | Keyboard handling on forms (mobile)                                             | accepted |
+| 0011 | Dispatcher panel: client-rendered data, local session, keyless map              | accepted |
+| 0012 | Driver GPS: foreground batches now, background task with the dev build          | accepted |
+| 0013 | Dispatcher panel visual system: brand tokens as project skills, phased redesign | accepted |
 
 ## Template
 

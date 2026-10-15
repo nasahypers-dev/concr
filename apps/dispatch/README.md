@@ -39,6 +39,15 @@ Outside production the login page offers both as one-click fills. Passwords are 
   area polygon with a map preview.
 - `/reports` — orders, delivered m³ and revenue for a date range (presets: today, this week, this month, last month, last 30 days; the start can never pass the end), by day and by grade, PDF export.
 
+## Design system
+
+The panel's visual rules live in three project skills under `.claude/skills/` (scoped to this
+app): `concr-design-system` (Novxanı Beton brand tokens per decision D24, typography, spacing,
+radius, status colours, accessibility; verified source in `reference/tokens.md`),
+`concr-dashboard-ui` (page and component recipes) and `concr-ui-review` (review checklist).
+ADR 0013 records the phased redesign; Phase 0 (docs) is done, Phase 1 applies the tokens to
+`src/app/globals.css`. Until then the file keeps the shadcn neutral defaults.
+
 ## Layout
 
 ```

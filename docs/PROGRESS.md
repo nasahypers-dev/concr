@@ -38,6 +38,23 @@ Built in one go after the owner asked to use the panel at once (D22 was decided 
 - **Not done:** drag-and-drop on the board (click-to-edit instead), server-side route protection
   (Phase B1), Google Maps (needs the key, ADR 0008), U2 step 3 (driver trip screen).
 
+### U3 design — Phase 0: design-system foundation (done 2026-10-15, docs only)
+
+Read-only UI/UX audit of the panel, then the foundation for the redesign without touching code:
+
+- **Brand:** Novxanı Beton site tokens verified from its CSS and approved as D24 (graphite
+  `#12161F`, amber `#F0B252` replaces `#F5A623` in the panel from Phase 1, background `#F5F7FB`,
+  text `#232B38`/`#66728A`, border `#E3E8F2`, success `#2FAF6A`, danger `#EF4444`, Space Grotesk +
+  Inter). Status, marker and board colours unchanged.
+- **Skills (`.claude/skills/`, scoped to `apps/dispatch/**`):** `concr-design-system` (+
+  `reference/tokens.md` with the extraction, Phase 1 mapping and contrast table),
+  `concr-dashboard-ui` (page recipes), `concr-ui-review` (checklist + report format). `CLAUDE.md`
+  points to them; ADR 0013 records the phased plan.
+- **Next:** Phase 1 — `globals.css` tokens, fonts (`next/font` decision), semantic status tokens,
+  hex removed from TSX outside the allow-list. Then Phase 2 shell + shared components, Phase 3
+  pages (board and live last), Phase 4 polish. `TODO(nurlan)`: warning/info tokens, sidebar shade,
+  mobile accent.
+
 ## U2 — driver mode (in progress, 2026-10-14)
 
 Three steps, one commit each; the owner approves each step before the next starts.
