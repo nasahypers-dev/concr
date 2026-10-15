@@ -47,12 +47,16 @@
     "invalidEmail": "Düzgün e-poçt ünvanı daxil edin",
     "passwordTooShort": "Şifrə ən azı 8 simvoldan ibarət olmalıdır",
     "invalidPhone": "Nömrənin 9 rəqəmini daxil edin (məs. 50 000 00 00)",
-    "devEnterAsCustomer": "DEV: müştəri kimi daxil ol",
-    "devEnterAsDriver": "DEV: sürücü kimi daxil ol",
-    "devQuickLogin": "DEV: test müştərisi kimi daxil ol",
     "devCodeHint": "Kod: {code}",
     "codeResent": "Kod yenidən göndərildi",
-    "devAccount": "DEV hesab: {email} / {password}"
+    "devAccount": "DEV hesab: {email} / {password}",
+    "driverLoginTitle": "Sürücü girişi",
+    "driverLoginSubtitle": "Zavodun verdiyi telefon (və ya e-poçt) və şifrə ilə daxil olun",
+    "driverLoginField": "Telefon və ya e-poçt",
+    "driverLoginPlaceholder": "050 000 00 00",
+    "driverLoginFailed": "Giriş məlumatları yanlışdır",
+    "driverLoginHint": "Hesabınız yoxdursa və ya şifrəni unutmusunuzsa, dispetçerə müraciət edin",
+    "enterAsDriver": "Sürücü girişi"
   },
   "setup": {
     "title": "Ad və soyadınızı daxil edin",
@@ -290,9 +294,9 @@
       "cancelled": "Reys ləğv edilib",
       "failed": "Reys uğursuz kimi qeyd edilib",
       "concrete": "Beton sayğacı",
-      "concreteOk": "Beton ömrünə {minutes} dəq qalır",
-      "concreteWarning": "Cəmi {minutes} dəq qaldı, tələsin",
-      "concreteExpired": "Beton ömrü bitib, dispetçerə zəng edin",
+      "concreteOk": "Betonun boşaldılması üçün qalan vaxt: {minutes} dəq",
+      "concreteWarning": "Boşaltmaya cəmi {minutes} dəq qaldı, tələsin",
+      "concreteExpired": "Boşaltma vaxtı bitib, dispetçerə zəng edin",
       "gpsOn": "GPS mövqe ötürülür",
       "gpsDenied": "Məkan icazəsi yoxdur, mövqe ötürülmür. Ayarlardan icazə verin.",
       "gpsError": "GPS mövqeyi alınmadı",
@@ -644,9 +648,11 @@
         "edit": "Sürücünü redaktə et",
         "deactivate": "Deaktiv et",
         "activate": "Aktivləşdir",
-        "hint": "Sürücü tətbiqə bu nömrə ilə, SMS kodu ilə daxil olur. Qeydiyyat yalnız buradan aparılır.",
+        "hint": "Sürücü tətbiqə telefon nömrəsi (və ya e-poçt) və bu şifrə ilə daxil olur. Qeydiyyat yalnız buradan aparılır.",
         "noTruck": "Mikser yoxdur",
-        "phoneTaken": "Bu nömrə artıq istifadə olunur"
+        "phoneTaken": "Bu nömrə artıq istifadə olunur",
+        "password": "Şifrə",
+        "newPassword": "Yeni şifrə (dəyişmək üçün)"
       },
       "area": {
         "title": "Xidmət ərazisi",

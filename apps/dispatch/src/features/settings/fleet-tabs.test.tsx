@@ -19,6 +19,7 @@ describe('DriversTab (D22)', () => {
     const sheet = await screen.findByRole('dialog');
     await userEvent.type(within(sheet).getByLabelText('Ad, soyad'), 'Nicat Quliyev');
     await userEvent.type(within(sheet).getByLabelText('Telefon'), '500000014');
+    await userEvent.type(within(sheet).getByLabelText('Şifrə'), 'Surucu123!');
     await userEvent.selectOptions(within(sheet).getByLabelText('Mikser'), 'truck_8_1');
     await userEvent.click(within(sheet).getByRole('button', { name: 'Yadda saxla' }));
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());

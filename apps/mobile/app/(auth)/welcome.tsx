@@ -1,35 +1,11 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import {
-  DEV_CUSTOMER_PHONE,
-  DEV_DRIVER_PHONE,
-  DEV_OTP_CODE,
-  useRequestOtp,
-  useVerifyOtp,
-} from '@/features/auth/use-auth';
 import { Button, Icon, Screen, Text, colors } from '@/ui';
 
 export default function WelcomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const requestOtp = useRequestOtp();
-  const verifyOtp = useVerifyOtp();
-  const [devPhone, setDevPhone] = useState<string | null>(null);
-
-  // Dev only: runs the real (mock) OTP flow for a seeded account in one tap.
-  const quickLogin = async (phone: string) => {
-    setDevPhone(phone);
-    try {
-      await requestOtp.mutateAsync({ phone });
-      await verifyOtp.mutateAsync({ phone, code: DEV_OTP_CODE });
-    } catch {
-      // Dev shortcut only; the normal phone flow reports errors on its own screens.
-    } finally {
-      setDevPhone(null);
-    }
-  };
 
   return (
     <Screen>
@@ -56,24 +32,14 @@ export default function WelcomeScreen() {
           icon="arrow-forward"
           onPress={() => router.push('/phone')}
         />
-        {__DEV__ ? (
-          <>
-            <Button
-              variant="ghost"
-              size="md"
-              label={t('auth.devQuickLogin')}
-              loading={devPhone === DEV_CUSTOMER_PHONE}
-              onPress={() => void quickLogin(DEV_CUSTOMER_PHONE)}
-            />
-            <Button
-              variant="ghost"
-              size="md"
-              label={t('auth.devEnterAsDriver')}
-              loading={devPhone === DEV_DRIVER_PHONE}
-              onPress={() => void quickLogin(DEV_DRIVER_PHONE)}
-            />
-          </>
-        ) : null}
+        {/* Drivers have accounts made by the supplier (D22); they never go through the OTP flow. */}
+        <Button
+          variant="ghost"
+          size="md"
+          icon="car-outline"
+          label={t('auth.enterAsDriver')}
+          onPress={() => router.push('/driver-login')}
+        />
       </View>
     </Screen>
   );

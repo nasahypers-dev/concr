@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -169,7 +170,11 @@ function TopBar() {
             <ChevronDown className="size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {user ? <DropdownMenuLabel>{roleLabel(t, user.role)}</DropdownMenuLabel> : null}
+            {user ? (
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>{roleLabel(t, user.role)}</DropdownMenuLabel>
+              </DropdownMenuGroup>
+            ) : null}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => logout.mutate()}>
               <LogOut className="size-4" />

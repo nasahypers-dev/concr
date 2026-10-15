@@ -48,6 +48,7 @@ import { useErrorMessage } from '@/features/common/use-error-message';
 import { formatPhoneAz } from '@/lib/format';
 
 const PHONE_RE = /^\+[1-9]\d{7,14}$/;
+const MIN_PASSWORD = 8;
 
 /** Spec §14 item 6: mixers 8/10/12 and pumps. */
 export function TrucksTab({ readOnly }: { readOnly: boolean }) {
@@ -350,11 +351,14 @@ function DriverSheet({ driver, onClose }: { driver: AdminDriver | null; onClose:
   const [name, setName] = useState(driver?.fullName ?? '');
   const [phone, setPhone] = useState(driver?.phone ?? '+994');
   const [truckId, setTruckId] = useState(driver?.currentTruckId ?? '');
+  const [password, setPassword] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const pending = create.isPending || update.isPending;
   const error = create.error ?? update.error;
   const nameInvalid = name.trim().length === 0;
   const phoneInvalid = !PHONE_RE.test(phone.trim());
+  // Required for a new driver; optional on edit (empty = keep the current password).
+  const passwordInvalid = (driver === null || password !== '') && password.length < MIN_PASSWORD;
   const mixers = (trucks.data ?? []).filter(
     (truck) => truck.isActive && truck.type === TruckType.MIXER,
   );
@@ -362,14 +366,20 @@ function DriverSheet({ driver, onClose }: { driver: AdminDriver | null; onClose:
   const submit = (event: FormEvent) => {
     event.preventDefault();
     setSubmitted(true);
-    if (nameInvalid || phoneInvalid) return;
-    const input = { fullName: name.trim(), phone: phone.trim(), truckId: truckId || null };
+    if (nameInvalid || phoneInvalid || passwordInvalid) return;
+    const base = { fullName: name.trim(), phone: phone.trim(), truckId: truckId || null };
     const done = () => {
       toast.success(tPanel('saved'));
       onClose();
     };
-    if (driver) update.mutate({ id: driver.id, input }, { onSuccess: done });
-    else create.mutate(input, { onSuccess: done });
+    if (driver) {
+      update.mutate(
+        { id: driver.id, input: password ? { ...base, password } : base },
+        { onSuccess: done },
+      );
+    } else {
+      create.mutate({ ...base, password }, { onSuccess: done });
+    }
   };
 
   return (
@@ -404,6 +414,22 @@ function DriverSheet({ driver, onClose }: { driver: AdminDriver | null; onClose:
               aria-invalid={submitted && phoneInvalid ? true : undefined}
             />
             {submitted && phoneInvalid ? <FieldError>{tAuth('invalidPhone')}</FieldError> : null}
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="driver-password">
+              {driver ? t('newPassword') : t('password')}
+            </FieldLabel>
+            <Input
+              id="driver-password"
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              aria-invalid={submitted && passwordInvalid ? true : undefined}
+            />
+            {submitted && passwordInvalid ? (
+              <FieldError>{tAuth('passwordTooShort')}</FieldError>
+            ) : null}
           </Field>
           <Field>
             <FieldLabel htmlFor="driver-truck">{t('truck')}</FieldLabel>

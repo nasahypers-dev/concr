@@ -15,7 +15,12 @@ import { ErrorCode } from '../../error-codes';
 import { STAFF, type FixtureSet } from '../../fixtures';
 import { isPointInPolygon } from '../../geo/geo';
 import { calculateQuote } from '../../pricing/calculate-quote';
-import { otpRequestSchema, otpVerifySchema, staffLoginSchema } from '../../schemas/auth';
+import {
+  driverLoginSchema,
+  otpRequestSchema,
+  otpVerifySchema,
+  staffLoginSchema,
+} from '../../schemas/auth';
 import type { Paginated } from '../../schemas/common';
 import {
   cancelOrderSchema,
@@ -66,6 +71,17 @@ export interface MockApiClient extends ApiClient {
 }
 
 const DEV_OTP = '123456';
+
+/** "050 000 00 12", "0500000012", "500000012" or "+994500000012" → "+994500000012". */
+function normaliseLogin(login: string): string {
+  const compact = login.replace(/[\s\-()]/g, '');
+  if (compact.startsWith('+')) return compact;
+  const digits = compact.replace(/\D/g, '');
+  if (digits.length === 9) return `+994${digits}`;
+  if (digits.length === 10 && digits.startsWith('0')) return `+994${digits.slice(1)}`;
+  if (digits.length === 12 && digits.startsWith('994')) return `+${digits}`;
+  return compact;
+}
 const ACCESS_PREFIX = 'mock.';
 const REFRESH_PREFIX = 'mockr.';
 const WINDOW_HOURS = 2;
@@ -284,7 +300,10 @@ export function createMockApiClient(options: MockApiClientOptions): MockApiClien
         if (code !== otpCode) throw new ApiClientError(ErrorCode.OTP_INVALID);
         store.otpCodes.delete(phone);
         let user = store.findUserByPhone(phone);
-        if (user && isStaff(user)) throw new ApiClientError(ErrorCode.FORBIDDEN);
+        // Staff sign in on the web, drivers with their password (D22): no OTP for either.
+        if (user && (isStaff(user) || user.role === UserRole.DRIVER)) {
+          throw new ApiClientError(ErrorCode.FORBIDDEN);
+        }
         if (user && !user.isActive) throw new ApiClientError(ErrorCode.USER_INACTIVE);
         if (!user) {
           const id = store.nextUserId();
@@ -321,6 +340,22 @@ export function createMockApiClient(options: MockApiClientOptions): MockApiClien
         const user = staff ? store.findUserById(staff.id) : undefined;
         if (!user)
           throw new ApiClientError(ErrorCode.UNAUTHORIZED, { message: 'Invalid credentials' });
+        if (!user.isActive) throw new ApiClientError(ErrorCode.USER_INACTIVE);
+        return issueSession(user);
+      },
+      async driverLogin(input) {
+        await delay();
+        const { login, password } = parse(driverLoginSchema, input);
+        const user = login.includes('@')
+          ? store.findUserByEmail(login)
+          : store.findUserByPhone(normaliseLogin(login));
+        if (
+          !user ||
+          user.role !== UserRole.DRIVER ||
+          store.driverPasswords.get(user.id) !== password
+        ) {
+          throw new ApiClientError(ErrorCode.UNAUTHORIZED, { message: 'Invalid credentials' });
+        }
         if (!user.isActive) throw new ApiClientError(ErrorCode.USER_INACTIVE);
         return issueSession(user);
       },

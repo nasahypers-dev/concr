@@ -58,6 +58,10 @@ Three steps, one commit each; the owner approves each step before the next start
    with a reason, handover act sheet (receiver name + up to 3 photos via expo-image-picker), foreground GPS
    batches while EN_ROUTE / ARRIVED (ADR 0012), times list and the act after completion. 5 tests.
    Fixture plates are now random placeholders (owner, 2026-10-14).
+4. **Driver sign-in with a password** (2026-10-15, D22 amendment): "Sürücü girişi" screen (phone or e-mail +
+   password), dev shortcuts removed, admin sets/resets the password on the Drivers page; the OTP refuses
+   driver phones. Sign-in now clears the query cache before storing the session (screens no longer stay
+   empty for 30 s). Sheets rise above the keyboard; a backdrop tap closes the keyboard first.
 
 ## U1 — what was built (2026-10-09)
 

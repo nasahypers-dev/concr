@@ -37,10 +37,11 @@ starts in Azerbaijani regardless of the phone's language; the language picked in
 
 ## Driver mode
 
-Drivers sign in with the same OTP flow (code `123456`). Seeded drivers: Rauf `+994500000012` (mixer
+Drivers never self-register and never use the OTP: the supplier creates them in the panel and they sign in
+with "Sürücü girişi" on the welcome screen using their phone (or e-mail) and the password the admin set (D22,
+amended 2026-10-15). Seeded drivers (password `Surucu123!`): Rauf `+994500000012` (mixer
 90-TR-631, one completed and one upcoming trip today), Elşən `+994500000011` (the trip the customer app tracks
-live, plus one tomorrow), Kamran `+994500000013` (off shift, nothing today). In dev builds the welcome screen
-has "DEV: enter as driver" (Rauf) next to the customer shortcut.
+live, plus one tomorrow), Kamran `+994500000013` (off shift, nothing today).
 
 "Today" shows the shift switch with the assigned mixer, today's trips and a preview of tomorrow; the profile has
 the mixer, the shift switch, language, appearance and "call the dispatcher". The trip screen walks the trip with

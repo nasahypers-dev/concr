@@ -16,6 +16,8 @@ export class MockStore {
   readonly routeProgress = new Map<Id, number>();
   /** Deliveries a real driver is operating; the simulated tracker leaves them alone. */
   readonly driverControlled = new Set<Id>();
+  /** Driver id → password (set by the admin; D22). */
+  readonly driverPasswords: Map<Id, string>;
   /** Pending OTP codes by phone. */
   readonly otpCodes = new Map<string, string>();
   /** Issued refresh tokens → user id (logout invalidates). */
@@ -33,6 +35,7 @@ export class MockStore {
 
   constructor(fixtures?: FixtureSet) {
     this.data = fixtures ?? createFixtures();
+    this.driverPasswords = new Map(Object.entries(this.data.driverPasswords));
     this.routeProgress.set(TRACKED_DELIVERY_ID, 0.35);
     this.counters.order = Math.max(0, ...this.data.orders.map((o) => Number(o.number.slice(-6))));
     this.counters.event = this.data.events.length;

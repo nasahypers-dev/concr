@@ -48,9 +48,12 @@ export const driverInputSchema = z.object({
   fullName: z.string().trim().min(1, { error: 'REQUIRED' }).max(80),
   phone: phoneE164Schema,
   truckId: z.string().min(1).nullable().optional(),
+  /** Initial password; the driver signs in with it (D22, amended 2026-10-15). */
+  password: z.string().min(8, { error: 'PASSWORD_TOO_SHORT' }).max(128),
 });
 export type DriverInput = z.infer<typeof driverInputSchema>;
 
+/** Every field optional; a `password` here resets the driver's password. */
 export const updateDriverSchema = driverInputSchema.partial().extend({
   /** false locks the account out of the app at once (D22). */
   isActive: z.boolean().optional(),

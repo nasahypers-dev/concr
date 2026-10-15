@@ -19,6 +19,16 @@ export const DRIVER_IDS = {
   kamran: 'drv_3',
 } as const;
 
+/** Dev-only password of every seeded driver (spec §18 style). TODO(nurlan): real ones come from the admin page. */
+export const DEV_DRIVER_PASSWORD = 'Surucu123!';
+
+/** Password per driver id; the mock keeps runtime changes in `MockStore.driverPasswords`. */
+export const DRIVER_PASSWORDS: Record<string, string> = {
+  [DRIVER_IDS.elshan]: DEV_DRIVER_PASSWORD,
+  [DRIVER_IDS.rauf]: DEV_DRIVER_PASSWORD,
+  [DRIVER_IDS.kamran]: DEV_DRIVER_PASSWORD,
+};
+
 /** Fleet per spec §18: 2×8, 2×10, 2×12 m³ mixers + one 24 m pump. Plates are random placeholders (owner, 2026-10-14). TODO(nurlan): real plates and counts. */
 export function createTrucks(): Truck[] {
   const mixer = (id: string, plate: string, capacity: number, driverId: string | null): Truck => ({

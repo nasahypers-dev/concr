@@ -35,7 +35,8 @@ Outside production the login page offers both as one-click fills. Passwords are 
 - `/live` — MapLibre map (OpenFreeMap tiles, no key) with trucks, sites and the plant; alerts: late,
   concrete risk (75 of 90 min), no signal (> 2 min); refreshed by the tracker events and every 10 s.
 - `/settings` — general parameters, products and prices, pumps, mixers, drivers (D22: drivers are
-  created here and sign in to the app by phone), service area polygon with a map preview.
+  created here with a password and sign in to the app with phone or e-mail + that password), service
+  area polygon with a map preview.
 - `/reports` — orders, delivered m³ and revenue for a date range, by day and by grade, CSV.
 
 ## Layout

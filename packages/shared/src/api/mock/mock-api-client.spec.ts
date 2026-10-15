@@ -3,6 +3,7 @@ import {
   bakuDate,
   createFixtures,
   CUSTOMER_IDS,
+  DEV_DRIVER_PASSWORD,
   DRIVER_IDS,
   ORDER_IDS,
   SITE_IDS,
@@ -41,8 +42,7 @@ async function loginAsDriver(
   setToken: (t: string | null) => void,
   phone: string,
 ): Promise<void> {
-  await api.auth.requestOtp({ phone });
-  const session = await api.auth.verifyOtp({ phone, code: '123456' });
+  const session = await api.auth.driverLogin({ login: phone, password: DEV_DRIVER_PASSWORD });
   setToken(session.accessToken);
 }
 
@@ -112,6 +112,29 @@ describe('mock api client — auth', () => {
       api.auth.verifyOtp({ phone: '+994506209584', code: '123456' }),
       'FORBIDDEN',
     ); // staff phone
+  });
+});
+
+describe('mock api client — driver sign-in', () => {
+  it('signs drivers in with phone or e-mail + password, never with the OTP', async () => {
+    const { api, setToken } = setup();
+    await expectApiError(
+      api.auth.driverLogin({ login: RAUF, password: 'wrong-pass' }),
+      'UNAUTHORIZED',
+    );
+    await expectApiError(
+      api.auth.driverLogin({ login: '+994500000001', password: DEV_DRIVER_PASSWORD }),
+      'UNAUTHORIZED',
+    ); // a customer phone is not a driver
+    await api.auth.requestOtp({ phone: RAUF });
+    await expectApiError(api.auth.verifyOtp({ phone: RAUF, code: '123456' }), 'FORBIDDEN');
+    const session = await api.auth.driverLogin({
+      login: '050 000 00 12',
+      password: DEV_DRIVER_PASSWORD,
+    });
+    expect(session.user.role).toBe('DRIVER');
+    setToken(session.accessToken);
+    expect((await api.driver.me()).id).toBe(DRIVER_IDS.rauf);
   });
 });
 
@@ -828,12 +851,16 @@ describe('mock api client — admin', () => {
     const created = await api.admin.createDriver({
       fullName: 'Nicat Quliyev',
       phone,
+      password: 'Yeni12345!',
       truckId: TRUCK_IDS.mixer8a,
     });
     expect(created.id).toBe('drv_4');
     expect(created.isActive).toBe(true);
     expect(created.truck?.plateNumber).toBe('10-RX-347');
-    await expectApiError(api.admin.createDriver({ fullName: 'Dublikat', phone }), 'CONFLICT');
+    await expectApiError(
+      api.admin.createDriver({ fullName: 'Dublikat', phone, password: 'Yeni12345!' }),
+      'CONFLICT',
+    );
     expect((await api.admin.listDrivers()).map((d) => d.id)).toEqual([
       'drv_1',
       'drv_2',
@@ -841,8 +868,7 @@ describe('mock api client — admin', () => {
       'drv_4',
     ]);
 
-    await api.auth.requestOtp({ phone });
-    const driverSession = await api.auth.verifyOtp({ phone, code: '123456' });
+    const driverSession = await api.auth.driverLogin({ login: phone, password: 'Yeni12345!' });
     expect(driverSession.user.role).toBe('DRIVER');
     setToken(driverSession.accessToken);
     expect((await api.driver.me()).truck?.plateNumber).toBe('10-RX-347');
@@ -853,8 +879,10 @@ describe('mock api client — admin', () => {
     expect(off.truck).toBeNull();
     setToken(driverSession.accessToken);
     await expectApiError(api.driver.me(), 'USER_INACTIVE');
-    await api.auth.requestOtp({ phone });
-    await expectApiError(api.auth.verifyOtp({ phone, code: '123456' }), 'USER_INACTIVE');
+    await expectApiError(
+      api.auth.driverLogin({ login: phone, password: 'Yeni12345!' }),
+      'USER_INACTIVE',
+    );
     setToken(null);
     await expectApiError(api.auth.refresh(driverSession.refreshToken), 'UNAUTHORIZED');
 

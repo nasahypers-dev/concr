@@ -20,6 +20,13 @@ export const staffLoginSchema = z.object({
 });
 export type StaffLoginInput = z.infer<typeof staffLoginSchema>;
 
+/** Driver sign-in (D22, amended 2026-10-15): login = phone (any local format) or e-mail. */
+export const driverLoginSchema = z.object({
+  login: z.string().trim().min(3, { error: 'REQUIRED' }).max(120),
+  password: z.string().min(8, { error: 'PASSWORD_TOO_SHORT' }).max(128),
+});
+export type DriverLoginInput = z.infer<typeof driverLoginSchema>;
+
 export const refreshTokenSchema = z.object({
   refreshToken: z.string().min(1),
 });

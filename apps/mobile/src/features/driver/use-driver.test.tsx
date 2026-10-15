@@ -1,9 +1,13 @@
-import { createFixtures, createMockApiClient, DeliveryStatus } from '@concr/shared';
+import {
+  createFixtures,
+  createMockApiClient,
+  DEV_DRIVER_PASSWORD,
+  DeliveryStatus,
+} from '@concr/shared';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import type { PropsWithChildren } from 'react';
 import { ApiProvider } from '@/api/api-provider';
-import { DEV_OTP_CODE } from '@/features/auth/use-auth';
 import { useSessionStore } from '@/store/session.store';
 import {
   tripDays,
@@ -27,8 +31,7 @@ function makeClient() {
 }
 
 async function signIn(client: ReturnType<typeof makeClient>, phone: string) {
-  await client.auth.requestOtp({ phone });
-  const session = await client.auth.verifyOtp({ phone, code: DEV_OTP_CODE });
+  const session = await client.auth.driverLogin({ login: phone, password: DEV_DRIVER_PASSWORD });
   useSessionStore.getState().setSession({
     role: session.user.role,
     accessToken: session.accessToken,

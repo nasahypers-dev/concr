@@ -47,12 +47,16 @@
     "invalidEmail": "Enter a valid email address",
     "passwordTooShort": "Password must be at least 8 characters",
     "invalidPhone": "Enter the 9 digits of the number (e.g. 50 000 00 00)",
-    "devEnterAsCustomer": "DEV: enter as customer",
-    "devEnterAsDriver": "DEV: enter as driver",
-    "devQuickLogin": "DEV: sign in as the test customer",
     "devCodeHint": "Code: {code}",
     "codeResent": "Code sent again",
-    "devAccount": "DEV account: {email} / {password}"
+    "devAccount": "DEV account: {email} / {password}",
+    "driverLoginTitle": "Driver sign-in",
+    "driverLoginSubtitle": "Sign in with the phone (or e-mail) and password the supplier gave you",
+    "driverLoginField": "Phone or e-mail",
+    "driverLoginPlaceholder": "050 000 00 00",
+    "driverLoginFailed": "Wrong sign-in details",
+    "driverLoginHint": "No account or forgotten password? Ask the dispatcher",
+    "enterAsDriver": "Driver sign-in"
   },
   "setup": {
     "title": "Enter your first and last name",
@@ -290,9 +294,9 @@
       "cancelled": "The trip was cancelled",
       "failed": "The trip is marked as failed",
       "concrete": "Concrete timer",
-      "concreteOk": "{minutes} min of concrete life left",
-      "concreteWarning": "Only {minutes} min left, hurry",
-      "concreteExpired": "The concrete has expired, call the dispatcher",
+      "concreteOk": "Time left to unload the concrete: {minutes} min",
+      "concreteWarning": "Only {minutes} min left to unload, hurry",
+      "concreteExpired": "Unloading time is over, call the dispatcher",
       "gpsOn": "GPS position is being sent",
       "gpsDenied": "No location permission, the position is not sent. Allow it in Settings.",
       "gpsError": "Could not get a GPS position",
@@ -644,9 +648,11 @@
         "edit": "Edit driver",
         "deactivate": "Deactivate",
         "activate": "Activate",
-        "hint": "The driver signs in to the app with this number and an SMS code. Registration happens only here.",
+        "hint": "The driver signs in to the app with the phone number (or e-mail) and this password. Registration happens only here.",
         "noTruck": "No mixer",
-        "phoneTaken": "This number is already in use"
+        "phoneTaken": "This number is already in use",
+        "password": "Password",
+        "newPassword": "New password (to change it)"
       },
       "area": {
         "title": "Service area",

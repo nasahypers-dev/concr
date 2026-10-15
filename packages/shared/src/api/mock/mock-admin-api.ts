@@ -305,6 +305,7 @@ export function createAdminApi(ctx: AdminApiContext): AdminApi {
       };
       store.data.users.push(user);
       store.data.drivers.push(driver);
+      store.driverPasswords.set(id, data.password);
       if (data.truckId) assignTruck(driver, data.truckId);
       return toAdminDriver(driver);
     },
@@ -325,6 +326,7 @@ export function createAdminApi(ctx: AdminApiContext): AdminApi {
         if (user) user.phone = patch.phone;
       }
       if (patch.truckId !== undefined) assignTruck(driver, patch.truckId);
+      if (patch.password !== undefined) store.driverPasswords.set(driver.id, patch.password);
       if (patch.isActive !== undefined && user) {
         user.isActive = patch.isActive;
         if (!patch.isActive) {

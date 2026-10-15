@@ -32,7 +32,12 @@ import type {
   UpdateSupplierSettingsInput,
   UpdateTruckInput,
 } from '../schemas/admin';
-import type { OtpRequestInput, OtpVerifyInput, StaffLoginInput } from '../schemas/auth';
+import type {
+  DriverLoginInput,
+  OtpRequestInput,
+  OtpVerifyInput,
+  StaffLoginInput,
+} from '../schemas/auth';
 import type { Paginated } from '../schemas/common';
 import type {
   ConfirmOrderInput,
@@ -79,6 +84,8 @@ export interface AuthApi {
   requestOtp(input: OtpRequestInput): Promise<OtpRequestResult>;
   verifyOtp(input: OtpVerifyInput): Promise<AuthSession>;
   staffLogin(input: StaffLoginInput): Promise<AuthSession>;
+  /** Drivers never use the OTP: phone or e-mail + the password the supplier set (D22). */
+  driverLogin(input: DriverLoginInput): Promise<AuthSession>;
   refresh(refreshToken: string): Promise<AuthSession>;
   logout(refreshToken: string): Promise<void>;
   me(): Promise<User>;

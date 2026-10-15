@@ -8,7 +8,7 @@ import type { Truck } from '../domain/truck';
 import type { CustomerAccount, Driver, User } from '../domain/user';
 import { createProducts, createPumpOptions } from './catalog';
 import { createCustomers, createSites, createStaffUsers } from './customers';
-import { createDriverUsers, createDrivers, createTrucks } from './fleet';
+import { createDriverUsers, createDrivers, createTrucks, DRIVER_PASSWORDS } from './fleet';
 import { createOrderFixtures } from './orders';
 import { createRouteNovxaniToYasamal } from './routes';
 import { createPlant, createServiceArea, createSupplier } from './supplier';
@@ -34,6 +34,8 @@ export interface FixtureSet {
   pumpOptions: PumpOption[];
   trucks: Truck[];
   drivers: Driver[];
+  /** Driver id → password (dev placeholders; the real API stores hashes). */
+  driverPasswords: Record<Id, string>;
   users: User[];
   customers: CustomerAccount[];
   sites: Site[];
@@ -68,6 +70,7 @@ export function createFixtures(now: Date = new Date()): FixtureSet {
     pumpOptions,
     trucks: createTrucks(),
     drivers: createDrivers(now),
+    driverPasswords: { ...DRIVER_PASSWORDS },
     users: [
       ...customers.map(({ profile: _profile, ...user }) => user),
       ...createDriverUsers(now),
