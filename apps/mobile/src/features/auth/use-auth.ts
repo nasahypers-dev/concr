@@ -13,8 +13,10 @@ import { useSettingsStore } from '@/store/settings.store';
 
 /** Mock OTP (spec §18). The mock API also returns it as `devCode`. */
 export const DEV_OTP_CODE = '123456';
-/** Seeded customer of the mock data (tests). */
+/** Seeded customer of the mock data (tests and the welcome screen's test shortcut). */
 export const DEV_CUSTOMER_PHONE = '+994500000001';
+/** Seeded driver Rauf (mixer 90-TR-631); password `DEV_DRIVER_PASSWORD` from the fixtures. */
+export const DEV_DRIVER_PHONE = '+994500000012';
 
 export function useRequestOtp() {
   const api = useApi();

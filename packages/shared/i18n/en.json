@@ -56,7 +56,9 @@
     "driverLoginPlaceholder": "050 000 00 00",
     "driverLoginFailed": "Wrong sign-in details",
     "driverLoginHint": "No account or forgotten password? Ask the dispatcher",
-    "enterAsDriver": "Driver sign-in"
+    "enterAsDriver": "Driver sign-in",
+    "testCustomerLogin": "Sign in as the test customer",
+    "testDriverLogin": "Sign in as the test driver"
   },
   "setup": {
     "title": "Enter your first and last name",

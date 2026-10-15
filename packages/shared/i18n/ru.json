@@ -56,7 +56,9 @@
     "driverLoginPlaceholder": "050 000 00 00",
     "driverLoginFailed": "Неверные данные для входа",
     "driverLoginHint": "Нет аккаунта или забыли пароль? Обратитесь к диспетчеру",
-    "enterAsDriver": "Вход для водителя"
+    "enterAsDriver": "Вход для водителя",
+    "testCustomerLogin": "Войти как тестовый клиент",
+    "testDriverLogin": "Войти как тестовый водитель"
   },
   "setup": {
     "title": "Укажите имя и фамилию",

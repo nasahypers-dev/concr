@@ -56,7 +56,9 @@
     "driverLoginPlaceholder": "050 000 00 00",
     "driverLoginFailed": "Giriş məlumatları yanlışdır",
     "driverLoginHint": "Hesabınız yoxdursa və ya şifrəni unutmusunuzsa, dispetçerə müraciət edin",
-    "enterAsDriver": "Sürücü girişi"
+    "enterAsDriver": "Sürücü girişi",
+    "testCustomerLogin": "Test müştərisi kimi daxil ol",
+    "testDriverLogin": "Test sürücüsü kimi daxil ol"
   },
   "setup": {
     "title": "Ad və soyadınızı daxil edin",
