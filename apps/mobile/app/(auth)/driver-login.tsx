@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useDriverLogin } from '@/features/auth/use-auth';
 import { useErrorMessage } from '@/features/common/use-error-message';
+import { formatAzPhoneInput, isPhoneLike } from '@/lib/phone';
 import { AppHeader, Banner, Button, Screen, Text, TextField } from '@/ui';
 
 const MIN_LOGIN_LENGTH = 3;
@@ -49,14 +50,17 @@ export default function DriverLoginScreen() {
         placeholder={t('auth.driverLoginPlaceholder')}
         value={identifier}
         onChangeText={(value) => {
-          setIdentifier(value);
+          // Phones are grouped as typed ("050 000 00 12"); e-mails stay as they are.
+          setIdentifier(isPhoneLike(value) ? formatAzPhoneInput(value) : value);
           if (login.isError) login.reset();
         }}
         error={touched && identifierInvalid ? t('sites.required') : undefined}
         icon="person-outline"
         autoCapitalize="none"
         autoCorrect={false}
-        keyboardType="email-address"
+        keyboardType={
+          identifier === '' ? 'default' : isPhoneLike(identifier) ? 'phone-pad' : 'email-address'
+        }
         autoFocus
       />
       <TextField

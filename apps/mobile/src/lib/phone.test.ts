@@ -1,4 +1,12 @@
-import { formatAzLocal, isCompleteAzLocal, localDigits, stripAzPrefix, toAzE164 } from './phone';
+import {
+  formatAzLocal,
+  formatAzPhoneInput,
+  isCompleteAzLocal,
+  isPhoneLike,
+  localDigits,
+  stripAzPrefix,
+  toAzE164,
+} from './phone';
 
 describe('phone helpers', () => {
   it('extracts the local digits from E.164', () => {
@@ -27,5 +35,16 @@ describe('phone helpers', () => {
     expect(isCompleteAzLocal('50326034')).toBe(false);
     expect(toAzE164('503260343')).toBe('+994503260343');
     expect(toAzE164('')).toBe('');
+  });
+  it('groups a free-form phone as it is typed and leaves e-mails alone', () => {
+    expect(formatAzPhoneInput('0500000012')).toBe('050 000 00 12');
+    expect(formatAzPhoneInput('05000')).toBe('050 00');
+    expect(formatAzPhoneInput('500000012')).toBe('50 000 00 12');
+    expect(formatAzPhoneInput('994500000012')).toBe('+994 50 000 00 12');
+    expect(formatAzPhoneInput('050000001299')).toBe('050 000 00 12');
+    expect(isPhoneLike('050 000 00 12')).toBe(true);
+    expect(isPhoneLike('+994 50')).toBe(true);
+    expect(isPhoneLike('rauf@example.az')).toBe(false);
+    expect(isPhoneLike('')).toBe(false);
   });
 });

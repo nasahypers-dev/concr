@@ -43,3 +43,28 @@ export function isCompleteAzLocal(digits: string): boolean {
 export function toAzE164(digits: string): string {
   return digits === '' ? '' : `${AZ_PREFIX}${digits}`;
 }
+
+/** True when the text could only be a phone number (digits, spaces, "+", "-", brackets). */
+export function isPhoneLike(input: string): boolean {
+  return input.trim() !== '' && /^[\d\s+\-()]+$/.test(input);
+}
+
+/**
+ * Live grouping for a free-form phone field (driver sign-in, owner 2026-10-15):
+ * "0500000012" → "050 000 00 12", "500000012" → "50 000 00 12", "994500000012" → "+994 50 000 00 12".
+ * Only digits are kept; the number is cut at its full length so nothing can be typed past it.
+ */
+export function formatAzPhoneInput(input: string): string {
+  const digits = input.replace(/\D/g, '');
+  if (digits.startsWith('994') && digits.length > 3) {
+    return `${AZ_PREFIX} ${formatAzLocal(digits.slice(3))}`.trimEnd();
+  }
+  if (digits.startsWith('0')) {
+    const d = digits.slice(0, AZ_LOCAL_LENGTH + 1);
+    const groups = [d.slice(0, 3), d.slice(3, 6), d.slice(6, 8), d.slice(8, 10)].filter(
+      (g) => g.length > 0,
+    );
+    return groups.join(' ');
+  }
+  return formatAzLocal(digits);
+}
