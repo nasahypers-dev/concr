@@ -81,12 +81,17 @@ Component rules seen on the site (for flavour, not to copy literally):
 | Success          | `#2FAF6A` | fills, dots, large text                                             |
 | Danger           | `#EF4444` | fills, dots, large text; destructive actions                        |
 
-Not decided (`TODO(nurlan)`): **warning** and **info** tokens, the sidebar shade (graphite 800 vs 900),
-hover shades for amber (site uses `#e09a35`), and small-text variants of success/danger (see §6).
+Decided in Phase 1 (ADR 0013, amendment 1), derived from verified site values, not business values:
+**warning** `#B06F10` (site amber-700) with text shade `#8C590D`, **info** `#5B8DEF` (site steel-500)
+with text shade `#2554B1`, **success** text shade `#207949`, **danger** text shade `#C51111`, focus
+ring `#B06F10`. The `-strong` text shades keep the hue and saturation of the solid and lower the HSL
+lightness (30 % for success/warning, 42 % for danger/info) until the ratio on white and on the canvas
+passes 4.5:1 (§6). Still open (`TODO(nurlan)`): the sidebar shade (kept `#12161F`), hover shades for
+amber (site uses `#e09a35`), the mobile accent.
 
-## 4. Current panel values (Phase 0 snapshot, unchanged)
+## 4. Values before Phase 1 (reference)
 
-`apps/dispatch/src/app/globals.css`:
+`apps/dispatch/src/app/globals.css` as it was after U3 (replaced on 2026-10-15):
 
 | Variable                         | Current value                                       |
 | -------------------------------- | --------------------------------------------------- |
@@ -107,58 +112,69 @@ Mobile theme for comparison (`apps/mobile/src/ui/theme.ts`, **out of scope**, no
 the panel work): primary `#12161F`, accent `#F5A623`, background `#F6F7F9`, border `#E5E7EB`,
 inkMuted `#6B7280`, info `#2563EB`, warning `#B45309`, danger `#DC2626`, success `#15803D`.
 
-## 5. Phase 1 mapping (target, not applied yet)
+## 5. Phase 1 mapping (applied 2026-10-15)
 
-| CSS variable                                    | Current                      | Target                  | Why                                                                                    |
-| ----------------------------------------------- | ---------------------------- | ----------------------- | -------------------------------------------------------------------------------------- |
-| `--background`                                  | `oklch(1 0 0)`               | `#F5F7FB`               | brand canvas; cards get real contrast                                                  |
-| `--foreground`                                  | `oklch(0.145 0 0)`           | `#232B38`               | brand body text                                                                        |
-| `--card`, `--popover`                           | `oklch(1 0 0)`               | `#FFFFFF`               | surface                                                                                |
-| `--card-foreground`, `--popover-foreground`     | `oklch(0.145 0 0)`           | `#232B38`               |                                                                                        |
-| `--primary`                                     | `oklch(0.205 0 0)`           | `#12161F`               | brand graphite for default buttons                                                     |
-| `--primary-foreground`                          | `oklch(0.985 0 0)`           | `#FFFFFF`               |                                                                                        |
-| `--secondary`, `--muted`, `--accent`            | `oklch(0.97 0 0)`            | `#EEF2F8`               | inset / hover surfaces (shadcn `--accent` is a hover colour, **not** the brand accent) |
-| `--secondary-foreground`, `--accent-foreground` | `oklch(0.205 0 0)`           | `#232B38`               |                                                                                        |
-| `--muted-foreground`                            | `oklch(0.556 0 0)`           | `#66728A`               | brand muted text                                                                       |
-| `--border`, `--input`                           | `oklch(0.922 0 0)`           | `#E3E8F2`               | brand hairline                                                                         |
-| `--ring`                                        | `oklch(0.708 0 0)`           | `#F0B252`               | amber focus ring (`ring-ring/50` ≈ amber glow)                                         |
-| `--destructive`                                 | `oklch(0.577 0.245 27.325)`  | `#EF4444`               | brand danger                                                                           |
-| `--concr-primary`                               | `#12161f`                    | `#12161F` (unchanged)   |                                                                                        |
-| `--concr-accent`                                | `#f5a623`                    | `#F0B252`               | D24                                                                                    |
-| `--concr-accent-foreground`                     | `#12161f`                    | `#12161F` (unchanged)   | white on amber fails contrast (§6)                                                     |
-| `--concr-success` (new)                         | —                            | `#2FAF6A`               | exposed as `bg-concr-success` etc.                                                     |
-| `--concr-danger` (new)                          | —                            | `#EF4444`               | alias of `--destructive`                                                               |
-| `--concr-warning`, `--concr-info` (new)         | —                            | `TODO(nurlan)`          | not decided                                                                            |
-| `--chart-1` … `--chart-5`                       | greys                        | amber/graphite scale    | reports bars                                                                           |
-| `--sidebar-*`                                   | shadcn neutrals (unused)     | graphite set or removed | decide in Phase 1                                                                      |
-| `--radius-sm/md/lg/xl`                          | 6 / 8 / 10 / 14 px (derived) | 6 / 10 / 16 / 24 px     | brand scale; primitives re-mapped once                                                 |
-| `--shadow-sm/md/lg`                             | Tailwind defaults            | brand `--sh-*` values   |                                                                                        |
-| `--font-heading`                                | system stack                 | Space Grotesk           | loading method per ADR 0013                                                            |
-| `--font-sans`                                   | system stack                 | Inter                   |                                                                                        |
+| CSS variable                                    | Before Phase 1              | Now                                  | Why                                                                                    |
+| ----------------------------------------------- | --------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------- |
+| `--background`                                  | `oklch(1 0 0)`              | `#F5F7FB`                            | brand canvas; cards get real contrast                                                  |
+| `--foreground`                                  | `oklch(0.145 0 0)`          | `#232B38`                            | brand body text                                                                        |
+| `--card`, `--popover`                           | `oklch(1 0 0)`              | `#FFFFFF`                            | surface                                                                                |
+| `--card-foreground`, `--popover-foreground`     | `oklch(0.145 0 0)`          | `#232B38`                            |                                                                                        |
+| `--primary`                                     | `oklch(0.205 0 0)`          | `#12161F`                            | brand graphite for default buttons, switch, checkbox                                   |
+| `--primary-foreground`                          | `oklch(0.985 0 0)`          | `#FFFFFF`                            |                                                                                        |
+| `--secondary`, `--muted`, `--accent`            | `oklch(0.97 0 0)`           | `#EEF2F8`                            | inset / hover surfaces (shadcn `--accent` is a hover colour, **not** the brand accent) |
+| `--secondary-foreground`, `--accent-foreground` | `oklch(0.205 0 0)`          | `#232B38`                            |                                                                                        |
+| `--muted-foreground`                            | `oklch(0.556 0 0)`          | `#66728A`                            | brand muted text                                                                       |
+| `--border`, `--input`                           | `oklch(0.922 0 0)`          | `#E3E8F2`                            | brand hairline                                                                         |
+| `--ring`                                        | `oklch(0.708 0 0)`          | `#B06F10`                            | focus indicator ≥ 3:1 (the accent amber is 1.9:1, the old grey 2.1:1)                  |
+| `--destructive`                                 | `oklch(0.577 0.245 27.325)` | `var(--concr-danger-strong)`         | shadcn uses it for text and borders; the AA text shade keeps error text readable       |
+| `--concr-primary`                               | `#12161f`                   | `#12161f` (unchanged)                |                                                                                        |
+| `--concr-accent`                                | `#f5a623`                   | `#f0b252`                            | D24                                                                                    |
+| `--concr-accent-foreground`                     | `#12161f`                   | `#12161f` (unchanged)                | white on amber fails contrast (§6)                                                     |
+| `--concr-success` / `-strong` (new)             | —                           | `#2faf6a` / `#207949`                | `bg-concr-success`, `text-concr-success-strong`                                        |
+| `--concr-danger` / `-strong` (new)              | —                           | `#ef4444` / `#c51111`                | brand danger for fills and dots; text uses the strong shade                            |
+| `--concr-warning` / `-strong` (new)             | —                           | `#b06f10` / `#8c590d`                | site amber-700; distinct from LOADING/EN_ROUTE/UNLOADING status colours                |
+| `--concr-info` / `-strong` (new)                | —                           | `#5b8def` / `#2554b1`                | site steel-500; distinct from ASSIGNED/ARRIVED status colours                          |
+| `--shadow-sm/md/lg`, `--shadow-accent` (new)    | Tailwind defaults           | site `--sh-*` values                 | `shadow-sm` cards, `shadow-md` menus, `shadow-lg` sheets                               |
+| `--font-sans`                                   | system stack                | `'Inter', …`                         | self-hosted subsets, `@font-face` + `unicode-range`                                    |
+| `--font-heading`                                | = `--font-sans`             | `'Space Grotesk', var(--font-inter)` | per-glyph fallback to Inter (no Cyrillic in Space Grotesk)                             |
+| `--chart-1` … `--chart-5`                       | greys                       | unchanged (unused)                   | reports bars use `bg-concr-accent`; revisit in Phase 3                                 |
+| `--sidebar-*`                                   | shadcn neutrals (unused)    | unchanged (unused)                   | the sidebar reads `bg-concr-primary`; decide in Phase 2                                |
+| `--radius`, `--radius-sm/md/lg/xl`              | 10 px → 6 / 8 / 10 / 14     | unchanged                            | scale moves with the primitive classes in Phase 2                                      |
+| `.dark` block                                   | shadcn defaults             | unchanged, never activated           | ADR 0013 §8                                                                            |
 
-Hex in TSX after Phase 1 is allowed only in `src/components/status-badge.tsx` (`deliveryStatusColor`),
-`src/components/map/live-map.tsx` (marker SVG) and `src/lib/pdf.ts` (pdfmake has no CSS). The
-constants `IDLE_COLOR`, `PLANT_COLOR`, `SITE_COLOR` in `live-page.tsx` and the graphite in
-`area-tab.tsx` move to one exported colour module that reads the same values as the tokens.
+Hex in TSX is still allowed only in `src/components/status-badge.tsx` (`deliveryStatusColor`),
+`src/components/map/live-map.tsx` (marker SVG) and `src/lib/pdf.ts` (pdfmake has no CSS). Phase 1
+touched no component, so the constants `IDLE_COLOR`, `PLANT_COLOR`, `SITE_COLOR` in `live-page.tsx`,
+the graphite in `area-tab.tsx` and the 17 Tailwind palette classes (`status-badge.tsx`,
+`inbox-page.tsx`, `live-page.tsx`, `order-detail-page.tsx`, `fleet-tabs.tsx`) remain as Phase 2 debt;
+`pdf.ts` keeps `#12161F` / `#6B7280` / `#F3F4F6` until the PDF template is revisited.
 
 ## 6. Contrast (WCAG 2.x relative luminance, computed 2026-10-15)
 
-| Foreground | Background | Ratio  | Verdict                                                                   |
-| ---------- | ---------- | ------ | ------------------------------------------------------------------------- |
-| `#232B38`  | `#F5F7FB`  | ≈ 12.6 | AA/AAA body text                                                          |
-| `#66728A`  | `#FFFFFF`  | ≈ 4.9  | AA for 14 px text                                                         |
-| `#66728A`  | `#F5F7FB`  | ≈ 4.5  | AA, borderline — keep muted text ≥ 14 px                                  |
-| `#66728A`  | `#EEF2F8`  | ≈ 4.3  | **fails** AA — no muted text on inset                                     |
-| `#FFFFFF`  | `#12161F`  | ≈ 18   | AA/AAA                                                                    |
-| `#F0B252`  | `#12161F`  | ≈ 9.7  | AA/AAA — amber text/icons on graphite ok                                  |
-| `#12161F`  | `#F0B252`  | ≈ 9.7  | AA/AAA — amber buttons get graphite text                                  |
-| `#FFFFFF`  | `#F0B252`  | ≈ 1.9  | **fails** — never white on amber                                          |
-| `#FFFFFF`  | `#2FAF6A`  | ≈ 2.8  | fails for text; ok for dots/fills                                         |
-| `#FFFFFF`  | `#EF4444`  | ≈ 3.8  | ok for large text / UI, not for 14 px                                     |
-| `#EF4444`  | `#FFFFFF`  | ≈ 3.8  | small danger text needs a darker shade (Phase 1 derives and verifies one) |
-| `#FFFFFF`  | `#9CA3AF`  | ≈ 2.5  | **fails** — PLANNED board blocks need dark text                           |
-| `#FFFFFF`  | `#60A5FA`  | ≈ 2.6  | **fails** — ASSIGNED board blocks need dark text                          |
-| `#FFFFFF`  | `#F97316`  | ≈ 2.8  | **fails** — EN_ROUTE blocks need dark text                                |
+| Foreground | Background | Ratio  | Verdict                                                        |
+| ---------- | ---------- | ------ | -------------------------------------------------------------- |
+| `#232B38`  | `#F5F7FB`  | ≈ 12.6 | AA/AAA body text                                               |
+| `#66728A`  | `#FFFFFF`  | ≈ 4.9  | AA for 14 px text                                              |
+| `#66728A`  | `#F5F7FB`  | ≈ 4.5  | AA, borderline — keep muted text ≥ 14 px                       |
+| `#66728A`  | `#EEF2F8`  | ≈ 4.3  | **fails** AA — no muted text on inset                          |
+| `#FFFFFF`  | `#12161F`  | ≈ 18   | AA/AAA                                                         |
+| `#F0B252`  | `#12161F`  | ≈ 9.7  | AA/AAA — amber text/icons on graphite ok                       |
+| `#12161F`  | `#F0B252`  | ≈ 9.7  | AA/AAA — amber buttons get graphite text                       |
+| `#FFFFFF`  | `#F0B252`  | ≈ 1.9  | **fails** — never white on amber                               |
+| `#FFFFFF`  | `#2FAF6A`  | ≈ 2.8  | fails for text; ok for dots/fills                              |
+| `#FFFFFF`  | `#EF4444`  | ≈ 3.8  | ok for large text / UI, not for 14 px                          |
+| `#EF4444`  | `#FFFFFF`  | ≈ 3.8  | small danger text uses `--concr-danger-strong` instead         |
+| `#C51111`  | `#FFFFFF`  | ≈ 6.1  | danger strong — AA (5.7 on canvas, 5.1 on `bg-destructive/10`) |
+| `#207949`  | `#FFFFFF`  | ≈ 5.4  | success strong — AA (5.0 on canvas)                            |
+| `#8C590D`  | `#FFFFFF`  | ≈ 5.9  | warning strong — AA (5.5 on canvas)                            |
+| `#2554B1`  | `#FFFFFF`  | ≈ 7.0  | info strong — AA (6.6 on canvas)                               |
+| `#B06F10`  | `#FFFFFF`  | ≈ 4.1  | focus ring / warning solid — non-text 3:1 ok (3.8 on canvas)   |
+| `#5B8DEF`  | `#FFFFFF`  | ≈ 3.2  | info solid — non-text 3:1 ok, not for text                     |
+| `#B5B5B5`  | `#FFFFFF`  | ≈ 2.1  | the previous grey ring — **failed** 3:1                        |
+| `#FFFFFF`  | `#9CA3AF`  | ≈ 2.5  | **fails** — PLANNED board blocks need dark text                |
+| `#FFFFFF`  | `#60A5FA`  | ≈ 2.6  | **fails** — ASSIGNED board blocks need dark text               |
+| `#FFFFFF`  | `#F97316`  | ≈ 2.8  | **fails** — EN_ROUTE blocks need dark text                     |
 
 ## 7. Status colours (owner-approved 2026-10-15, do not change)
 

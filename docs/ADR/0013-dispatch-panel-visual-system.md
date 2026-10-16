@@ -87,3 +87,45 @@ the work must live in git (CLAUDE.md owner context).
 - Risks to watch: the `cn` package's class-merge semantics when overriding primitive classes,
   Base UI (not Radix) attribute names, Next 16 API differences (`apps/dispatch/AGENTS.md`), build
   network access for Google fonts, and test selectors that depend on Azerbaijani wording.
+
+## Amendment 1 — Phase 1 implemented (2026-10-15)
+
+Files: `apps/dispatch/src/app/globals.css`, `apps/dispatch/src/app/layout.tsx`,
+`apps/dispatch/public/fonts/*`. No component, page, status map, data hook or shared code changed.
+
+1. **Fonts are self-hosted, declared with plain `@font-face`, not `next/font`.** The Google Fonts
+   subsets of Inter v20 (latin, latin-ext, cyrillic, cyrillic-ext; weight axis 400–700) and Space
+   Grotesk v22 (latin, latin-ext; 500–700) were downloaded once from `fonts.gstatic.com` and live in
+   `public/fonts` with their OFL licences and a provenance README. `next/font/local` cannot express a
+   `unicode-range` per file, and `next/font/google` needs network at build time (CI), so the
+   `@font-face` rules sit in `globals.css`, `font-display: swap`, and the root layout renders two
+   `<link rel="preload" as="font">` elements for the Latin files (React's `preload()` hint produced
+   no tag in the Next 16 HTML, verified with `next start` + curl). Glyph coverage was verified by
+   parsing the files' cmap:
+   both fonts contain Ə ə Ğ ğ İ ı Ö ö Ş ş Ü ü Ç ç and ₼; Space Grotesk has no Cyrillic, so the heading
+   stack is `'Space Grotesk', var(--font-inter)` and Russian headings fall back glyph by glyph to
+   Inter. Total payload 218 KB across the six files; a page loads only the subsets it uses.
+2. **Tokens.** The shadcn variables now hold the D24 values (canvas `#F5F7FB`, surface `#FFFFFF`,
+   text `#232B38`, muted `#66728A`, inset/hover `#EEF2F8`, border `#E3E8F2`, primary `#12161F`,
+   accent `#F0B252`). Semantic feedback tokens were added as pairs: `--concr-success` `#2FAF6A` /
+   `-strong` `#207949`, `--concr-danger` `#EF4444` / `-strong` `#C51111`, `--concr-warning` `#B06F10`
+   (site amber-700) / `-strong` `#8C590D`, `--concr-info` `#5B8DEF` (site steel-500) / `-strong`
+   `#2554B1`. The plain token is the solid for fills, dots and icons; the `-strong` token is the
+   WCAG AA text shade (same hue and saturation, HSL lightness lowered until ≥ 4.5:1 on white and on
+   the canvas). Warning and info were chosen so that no value equals a `deliveryStatusColor`
+   entry. Brand shadows `--shadow-sm/md/lg/accent` replace the Tailwind defaults.
+3. **Two deviations from the owner's literal list, both for WCAG AA.** `--destructive` maps to
+   `--concr-danger-strong` (`#C51111`) instead of `#EF4444`, because shadcn uses it for 14 px error
+   text and borders (`#EF4444` on white is 3.8:1); the brand red stays available as
+   `--concr-danger` for fills and buttons. `--ring` is the site's amber-700 `#B06F10` instead of the
+   accent `#F0B252`, because a focus indicator must reach 3:1 against white (1.9:1 for the accent).
+4. **Deferred to Phase 2.** The radius scale and the one-time class swap inside the shadcn
+   primitives (item 6 above), the `STATUS_THEME` record, the replacement of the 17 palette classes
+   and of the hex constants in `live-page.tsx` / `area-tab.tsx`, the chart and sidebar variables.
+   Keeping Phase 1 to tokens and fonts means no component file changed and every existing test
+   passes unmodified.
+5. **Visual effects to expect** (not regressions, listed for the owner's check): the page canvas
+   is light blue-grey and cards are white; the top bar shares the canvas colour; outline buttons and
+   the active tab inherit `--background`; default buttons, switches and checkboxes are graphite;
+   error text is a deeper red; the focus ring is deep amber; all text renders in Inter, headings in
+   Space Grotesk.

@@ -54,7 +54,7 @@ Project skills in `.claude/skills/` (git-tracked, scoped to `apps/dispatch/**`);
 - **Building or restyling a panel page or feature component → follow `concr-dashboard-ui`** (page anatomy, recipes, states, i18n, formatting, tests).
 - **After any UI change under `apps/dispatch` → run `concr-ui-review`** (also `/concr-ui-review`) and fix blockers before the gates.
 - No raw colours or Tailwind palette classes in panel TSX; the only files allowed to hold hex are `status-badge.tsx` (`deliveryStatusColor`), `map/live-map.tsx` and `lib/pdf.ts`. `deliveryStatusColor`, tone maps and marker colours change only with the owner.
-- Redesign runs in phases (ADR 0013, status in `docs/PROGRESS.md`): Phase 0 docs done 2026-10-15; Phase 1 tokens + fonts next. Each phase is one PR with green gates and no logic changes.
+- Redesign runs in phases (ADR 0013, status in `docs/PROGRESS.md`): Phase 0 docs and Phase 1 tokens + self-hosted fonts done 2026-10-15; Phase 2 (shell, shared components, radius scale, `STATUS_THEME`, palette classes → tokens) next. Each phase is one PR with green gates and no logic changes. Fonts stay self-hosted in `apps/dispatch/public/fonts` (never `next/font/google`).
 
 ## Conventions
 - TypeScript strict; no `any`. Named exports. `kebab-case` files, `PascalCase` components, `camelCase` otherwise.
