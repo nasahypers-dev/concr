@@ -65,14 +65,17 @@ export function ReportsPage() {
     if (!invalid) setRange({ from, to });
   };
 
-  // The start can never pass the end: picking one side drags the other along (owner, 2026-10-15).
-  const changeFrom = (value: string) => {
-    setFrom(value);
-    if (value && to && value > to) setTo(value);
+  // The start can never pass the end and the end can never fall before the start (owner,
+  // 2026-10-15): the picker is limited by min/max, a typed value that crosses the other side keeps
+  // "Göstər" disabled and snaps to that side as soon as the field loses focus. Native date inputs
+  // fire onChange for every keystroke (with partial years such as 0002 while the year is typed),
+  // and rewriting the value mid-typing scrambles the month/day/year segments, so nothing is clamped
+  // while the field is focused. The other field never moves.
+  const settleFrom = () => {
+    if (from && to && from > to) setFrom(to);
   };
-  const changeTo = (value: string) => {
-    setTo(value);
-    if (value && from && value < from) setFrom(value);
+  const settleTo = () => {
+    if (from && to && to < from) setTo(from);
   };
   const applyPreset = (key: PresetKey) => {
     const next = presetRange(key);
@@ -159,7 +162,8 @@ export function ReportsPage() {
               type="date"
               value={from}
               max={to || undefined}
-              onChange={(e) => changeFrom(e.target.value)}
+              onChange={(e) => setFrom(e.target.value)}
+              onBlur={settleFrom}
               className="w-44"
               aria-invalid={invalid ? true : undefined}
             />
@@ -170,7 +174,8 @@ export function ReportsPage() {
               type="date"
               value={to}
               min={from || undefined}
-              onChange={(e) => changeTo(e.target.value)}
+              onChange={(e) => setTo(e.target.value)}
+              onBlur={settleTo}
               className="w-44"
               aria-invalid={invalid ? true : undefined}
             />
