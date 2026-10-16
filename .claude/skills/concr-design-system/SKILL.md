@@ -11,11 +11,12 @@ paths:
 
 - Applies to `apps/dispatch/**` only. The mobile app keeps `apps/mobile/src/ui/theme.ts`; business
   logic, API, GPS, MapLibre behaviour and order/delivery statuses are out of scope.
-- **Phase 0 (2026-10-15): documented, not applied.** `apps/dispatch/src/app/globals.css` still holds
-  the shadcn neutral defaults and `--concr-accent: #f5a623`. Phase 1 applies the tokens below (ADR
-  0013). Until then, do not migrate "a little": new code uses the semantic classes that already exist
-  (`bg-background`, `bg-card`, `text-muted-foreground`, `border-border`, `bg-concr-primary`,
-  `bg-concr-accent`) and never raw colours.
+- **Phase 1 (2026-10-15): tokens and fonts are applied** in `apps/dispatch/src/app/globals.css`
+  (ADR 0013, amendment 1). Components still carry their Phase 0 classes (palette classes in
+  `status-badge.tsx`, `live-page.tsx`, inbox, order detail, fleet tabs; hex constants in
+  `live-page.tsx` and `area-tab.tsx`); they move to the tokens in Phase 2 together with
+  `STATUS_THEME`, the radius scale and the shared components. New code uses the semantic classes
+  below and never raw colours.
 - Companions: `concr-dashboard-ui` (page and component recipes), `concr-ui-review` (checklist).
   Verified brand extraction, the Phase 1 mapping table and the contrast numbers:
   [reference/tokens.md](reference/tokens.md).
@@ -35,35 +36,46 @@ paths:
 
 ### Brand palette (D24)
 
-| Role             | Value     | Use                                                                 |
-| ---------------- | --------- | ------------------------------------------------------------------- |
-| Primary graphite | `#12161F` | sidebar, default (dark) buttons, text on amber, headings on dark    |
-| Brand amber      | `#F0B252` | **the single accent**: primary action, active nav, focus ring, bars |
-| Background       | `#F5F7FB` | page canvas                                                         |
-| Surface          | `#FFFFFF` | cards, tables, dialogs, sheets, inputs                              |
-| Text primary     | `#232B38` | body text                                                           |
-| Text muted       | `#66728A` | secondary text, labels, placeholders (≥ 14 px, never on inset)      |
-| Border           | `#E3E8F2` | hairlines, table rows, card and input borders                       |
-| Success          | `#2FAF6A` | fills, dots, ≥ 18 px text                                           |
-| Danger           | `#EF4444` | fills, dots, ≥ 18 px text; destructive actions                      |
+| Role             | Value     | Use                                                                |
+| ---------------- | --------- | ------------------------------------------------------------------ |
+| Primary graphite | `#12161F` | sidebar, default (dark) buttons, text on amber, headings on dark   |
+| Brand amber      | `#F0B252` | **the single accent**: primary action, active nav, bars (focus §5) |
+| Background       | `#F5F7FB` | page canvas                                                        |
+| Surface          | `#FFFFFF` | cards, tables, dialogs, sheets, inputs                             |
+| Text primary     | `#232B38` | body text                                                          |
+| Text muted       | `#66728A` | secondary text, labels, placeholders (≥ 14 px, never on inset)     |
+| Border           | `#E3E8F2` | hairlines, table rows, card and input borders                      |
+| Success          | `#2FAF6A` | fills, dots, ≥ 18 px text                                          |
+| Danger           | `#EF4444` | fills, dots, ≥ 18 px text; destructive actions                     |
 
-Extended values verified on the site (hover/inset shades, not yet semantic): graphite 900 `#0D1117`,
-amber 600 `#E09A35`, amber 700 `#B06F10`, inset `#EEF2F8`, steel `#5B8DEF`. Not decided
-(`TODO(nurlan)`): warning and info tokens, the sidebar shade, small-text shades of success/danger.
+Extended values verified on the site (hover/inset shades): graphite 900 `#0D1117`, amber 600
+`#E09A35`, amber 700 `#B06F10`, inset `#EEF2F8`, steel `#5B8DEF`. Still open (`TODO(nurlan)`): the
+sidebar shade (kept at `#12161F`) and the mobile accent.
 
-### Semantic layer (Phase 1 target)
+### Semantic layer (applied in Phase 1)
 
-| Token (CSS variable)                 | Value            | Tailwind class examples                        |
-| ------------------------------------ | ---------------- | ---------------------------------------------- |
-| `--background` / `--foreground`      | canvas / text    | `bg-background`, `text-foreground`             |
-| `--card` / `--popover`               | surface          | `bg-card`, `bg-popover`                        |
-| `--muted` / `--muted-foreground`     | inset / muted    | `bg-muted`, `text-muted-foreground`            |
-| `--border` / `--input` / `--ring`    | border / amber   | `border-border`, `ring-ring/50`                |
-| `--primary` / `--primary-foreground` | graphite / white | `bg-primary` (default button)                  |
-| `--concr-accent` / `-foreground`     | amber / graphite | `bg-concr-accent text-concr-accent-foreground` |
-| `--destructive`, `--concr-danger`    | danger           | `text-destructive`, `bg-destructive/10`        |
-| `--concr-success` (new)              | success          | `bg-concr-success`, `text-concr-success`       |
-| `--concr-warning`, `--concr-info`    | `TODO(nurlan)`   | not available until decided                    |
+| Token (CSS variable)                        | Value                 | Tailwind class examples                                  |
+| ------------------------------------------- | --------------------- | -------------------------------------------------------- |
+| `--background` / `--foreground`             | `#F5F7FB` / `#232B38` | `bg-background`, `text-foreground`                       |
+| `--card` / `--popover` (+ `-foreground`)    | `#FFFFFF` / `#232B38` | `bg-card`, `bg-popover`                                  |
+| `--muted`, `--secondary`, `--accent`        | `#EEF2F8`             | `bg-muted`, hover surfaces                               |
+| `--muted-foreground`                        | `#66728A`             | `text-muted-foreground`                                  |
+| `--border` / `--input`                      | `#E3E8F2`             | `border-border`, `border-input`                          |
+| `--ring`                                    | `#B06F10` (amber-700) | `focus-visible:ring-ring/50`, `border-ring`              |
+| `--primary` / `--primary-foreground`        | `#12161F` / `#FFFFFF` | `bg-primary` (default button, switch, checkbox)          |
+| `--concr-accent` / `-foreground`            | `#F0B252` / `#12161F` | `bg-concr-accent text-concr-accent-foreground`           |
+| `--concr-success` / `-strong`               | `#2FAF6A` / `#207949` | `bg-concr-success`, `text-concr-success-strong`          |
+| `--concr-danger` / `-strong`                | `#EF4444` / `#C51111` | `bg-concr-danger/10`, `text-concr-danger-strong`         |
+| `--destructive` (= `--concr-danger-strong`) | `#C51111`             | `text-destructive`, `bg-destructive/10` (shadcn)         |
+| `--concr-warning` / `-strong`               | `#B06F10` / `#8C590D` | `bg-concr-warning/10`, `text-concr-warning-strong`       |
+| `--concr-info` / `-strong`                  | `#5B8DEF` / `#2554B1` | `bg-concr-info/10`, `text-concr-info-strong`             |
+| `--shadow-sm` / `-md` / `-lg` / `-accent`   | brand elevation       | `shadow-sm` cards, `shadow-md` menus, `shadow-lg` sheets |
+
+Rule of thumb: the plain semantic token is the solid (fills at `/10`, dots, icons, text ≥ 18 px);
+the `-strong` token is the only one allowed for 14 px text on light surfaces (all ≥ 4.5:1). The
+solids are 3:1 or better against white for icons and dots, except success (2.8:1), which therefore
+always comes with a label. Warning and info are deliberately different values from every
+`deliveryStatusColor` entry (§7).
 
 Trap: shadcn's `--accent` is the **hover** surface used by menus and tabs, not the brand accent.
 Brand amber is always `concr-accent`.
@@ -84,10 +96,14 @@ Brand amber is always `concr-accent`.
 
 - Families: **Space Grotesk** for headings (`font-heading`), **Inter** for everything else
   (`font-sans`), system stack as fallback. Weights: Space Grotesk 500/600/700, Inter 400/500/600.
-- Loading is a Phase 1 decision (ADR 0013): `next/font/google` (built into Next, no dependency,
-  needs network at build) or self-hosted woff2 in `apps/dispatch/public/fonts` via `next/font/local`.
-  Phase 0 loads nothing. Before switching headings to Space Grotesk, verify it renders Ə/ə, Ğ/ğ,
-  I/ı, Ö/ö, Ü/ü, Ç/ç, Ş/ş; if a glyph is missing, headings use Inter 600 with the same scale.
+- Loading (applied in Phase 1, ADR 0013 amendment 1): self-hosted Google Fonts subsets in
+  `apps/dispatch/public/fonts` (Inter v20 latin / latin-ext / cyrillic / cyrillic-ext, Space Grotesk
+  v22 latin / latin-ext, OFL licences next to them) declared as plain `@font-face` rules with
+  `unicode-range` in `globals.css`; the two Latin files are preloaded from `src/app/layout.tsx`.
+  Glyphs verified from the files' cmap: both fonts contain Ə ə Ğ ğ İ ı Ö ö Ş ş Ü ü Ç ç and ₼;
+  Space Grotesk has no Cyrillic, so Russian headings fall back to Inter through the stack
+  `'Space Grotesk', var(--font-inter)`. Never add a font through `next/font/google` (network at
+  build) and never hand-craft a font file.
 - Scale (size / weight / line-height / tracking) and the Tailwind spelling:
 
 | Level   | Spec                              | Classes                                                       |
@@ -113,7 +129,7 @@ Brand amber is always `concr-accent`.
 
 ## 4. Radius
 
-| Use                                             | Brand | Phase 1 class / variable     |
+| Use                                             | Brand | Phase 2 class / variable     |
 | ----------------------------------------------- | ----- | ---------------------------- |
 | Controls: button, input, select, textarea, tabs | 6 px  | `rounded-sm` (`--radius-sm`) |
 | Menus, popovers, tooltips, board blocks         | 10 px | `rounded-md` (`--radius-md`) |
@@ -121,8 +137,9 @@ Brand amber is always `concr-accent`.
 | Large panels, empty states                      | 24 px | `rounded-xl` (`--radius-xl`) |
 | Badges, chips, avatars, map labels              | pill  | `rounded-full`               |
 
-Phase 1 redefines `--radius-sm/md/lg/xl` once and swaps the classes inside the shadcn primitives in
-one commit; until then the current classes stay (`rounded-lg` controls, `rounded-xl` cards).
+Phase 2 redefines `--radius-sm/md/lg/xl` once and swaps the classes inside the shadcn primitives in
+one commit (deferred from Phase 1 so that the token change stays free of component edits); until
+then the current classes stay (`rounded-lg` controls, `rounded-xl` cards, `--radius: 0.625rem`).
 
 ## 5. Elevation, borders, focus, motion
 
@@ -130,7 +147,9 @@ one commit; until then the current classes stay (`rounded-lg` controls, `rounded
   lg `0 16px 42px rgba(23,33,56,.12)`, accent `0 8px 26px rgba(240,178,82,.28)`.
 - Cards on the canvas: 1 px `border-border` + `shadow-sm`; menus and popovers `shadow-md`; sheets
   and dialogs `shadow-lg`; nothing casts a shadow inside a card; tables use borders only.
-- Focus: amber ring, `focus-visible:ring-3 focus-visible:ring-ring/50` with `--ring` amber;
+- Focus: `--ring: #B06F10` (site amber-700, 4.1:1 on white and 3.8:1 on the canvas, so the
+  indicator meets the 3:1 non-text rule; the accent amber is only 1.9:1 and must not be the ring);
+  the primitives render `focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50`,
   visible on every interactive element, never removed.
 - Motion: `cubic-bezier(0.22, 1, 0.36, 1)`; 180 ms for hover, chips, rows; 320 ms for sheets and
   dialogs; honour `prefers-reduced-motion` (also for the pulsing no-signal marker ring).
@@ -141,8 +160,11 @@ one commit; until then the current classes stay (`rounded-lg` controls, `rounded
   page-header actions; 24 (`size-6`) empty states. Default stroke width; colour inherits
   (`currentColor`).
 - Decorative icons are `aria-hidden`; icon-only buttons carry an `aria-label` from i18n.
-- No emoji, no inline SVG in TSX. The only custom graphics: map markers in `live-map.tsx` and the
-  supplier logo from `supplier.logoUrl`. Navigation icons are fixed in `features/shell/nav.ts`.
+- No emoji, no inline SVG in TSX. The only custom graphics: the map markers in `live-map.tsx` (the
+  owner's isometric mixer image `public/markers/mixer-truck.png` drawn at 32 × 32, never recoloured
+  or regenerated, the site pin, the plant badge) and the supplier logo from `supplier.logoUrl`.
+  Status on the map is a small coloured dot next to the icon, never a recolour of the image.
+  Navigation icons are fixed in `features/shell/nav.ts`.
 
 ## 7. Status colours
 
@@ -224,6 +246,8 @@ components. Do not build it now (CLAUDE.md rule 4). Logo and name always come fr
 
 ## Phases (ADR 0013, status in `docs/PROGRESS.md`)
 
-Phase 0 docs (done 2026-10-15) → Phase 1 tokens + fonts + status theme → Phase 2 shell + shared
-components (`DataTable`, `KeyValue`, `ChipGroup`, `EntitySheet`) → Phase 3 pages (board and live
-last) → Phase 4 polish (contrast, keyboard, 768/1024/1280, i18n, docs).
+Phase 0 docs (done 2026-10-15) → Phase 1 tokens + fonts + semantic feedback tokens (done
+2026-10-15) → Phase 2 shell + shared components (`DataTable`, `KeyValue`, `ChipGroup`,
+`EntitySheet`), `STATUS_THEME`, radius scale, palette classes and hex constants replaced by tokens
+→ Phase 3 pages (board and live last) → Phase 4 polish (contrast, keyboard, 768/1024/1280, i18n,
+docs).

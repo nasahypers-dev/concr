@@ -115,6 +115,11 @@ packages/shared/i18n/{az,ru,en}.json panel.* keys, az first, all three files
   `live-map.tsx` are not a design surface: the MapLibre element's transform belongs to MapLibre,
   only the inner node is repainted when `visualKey` changes. Change marker SVG/CSS strings only with
   the owner, keep `SIZE`/anchor values.
+- Mixer markers: the owner's image (`public/markers/mixer-truck.png`) at 32 × 32, a status dot on
+  the corner (`deliveryStatusColor`), the plate as a small white label underneath, no company name
+  on the map. A click selects the mixer (`selected`, amber frame) and the page renders
+  `TruckInfoPanel` inside the map card (`absolute bottom-3 left-3`), where the company name, driver,
+  trip and last signal live.
 - Layout: `xl:grid-cols-[1fr_380px]`, map card `h-[70vh] min-h-[420px] p-0`; right column: alerts
   (sorted late → concrete risk → no signal), trucks on shift (status dot + plate + driver), legend.
 - Data: `useLive()` polls every 10 s and `subscribeLive` invalidates the query; do not add state

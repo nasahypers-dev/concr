@@ -32,8 +32,11 @@ Outside production the login page offers both as one-click fills. Passwords are 
 - `/orders` — history table with status chips, date, search, paging and a PDF export.
 - `/board?date=` — mixer × hour board, click a trip to change mixer / driver / departure, "plan"
   for confirmed orders of the day.
-- `/live` — MapLibre map (OpenFreeMap tiles, no key) with trucks, sites and the plant; alerts: late,
-  concrete risk (75 of 90 min), no signal (> 2 min); refreshed by the tracker events and every 10 s.
+- `/live` — MapLibre map (OpenFreeMap tiles, no key) with the plant (supplier logo), site pins and
+  mixers drawn with the owner's isometric icon (`public/markers/mixer-truck.png`, 32 × 32) plus a
+  status dot and the plate underneath; clicking a mixer opens an info panel (company, driver, trip,
+  last signal). Alerts: late, concrete risk (75 of 90 min), no signal (> 2 min); refreshed by the
+  tracker events and every 10 s.
 - `/settings` — general parameters, products and prices, pumps, mixers, drivers (D22: drivers are
   created here with a password and sign in to the app with phone or e-mail + that password), service
   area polygon with a map preview.
@@ -45,8 +48,12 @@ The panel's visual rules live in three project skills under `.claude/skills/` (s
 app): `concr-design-system` (Novxanı Beton brand tokens per decision D24, typography, spacing,
 radius, status colours, accessibility; verified source in `reference/tokens.md`),
 `concr-dashboard-ui` (page and component recipes) and `concr-ui-review` (review checklist).
-ADR 0013 records the phased redesign; Phase 0 (docs) is done, Phase 1 applies the tokens to
-`src/app/globals.css`. Until then the file keeps the shadcn neutral defaults.
+ADR 0013 records the phased redesign. Phase 1 (2026-10-15) applied the tokens to
+`src/app/globals.css` and self-hosted the brand fonts: Inter (text) and Space Grotesk (headings) as
+Google Fonts subsets in `public/fonts` (OFL, provenance in `public/fonts/README.md`), declared with
+`@font-face` + `unicode-range`; no network is needed at build time. Status colours
+(`deliveryStatusColor`), map markers and the board are unchanged; the component-level migration
+(palette classes, radius scale, `STATUS_THEME`) is Phase 2.
 
 ## Layout
 

@@ -50,10 +50,42 @@ Read-only UI/UX audit of the panel, then the foundation for the redesign without
   `reference/tokens.md` with the extraction, Phase 1 mapping and contrast table),
   `concr-dashboard-ui` (page recipes), `concr-ui-review` (checklist + report format). `CLAUDE.md`
   points to them; ADR 0013 records the phased plan.
-- **Next:** Phase 1 — `globals.css` tokens, fonts (`next/font` decision), semantic status tokens,
-  hex removed from TSX outside the allow-list. Then Phase 2 shell + shared components, Phase 3
-  pages (board and live last), Phase 4 polish. `TODO(nurlan)`: warning/info tokens, sidebar shade,
-  mobile accent.
+- **Next:** Phase 1 (below), then Phase 2 shell + shared components, Phase 3 pages (board and
+  live last), Phase 4 polish.
+
+### U3 design — Phase 1: design foundations (done 2026-10-15, tokens and fonts only)
+
+- **Tokens (`apps/dispatch/src/app/globals.css`):** shadcn variables now carry D24 (canvas
+  `#F5F7FB`, surface `#FFFFFF`, text `#232B38` / `#66728A`, border `#E3E8F2`, primary `#12161F`,
+  accent `#F0B252`); semantic pairs `concr-success/-strong`, `concr-danger/-strong`,
+  `concr-warning/-strong` (`#B06F10` / `#8C590D`), `concr-info/-strong` (`#5B8DEF` / `#2554B1`);
+  brand shadows; `--destructive` = danger-strong `#C51111` and `--ring` = amber-700 `#B06F10` for
+  WCAG AA (ADR 0013 amendment 1). `deliveryStatusColor`, tone maps, marker constants, board maths,
+  polling, query keys and `@concr/shared` untouched; radius scale and `.dark` unchanged.
+- **Fonts:** Inter v20 + Space Grotesk v22 self-hosted in `apps/dispatch/public/fonts` (Google
+  Fonts subsets, OFL, 218 KB total) via `@font-face` + `unicode-range`; Latin files preloaded in
+  `layout.tsx`. Glyphs verified from the cmap: Ə ə Ğ ğ İ ı Ö ö Ş ş Ü ü Ç ç and ₼ in both; no
+  Cyrillic in Space Grotesk → Russian headings fall back to Inter.
+- **Checks:** lint, typecheck, 105 tests, prettier, `next build` green; `next start` smoke test
+  served the fonts (200, `font/woff2`). Not done: browser screenshots at 768/1024/1280.
+- **Phase 2 debt:** 17 palette classes (`status-badge.tsx`, `inbox-page.tsx`, `live-page.tsx`,
+  `order-detail-page.tsx`, `fleet-tabs.tsx`), hex constants in `live-page.tsx` / `area-tab.tsx`,
+  radius scale + primitive classes, `STATUS_THEME`, chart/sidebar variables. `TODO(nurlan)`:
+  sidebar shade, mobile accent.
+
+### Live map: owner's isometric mixer markers (2026-10-16)
+
+- `apps/dispatch/public/markers/mixer-truck.png` (owner's 512 × 512 image, untouched) replaces the
+  drawn mixer SVG; drawn at 32 × 32 with a status-coloured dot on the corner (`deliveryStatusColor`
+  unchanged, idle grey), the plate as a small white label underneath, a pulsing red ring on the dot
+  while the signal is lost and an amber frame when selected. The supplier name is no longer printed
+  under the plant marker (hover text only).
+- Clicking a mixer opens `TruckInfoPanel` over the map (plate, company name, status, driver, order
+  link, site, ETA, speed, last signal); new keys `panel.live.info.*` in az/ru/en. GPS, polling,
+  marker reconciliation (`visualKey`, MapLibre-owned transform) and status logic are unchanged;
+  the heading arrow is gone because an isometric image has a fixed orientation.
+- Reports: a typed start date can no longer pass the end (clamped on blur, "Göstər" disabled while
+  invalid); verified by typing in headless Chrome. Tests: live page click → panel, reports clamp.
 
 ## U2 — driver mode (in progress, 2026-10-14)
 
