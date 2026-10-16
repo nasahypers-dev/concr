@@ -3,16 +3,18 @@
 import type { LiveSnapshot, LiveTruck, Unsubscribe } from '@concr/shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { cn } from 'cn';
+import { XIcon } from 'lucide-react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useApi } from '@/api/api-provider';
 import { queryKeys } from '@/api/query-keys';
 import type { MapMarker } from '@/components/map/live-map';
 import { PageHeader } from '@/components/page-header';
 import { ErrorState, LoadingRows } from '@/components/state-view';
 import { deliveryStatusColor, StatusBadge } from '@/components/status-badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSupplier } from '@/features/common/use-supplier';
@@ -37,6 +39,9 @@ export function LivePage() {
   const queryClient = useQueryClient();
   const live = useLive();
   const supplier = useSupplier();
+  /** Clicked mixer; its info panel floats over the map until closed or until it leaves the shift. */
+  const [selectedTruckId, setSelectedTruckId] = useState<string | null>(null);
+  const selectedTruck = live.data?.trucks.find((x) => x.truck.id === selectedTruckId) ?? null;
 
   useEffect(() => {
     const refresh = () => void queryClient.invalidateQueries({ queryKey: queryKeys.live });
@@ -75,8 +80,9 @@ export function LivePage() {
           label: truck.truck.plateNumber,
           title: `${truck.truck.plateNumber} · ${truck.delivery.orderNumber}`,
           color: deliveryStatusColor[truck.delivery.status],
-          heading: truck.heading,
           alert: truck.signalLost,
+          selected: truck.truck.id === selectedTruckId,
+          onClick: () => setSelectedTruckId(truck.truck.id),
         });
         markers.push({
           id: `site:${truck.delivery.id}`,
@@ -98,6 +104,8 @@ export function LivePage() {
           label: truck.truck.plateNumber,
           title: `${truck.truck.plateNumber} · ${t('idle')}`,
           color: IDLE_COLOR,
+          selected: truck.truck.id === selectedTruckId,
+          onClick: () => setSelectedTruckId(truck.truck.id),
         });
       }
     }
@@ -119,7 +127,7 @@ export function LivePage() {
         <ErrorState error={live.error} onRetry={() => void live.refetch()} />
       ) : (
         <div className="grid gap-4 xl:grid-cols-[1fr_380px]">
-          <Card size="sm" className="h-[70vh] min-h-[420px] overflow-hidden p-0">
+          <Card size="sm" className="relative h-[70vh] min-h-[420px] overflow-hidden p-0">
             {plant ? (
               <LiveMap center={plant} zoom={10} markers={markers} className="h-full" />
             ) : (
@@ -127,6 +135,13 @@ export function LivePage() {
                 {t('mapUnavailable')}
               </div>
             )}
+            {selectedTruck ? (
+              <TruckInfoPanel
+                truck={selectedTruck}
+                supplierName={supplier.data?.supplier.name ?? ''}
+                onClose={() => setSelectedTruckId(null)}
+              />
+            ) : null}
           </Card>
           <div className="flex flex-col gap-4">
             <MapLegend />
@@ -136,6 +151,77 @@ export function LivePage() {
         </div>
       )}
     </>
+  );
+}
+
+/**
+ * Info panel for the mixer clicked on the map (owner, 2026-10-16): the company name lives here
+ * instead of under the marker, with the driver, the trip and the last GPS signal.
+ */
+function TruckInfoPanel({
+  truck,
+  supplierName,
+  onClose,
+}: {
+  truck: LiveTruck;
+  supplierName: string;
+  onClose: () => void;
+}) {
+  const t = useTranslations('panel.live');
+  const tc = useTranslations('common');
+  return (
+    <section
+      aria-label={t('info.title')}
+      data-testid="truck-info"
+      className="absolute bottom-3 left-3 z-10 w-72 max-w-[calc(100%-1.5rem)] rounded-lg border bg-popover p-3 text-sm text-popover-foreground shadow-md"
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex min-w-0 flex-col">
+          <span className="font-heading text-base font-semibold">{truck.truck.plateNumber}</span>
+          <span className="truncate text-xs text-muted-foreground">{supplierName}</span>
+        </div>
+        <Button variant="ghost" size="icon-sm" aria-label={tc('close')} onClick={onClose}>
+          <XIcon />
+        </Button>
+      </div>
+      <dl className="mt-2 grid grid-cols-[5.5rem_1fr] gap-x-2 gap-y-1">
+        <dt className="text-muted-foreground">{t('info.status')}</dt>
+        <dd>
+          {truck.delivery ? (
+            <StatusBadge kind="delivery" status={truck.delivery.status} />
+          ) : truck.onShift ? (
+            t('idle')
+          ) : (
+            t('offShift')
+          )}
+        </dd>
+        <dt className="text-muted-foreground">{t('info.driver')}</dt>
+        <dd className="truncate">{truck.driver?.fullName ?? t('info.noDriver')}</dd>
+        {truck.delivery ? (
+          <>
+            <dt className="text-muted-foreground">{t('info.order')}</dt>
+            <dd>
+              <Link href={`/orders/${truck.delivery.orderId}`} className="underline">
+                {truck.delivery.orderNumber}
+              </Link>
+            </dd>
+            <dt className="text-muted-foreground">{t('info.site')}</dt>
+            <dd className="truncate">{truck.delivery.siteName}</dd>
+          </>
+        ) : null}
+      </dl>
+      <div className="mt-2 flex flex-wrap gap-x-3 text-xs text-muted-foreground">
+        {truck.etaMinutes !== null ? <span>{t('eta', { minutes: truck.etaMinutes })}</span> : null}
+        {truck.speedKmh !== null ? (
+          <span>{t('info.speed', { kmh: Math.round(truck.speedKmh) })}</span>
+        ) : null}
+        {truck.locationAt ? (
+          <span className={truck.signalLost ? 'text-destructive' : undefined}>
+            {t('lastSeen', { time: formatTime(truck.locationAt) })}
+          </span>
+        ) : null}
+      </div>
+    </section>
   );
 }
 

@@ -584,7 +584,16 @@
       "legend": "İşarələr",
       "legendSite": "Obyekt (reys nömrəsi ilə)",
       "legendIdle": "Boş mikser",
-      "legendMoving": "Reysdə olan mikser"
+      "legendMoving": "Reysdə olan mikser",
+      "info": {
+        "title": "Mikser",
+        "status": "Status",
+        "driver": "Sürücü",
+        "noDriver": "Sürücü təyin edilməyib",
+        "order": "Sifariş",
+        "site": "Obyekt",
+        "speed": "Sürət: {kmh} km/saat"
+      }
     },
     "settings": {
       "title": "Ayarlar",

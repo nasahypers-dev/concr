@@ -584,7 +584,16 @@
       "legend": "Legend",
       "legendSite": "Site (with the trip number)",
       "legendIdle": "Idle mixer",
-      "legendMoving": "Mixer on a trip"
+      "legendMoving": "Mixer on a trip",
+      "info": {
+        "title": "Mixer",
+        "status": "Status",
+        "driver": "Driver",
+        "noDriver": "No driver assigned",
+        "order": "Order",
+        "site": "Site",
+        "speed": "Speed: {kmh} km/h"
+      }
     },
     "settings": {
       "title": "Settings",
